@@ -16,6 +16,9 @@ export async function init(baseDir) {
     path.join(baseDir, 'requirements'),
     path.join(baseDir, 'requirements', 'features'),
     path.join(baseDir, 'requirements', 'bugs'),
+    path.join(baseDir, 'requirements', 'questions'),
+    path.join(baseDir, 'requirements', 'adjustments'),
+    path.join(baseDir, 'requirements', 'refactors'),
     path.join(baseDir, 'requirements', 'tech-debt'),
     path.join(baseDir, 'templates'),
     path.join(baseDir, 'logs')

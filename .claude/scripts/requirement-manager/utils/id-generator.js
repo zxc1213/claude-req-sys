@@ -6,6 +6,9 @@
 const counters = {
   feature: 0,
   bug: 0,
+  question: 0,
+  adjustment: 0,
+  refactor: 0,
   'tech-debt': 0
 };
 
@@ -26,6 +29,9 @@ export function generate(type) {
   const prefixMap = {
     'feature': 'FEAT',
     'bug': 'BUG',
+    'question': 'QUES',
+    'adjustment': 'ADJU',
+    'refactor': 'REF',
     'tech-debt': 'DEBT'
   };
   const prefix = prefixMap[type];
@@ -56,6 +62,9 @@ export function parse(id) {
   const prefixToType = {
     'FEAT': 'feature',
     'BUG': 'bug',
+    'QUES': 'question',
+    'ADJU': 'adjustment',
+    'REF': 'refactor',
     'DEBT': 'tech-debt'
   };
 
@@ -78,10 +87,15 @@ export function parse(id) {
  */
 export function reset(type) {
   if (type) {
-    counters[type] = 0;
+    if (counters.hasOwnProperty(type)) {
+      counters[type] = 0;
+    }
   } else {
     counters.feature = 0;
     counters.bug = 0;
+    counters.question = 0;
+    counters.adjustment = 0;
+    counters.refactor = 0;
     counters['tech-debt'] = 0;
   }
 }
