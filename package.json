@@ -2,6 +2,7 @@
   "name": "claude-requirement-system",
   "version": "0.1.0",
   "description": "智能需求管理与自动化执行系统",
+  "type": "module",
   "main": ".claude/scripts/requirement-manager/index.js",
   "scripts": {
     "test": "node tests/run-all.js",
