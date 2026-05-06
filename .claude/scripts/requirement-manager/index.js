@@ -117,9 +117,17 @@ class RequirementManager {
     // 使用 Processor 的静态方法解析类型
     const parsed = Processor.parseType(input);
 
+    // 转换模式名称以匹配 scheduler 的期望
+    const modeMapping = {
+      'full_auto': 'fully',
+      'semi_auto': 'semi',
+      'manual': 'manual'
+    };
+
     // 合并选项
     return {
       ...parsed,
+      mode: modeMapping[parsed.mode] || 'semi',
       ...options
     };
   }
@@ -222,7 +230,15 @@ class RequirementManager {
         requirementId: requirement.id,
         type: requirement.type,
         mode: requirement.mode,
+        modeDescription: '半自动执行',
         steps: [],
+        checkpoints: [],
+        metadata: {
+          primarySkill: 'brainstorming',
+          optionalSkills: [],
+          totalSteps: 0,
+          totalCheckpoints: 0
+        },
         error: err.message
       };
     }
@@ -240,9 +256,10 @@ class RequirementManager {
       this.logPath
     );
 
+    const totalSteps = executionPlan.metadata?.totalSteps || 0;
     await info(
       requirement.id,
-      `执行模式: ${executionPlan.modeDescription}, 步骤数: ${executionPlan.metadata.totalSteps}`,
+      `执行模式: ${executionPlan.modeDescription}, 步骤数: ${totalSteps}`,
       this.logPath
     );
   }
@@ -255,7 +272,9 @@ class RequirementManager {
    */
   formatResult(requirement, executionPlan) {
     // 获取第一个步骤（通常是 brainstorming）
-    const firstStep = executionPlan.steps[0];
+    const firstStep = executionPlan.steps && executionPlan.steps.length > 0
+      ? executionPlan.steps[0]
+      : null;
 
     return {
       success: true,
@@ -268,8 +287,8 @@ class RequirementManager {
       executionPlan: {
         mode: executionPlan.mode,
         modeDescription: executionPlan.modeDescription,
-        totalSteps: executionPlan.metadata.totalSteps,
-        checkpoints: executionPlan.checkpoints.length
+        totalSteps: executionPlan.metadata?.totalSteps || 0,
+        checkpoints: executionPlan.checkpoints?.length || 0
       },
       nextSteps: this.generateNextSteps(requirement, executionPlan, firstStep)
     };
