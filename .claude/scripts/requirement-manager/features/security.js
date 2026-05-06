@@ -260,4 +260,4 @@ class SecurityFilter {
 // 导出单例
 const securityFilter = new SecurityFilter();
 
-module.exports = securityFilter;
+export default securityFilter;
