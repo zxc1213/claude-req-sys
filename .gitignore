@@ -7,6 +7,11 @@ node_modules/
 # 日志
 *.log
 npm-debug.log*
+.claude/logs/*.log
+
+# 系统文件
+.DS_Store
+Thumbs.db
 
 # 系统文件
 .DS_Store
