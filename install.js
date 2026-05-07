@@ -7,10 +7,15 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 
-const ROOT = path.resolve(new URL('.', import.meta.url).pathname);
-const TARGET = process.cwd();
+// 获取 install.js 所在目录（源目录）
+const scriptPath = fileURLToPath(import.meta.url);
+const ROOT = path.dirname(scriptPath);
+
+// 目标目录：从命令行参数获取，或使用当前目录
+const TARGET = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
 
 // 需要复制的文件和目录（不包含 settings.json）
 const COPY_ITEMS = [
@@ -57,6 +62,11 @@ console.log('📋 复制系统文件...');
 COPY_ITEMS.forEach(item => {
   const src = path.join(ROOT, item);
   const dst = path.join(TARGET, item);
+
+  if (!fs.existsSync(src)) {
+    console.log(`⚠️  跳过不存在的文件: ${item}`);
+    return;
+  }
 
   if (fs.statSync(src).isDirectory()) {
     copyDir(src, dst);
