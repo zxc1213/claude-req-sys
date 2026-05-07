@@ -14,6 +14,7 @@ import { Processor } from './core/processor.js';
 import { schedule, generateSkillPrompt } from './core/scheduler.js';
 import securityFilter from './features/security.js';
 import { info, success, warn, error } from './utils/logger.js';
+import Dashboard from './ui/dashboard.js';
 import path from 'path';
 import chalk from 'chalk';
 
@@ -149,36 +150,39 @@ class RequirementManager {
    */
   async handleQueryCommand(parsed) {
     const description = parsed.description;
+    const dashboard = new Dashboard(this.baseDir);
 
     if (description.includes('--list')) {
+      await dashboard.show();
       return {
         success: true,
         action: 'list_requirements',
-        message: '列出所有需求',
-        implementation: 'TODO: 实现需求列表功能'
+        message: '已显示所有需求'
       };
     }
 
     if (description.includes('--active')) {
+      const active = await dashboard.getActiveRequirement();
+      dashboard.showActive(active);
       return {
         success: true,
         action: 'list_active',
-        message: '显示当前活跃需求',
-        implementation: 'TODO: 实现活跃需求查询'
+        message: '已显示活跃需求'
       };
     }
 
     if (description.includes('--dashboard')) {
+      await dashboard.show();
       return {
         success: true,
         action: 'show_dashboard',
-        message: '显示需求仪表板',
-        implementation: 'TODO: 实现仪表板功能'
+        message: '已显示需求仪表板'
       };
     }
 
     if (description.includes('--status')) {
       const id = description.replace('--status', '').trim();
+      // TODO: 实现单个需求状态查询
       return {
         success: true,
         action: 'show_status',
@@ -358,15 +362,58 @@ class RequirementManager {
     // 创建管理器实例
     const manager = new RequirementManager(baseDir);
 
-    // 解析参数
-    const input = args.join(' ');
+    // 处理命令行选项
     const options = {};
+    let input = '';
+
+    // 解析命令行参数
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+
+      // 处理选项
+      if (arg === '--feature' || arg === '-f') {
+        options.type = 'feature';
+      } else if (arg === '--bug' || arg === '-b') {
+        options.type = 'bug';
+      } else if (arg === '--question' || arg === '-q') {
+        options.type = 'question';
+      } else if (arg === '--adjust' || arg === '-a') {
+        options.type = 'adjustment';
+      } else if (arg === '--refactor' || arg === '-r') {
+        options.type = 'refactor';
+      } else if (arg === '--auto') {
+        options.mode = 'full_auto';
+      } else if (arg === '--conservative') {
+        options.mode = 'manual';
+      } else if (arg.startsWith('--status=')) {
+        input = `--status ${arg.replace('--status=', '')}`;
+      } else if (arg === '--dashboard' || arg === '--list' || arg === '--active' || arg === '--status') {
+        // 查询命令，添加到输入前面
+        input = (input ? `${input} ${arg}` : arg);
+      } else if (!arg.startsWith('--')) {
+        // 不是选项的参数作为描述
+        input = (input ? `${input} ${arg}` : arg);
+      } else {
+        // 其他选项添加到输入中
+        input = (input ? `${input} ${arg}` : arg);
+      }
+    }
+
+    // 如果没有输入，使用默认描述
+    if (!input) {
+      input = '创建新需求';
+    }
 
     // 处理输入
     const result = await manager.handle(input, options);
 
+    // 对于查询命令，不需要格式化输出（Dashboard 已经输出）
+    if (result.action && ['show_dashboard', 'list_requirements', 'list_active'].includes(result.action)) {
+      return;
+    }
+
     // 输出结果
-    console.log(JSON.stringify(result, null, 2));
+    formatOutput(result);
   }
 }
 
@@ -432,7 +479,7 @@ export default RequirementManager;
 export { formatOutput };
 
 // CLI 入口（如果直接运行此文件）
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
   RequirementManager.cli(process.argv.slice(2)).catch(err => {
     console.error('CLI 错误:', err);
     process.exit(1);
