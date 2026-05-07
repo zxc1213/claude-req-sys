@@ -5,11 +5,11 @@
  * 用于将需求管理系统安装到任何项目中
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
 
-const ROOT = path.resolve(__dirname);
+const ROOT = path.resolve(new URL('.', import.meta.url).pathname);
 const TARGET = process.cwd();
 
 // 需要复制的文件和目录
