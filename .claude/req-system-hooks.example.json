@@ -1,4 +1,5 @@
 {
+  "_comment": "ClaudeReqSys Hooks 配置示例 - 如需在项目中启用自动化功能，请将以下内容合并到项目的 settings.json 中",
   "hooks": {
     "PostToolUse": [
       {

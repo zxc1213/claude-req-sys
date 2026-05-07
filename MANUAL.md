@@ -6,6 +6,8 @@
 
 这意味着你需要在要使用的项目目录中安装此系统。
 
+**本安装脚本不会覆盖你现有的配置文件。**
+
 ---
 
 ## 🎯 快速安装（3步）
@@ -47,15 +49,74 @@ node E:\AI_Project\ClaudeReqSys\install.js
 ├── .claude/
 │   ├── commands/
 │   │   └── requirement.md          ← 自定义命令（/req 生效的关键）
-│   ├── scripts/
+│   ├── scripts/                    ← 核心脚本（新增）
 │   │   ├── hooks/                  ← 自动化钩子
+│   │   │   ├── post-req-update.js
+│   │   │   └── stop-req-summary.js
 │   │   └── requirement-manager/    ← 核心逻辑
-│   └── settings.json               ← 配置文件
-├── .requirements/                  ← 需求数据
-└── node_modules/                   ← 依赖
+│   ├── req-system-hooks.example.json ← Hooks 配置示例（新增）
+│   ├── settings.json               ← 你的配置（不会被修改）
+│   └── settings.local.json         ← 你的本地配置（不会被修改）
+├── .requirements/                  ← 需求数据（新增）
+└── node_modules/                   ← 依赖（如果已有则添加）
 ```
 
 **关键文件**：`.claude/commands/requirement.md` — 这是 `/req` 命令的定义文件。
+
+---
+
+## 🔧 配置说明
+
+### 自动化功能（可选）
+
+安装脚本会创建 `req-system-hooks.example.json`，其中包含自动化 Hooks 配置。
+
+**如需启用自动化功能**，请手动将示例文件中的 hooks 配置合并到你的 `settings.json`：
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/post-req-update.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "更新需求记录",
+        "id": "post:req:update"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "生成需求执行总结",
+        "id": "stop:req:summary"
+      }
+    ]
+  }
+}
+```
+
+### 基础使用（无需 Hooks）
+
+即使不配置 Hooks，`/req` 命令也可以正常使用：
+
+- ✅ 创建需求
+- ✅ 查看仪表板
+- ✅ 管理需求状态
+- ❌ 自动跟踪文件变更（需要 Hooks）
+- ❌ 自动生成会话总结（需要 Hooks）
 
 ---
 
@@ -75,12 +136,12 @@ cd /path/to/project-b
 node E:\AI_Project\ClaudeReqSys\install.js
 ```
 
-### 方法二：使用全局配置（高级）
+### 方法二：使用全局模板（高级）
 
 在用户主目录创建全局模板：
 
 ```bash
-# 1. 复制到全局模板目录
+# 1. 复制命令到全局模板
 mkdir -p ~/.claude-template/commands
 cp E:\AI_Project\ClaudeReqSys/.claude/commands/requirement.md ~/.claude-template/commands/
 
@@ -90,93 +151,19 @@ cp -r ~/.claude-template/* /path/to/new-project/.claude/
 
 ---
 
-## 🔧 故障排除
-
-### 问题：`/req` 命令没反应
-
-**检查清单**：
-
-1. ✅ **确认当前目录**
-```bash
-pwd  # 确认在正确的项目目录
-```
-
-2. ✅ **确认命令文件存在**
-```bash
-ls .claude/commands/requirement.md
-# 应该看到这个文件
-```
-
-3. ✅ **确认文件内容**
-```bash
-cat .claude/commands/requirement.md
-# 应该看到命令定义（开头是 ---）
-```
-
-4. ✅ **重启 Claude Code**
-```bash
-# 完全退出 Claude Code，重新打开
-```
-
----
-
-## 🎓 工作原理
-
-```
-你输入: /req 添加登录功能
-   ↓
-Claude Code 查找: 当前目录/.claude/commands/requirement.md
-   ↓
-找到定义 → 加载命令说明
-   ↓
-执行: node .claude/scripts/requirement-manager/index.js "添加登录功能"
-   ↓
-返回结果
-```
-
----
-
-## 📋 完整安装示例
-
-### 场景：在 C:\Users\19944\TestProject 中使用
+## 🔄 卸载
 
 ```bash
-# 1. 创建测试项目
-mkdir C:\Users\19944\TestProject
-cd C:\Users\19944\TestProject
+# 删除文件
+rm -rf .claude/commands/requirement.md
+rm -rf .claude/scripts/requirement-manager
+rm -rf .claude/scripts/hooks/post-req-update.js
+rm -rf .claude/scripts/hooks/stop-req-summary.js
+rm -rf .claude/req-system-hooks.example.json
+rm -rf .requirements/
 
-# 2. 初始化项目（可选）
-git init
-npm init -y
-
-# 3. 安装 ClaudeReqSys
-node E:\AI_Project\ClaudeReqSys\install.js
-
-# 4. 验证安装
-ls .claude/commands/  # 应该看到 requirement.md
-
-# 5. 在 Claude Code 中使用
-/req --dashboard
+# 注意：settings.json 不会被修改，无需恢复
 ```
-
----
-
-## 💡 最佳实践
-
-1. **为每个项目单独安装**
-   - 保持项目独立性
-   - 避免版本冲突
-
-2. **版本控制**
-```bash
-# 提交到 Git
-git add .claude/
-git commit -m "添加需求管理系统"
-```
-
-3. **团队协作**
-   - 将 `.claude/` 目录加入项目
-   - 团队成员克隆项目后自动拥有命令
 
 ---
 
@@ -200,6 +187,40 @@ git commit -m "添加需求管理系统"
 
 ---
 
+## ⚠️ 故障排除
+
+### 问题：`/req` 命令没反应
+
+**检查清单**：
+
+1. ✅ **确认当前目录**
+```bash
+pwd  # 确认在正确的项目目录
+```
+
+2. ✅ **确认命令文件存在**
+```bash
+ls .claude/commands/requirement.md
+```
+
+3. ✅ **重启 Claude Code**
+```bash
+# 完全退出 Claude Code，重新打开
+```
+
+### 问题：自动化功能不工作
+
+**解决方案**：
+
+1. 检查是否已配置 Hooks
+```bash
+cat .claude/settings.json | grep -A 10 '"hooks"'
+```
+
+2. 如果没有配置，按照"配置说明"部分手动添加
+
+---
+
 ## 📞 获取帮助
 
 - **用户指南**：`docs/guides/user-guide.md`
@@ -208,4 +229,7 @@ git commit -m "添加需求管理系统"
 
 ---
 
-**记住**：`/req` 只在安装了系统的目录中生效！
+**记住**：
+- ✅ 安装脚本不会覆盖你的 settings.json
+- ✅ 命令立即可用，无需配置 Hooks
+- ⚙️ Hooks 是可选的自动化功能
