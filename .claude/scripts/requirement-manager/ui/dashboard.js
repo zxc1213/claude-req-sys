@@ -51,7 +51,7 @@ export class Dashboard {
    */
   constructor(baseDir) {
     this.baseDir = baseDir;
-    this.requirementsDir = path.join(baseDir, 'requirements');
+    this.requirementsDir = path.join(baseDir, '.requirements');
   }
 
   /**
