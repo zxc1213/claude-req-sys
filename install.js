@@ -3,6 +3,7 @@
 /**
  * ClaudeReqSys 安装脚本
  * 用于将需求管理系统安装到任何项目中
+ * 智能合并配置，不覆盖用户现有设置
  */
 
 import fs from 'fs';
@@ -26,6 +27,56 @@ const COPY_ITEMS = [
 ];
 
 console.log('🚀 ClaudeReqSys 安装向导\n');
+
+// ============================================================================
+// JSON 深度合并工具函数
+// ============================================================================
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function deepMergeJson(baseValue, patchValue) {
+  if (!isPlainObject(baseValue) || !isPlainObject(patchValue)) {
+    return patchValue;
+  }
+
+  const merged = { ...baseValue };
+  for (const [key, value] of Object.entries(patchValue)) {
+    if (isPlainObject(value) && isPlainObject(merged[key])) {
+      merged[key] = deepMergeJson(merged[key], value);
+    } else if (Array.isArray(value) && Array.isArray(merged[key])) {
+      // 数组合并：保留唯一项
+      const mergedArray = [...merged[key]];
+      for (const item of value) {
+        if (!mergedArray.includes(item)) {
+          mergedArray.push(item);
+        }
+      }
+      merged[key] = mergedArray;
+    } else {
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
+function readJsonObject(filePath, label) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(content);
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeJsonObject(filePath, value) {
+  fs.writeFileSync(filePath, JSON.stringify(value, null, 2) + '\n', 'utf8');
+}
+
+// ============================================================================
+// 安装逻辑
+// ============================================================================
 
 // 1. 检查目标目录
 const targetGit = path.join(TARGET, '.git');
@@ -75,43 +126,74 @@ COPY_ITEMS.forEach(item => {
   }
 });
 
-// 4. 创建 hooks 配置文件（不覆盖现有配置）
-console.log('⚙️  创建 hooks 配置示例...');
-const hooksExamplePath = path.join(TARGET, '.claude', 'req-system-hooks.example.json');
-const hooksConfig = {
-  "_comment": "ClaudeReqSys Hooks 配置 - 如需启用自动化功能，请将以下内容合并到 settings.json 的 hooks 配置中",
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \".claude/scripts/hooks/post-req-update.js\"",
-            "timeout": 10
-          }
-        ],
-        "description": "更新需求记录",
-        "id": "post:req:update"
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
-            "timeout": 10
-          }
-        ],
-        "description": "生成需求执行总结",
-        "id": "stop:req:summary"
-      }
-    ]
-  }
-};
-fs.writeFileSync(hooksExamplePath, JSON.stringify(hooksConfig, null, 2));
+// 4. 智能合并 hooks 配置
+console.log('⚙️  配置自动化 hooks...');
+
+const settingsPath = path.join(TARGET, '.claude', 'settings.json');
+const hooksConfigPath = path.join(ROOT, '.claude', 'hooks.json');
+
+let shouldMergeHooks = false;
+let existingSettings = {};
+let hooksConfig = {};
+
+// 读取现有 settings.json
+if (fs.existsSync(settingsPath)) {
+  existingSettings = readJsonObject(settingsPath, 'settings.json') || {};
+  console.log('✓ 找到现有 settings.json');
+}
+
+// 读取 hooks 配置
+if (fs.existsSync(hooksConfigPath)) {
+  hooksConfig = readJsonObject(hooksConfigPath, 'hooks.json') || {};
+  shouldMergeHooks = true;
+  console.log('✓ 找到 hooks 配置模板');
+}
+
+if (shouldMergeHooks && Object.keys(hooksConfig).length > 0) {
+  // 智能合并 hooks
+  const mergedSettings = deepMergeJson(existingSettings, hooksConfig);
+  writeJsonObject(settingsPath, mergedSettings);
+  console.log('✓ Hooks 配置已智能合并到 settings.json');
+} else {
+  // 创建示例配置文件
+  const hooksExamplePath = path.join(TARGET, '.claude', 'req-system-hooks.example.json');
+  const exampleConfig = {
+    "_comment": "ClaudeReqSys Hooks 配置 - 如需启用自动化功能，请将以下内容合并到 settings.json 的 hooks 配置中",
+    "hooks": {
+      "PostToolUse": [
+        {
+          "matcher": "Edit|Write|Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "node \".claude/scripts/hooks/post-req-update.js\"",
+              "timeout": 10
+            }
+          ],
+          "description": "更新需求记录",
+          "id": "post:req:update"
+        }
+      ],
+      "Stop": [
+        {
+          "matcher": "*",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
+              "timeout": 10
+            }
+          ],
+          "description": "生成需求执行总结",
+          "id": "stop:req:summary"
+        }
+      ]
+    }
+  };
+  writeJsonObject(hooksExamplePath, exampleConfig);
+  console.log('ⓘ 未找到 hooks 配置模板，已创建示例文件');
+  console.log('  如需自动化功能，请手动合并 .claude/req-system-hooks.example.json 到 settings.json');
+}
 
 // 5. 安装依赖
 console.log('📦 安装依赖...');
@@ -145,8 +227,8 @@ console.log('  /req 添加你的第一个需求');
 console.log('  /req --dashboard 查看仪表板\n');
 console.log('📌 注意:');
 console.log('  - 自定义命令已安装，可直接使用 /req');
-console.log('  - Hooks 配置示例已保存到 .claude/req-system-hooks.example.json');
-console.log('  - 如需自动化功能，请手动合并 hooks 配置到 settings.json\n');
+console.log('  - Hooks 配置已自动合并到 settings.json');
+console.log('  - 系统文件已初始化\n');
 console.log('文档: docs/guides/user-guide.md');
 
 function copyDir(src, dst) {
