@@ -12,11 +12,10 @@ import { execSync } from 'child_process';
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname);
 const TARGET = process.cwd();
 
-// 需要复制的文件和目录
+// 需要复制的文件和目录（不包含 settings.json）
 const COPY_ITEMS = [
   '.claude/commands',
   '.claude/scripts',
-  '.claude/settings.json',
   'README.md',
   'docs'
 ];
@@ -66,27 +65,43 @@ COPY_ITEMS.forEach(item => {
   }
 });
 
-// 4. 合并 settings.json
-console.log('⚙️  配置 hooks...');
-const settingsSrc = path.join(ROOT, '.claude', 'settings.json');
-const settingsDst = path.join(TARGET, '.claude', 'settings.json');
-
-let settings = {};
-if (fs.existsSync(settingsDst)) {
-  settings = JSON.parse(fs.readFileSync(settingsDst, 'utf8'));
-}
-
-const newSettings = JSON.parse(fs.readFileSync(settingsSrc, 'utf8'));
-
-// 合并 hooks
-if (!settings.hooks) settings.hooks = {};
-if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
-if (!settings.hooks.Stop) settings.hooks.Stop = [];
-
-settings.hooks.PostToolUse.push(...newSettings.hooks.PostToolUse);
-settings.hooks.Stop.push(...newSettings.hooks.Stop);
-
-fs.writeFileSync(settingsDst, JSON.stringify(settings, null, 2));
+// 4. 创建 hooks 配置文件（不覆盖现有配置）
+console.log('⚙️  创建 hooks 配置示例...');
+const hooksExamplePath = path.join(TARGET, '.claude', 'req-system-hooks.example.json');
+const hooksConfig = {
+  "_comment": "ClaudeReqSys Hooks 配置 - 如需启用自动化功能，请将以下内容合并到 settings.json 的 hooks 配置中",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/post-req-update.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "更新需求记录",
+        "id": "post:req:update"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "生成需求执行总结",
+        "id": "stop:req:summary"
+      }
+    ]
+  }
+};
+fs.writeFileSync(hooksExamplePath, JSON.stringify(hooksConfig, null, 2));
 
 // 5. 安装依赖
 console.log('📦 安装依赖...');
@@ -118,6 +133,10 @@ console.log('\n✅ 安装完成!\n');
 console.log('开始使用:');
 console.log('  /req 添加你的第一个需求');
 console.log('  /req --dashboard 查看仪表板\n');
+console.log('📌 注意:');
+console.log('  - 自定义命令已安装，可直接使用 /req');
+console.log('  - Hooks 配置示例已保存到 .claude/req-system-hooks.example.json');
+console.log('  - 如需自动化功能，请手动合并 hooks 配置到 settings.json\n');
 console.log('文档: docs/guides/user-guide.md');
 
 function copyDir(src, dst) {

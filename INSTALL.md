@@ -20,6 +20,8 @@ cd E:\AI_Project\ClaudeReqSys
 npm install
 ```
 
+然后就可以用 `/req` 命令了。
+
 ### 安装到新项目
 
 **方式一：自动安装脚本**
@@ -29,10 +31,10 @@ npm install
 cd /path/to/your/project
 
 # 克隆或复制 ClaudeReqSys
-git clone <repository-url> ClaudeReqSys-temp
+git clone https://github.com/zxc1213/claude-req-sys.git ClaudeReqSys-temp
 cd ClaudeReqSys-temp
 
-# 运行安装脚本（将系统安装到上级目录）
+# 运行安装脚本（将系统安装到当前目录）
 node install.js
 ```
 
@@ -49,19 +51,9 @@ node install.js
 │   │   ├── post-req-update.js
 │   │   └── stop-req-summary.js
 │   └── requirement-manager/
-│       ├── index.js
-│       ├── router.js
-│       ├── detector.js
-│       ├── filters/
-│       ├── integrations/
-│       └── optimization/
-└── settings.json
 
+# 注意：不要复制 settings.json，避免覆盖现有配置
 docs/
-├── specs/
-└── guides/
-
-requirements/  # 创建空目录
 ```
 
 2. **安装依赖**
@@ -81,65 +73,45 @@ npm install js-yaml fuse.js chalk cli-table3 ora
 
 ### 方法一：npm 包（推荐）
 
-1. **发布到 npm**（或私有 npm）
-
-```bash
-# 在 ClaudeReqSys 目录
-npm publish
-```
-
-2. **用户安装**
-
+1. **从 GitHub 安装**
 ```bash
 # 全局安装
-npm install -g claude-requirement-system
+npm install -g https://github.com/zxc1213/claude-req-sys.git
 
 # 或安装到项目
-npm install --save-dev claude-requirement-system
+npm install --save-dev https://github.com/zxc1213/claude-req-sys.git
 ```
 
-3. **运行安装脚本**
-
+2. **运行安装脚本**
 ```bash
 # 进入目标项目
 cd /path/to/project
 
 # 运行安装
 claude-req-install
-# 或
-npx claude-requirement-system install
 ```
 
 ### 方法二：Git Submodule
 
 ```bash
 # 在目标项目中
-git submodule add <repository-url> .claude-reqsys
+git submodule add https://github.com/zxc1213/claude-req-sys.git .claude-reqsys
 cd .claude-reqsys
 node install.js
 ```
 
-### 方法三：复制粘贴
+### 方法三：直接下载
 
-最简单的方式：
-
-1. **打包项目**
+1. **下载并解压**
 ```bash
-cd E:\AI_Project\ClaudeReqSys
-tar -czf claude-reqsys.tar.gz \
-  .claude/ \
-  docs/ \
-  install.js \
-  package.json \
-  README.md
+# 下载项目
+wget https://github.com/zxc1213/claude-req-sys/archive/refs/heads/master.zip
+unzip master.zip
+cd claude-req-sys-master
 ```
 
-2. **分发压缩包**
-
-3. **用户解压并安装**
+2. **运行安装**
 ```bash
-tar -xzf claude-reqsys.tar.gz
-cd claude-reqsys
 node install.js
 ```
 
@@ -151,20 +123,20 @@ node install.js
 
 ```
 .claude/
-├── commands/requirement.md    # 自定义命令定义
+├── commands/requirement.md    # 自定义命令定义（必需）
 ├── scripts/
-│   ├── hooks/                 # 自动化钩子
+│   ├── hooks/                 # 自动化钩子（可选）
 │   │   ├── post-req-update.js   # 工具后执行
 │   │   └── stop-req-summary.js   # 停止时总结
-│   └── requirement-manager/   # 核心逻辑
-└── settings.json              # Claude Code 配置
+│   └── requirement-manager/   # 核心逻辑（必需）
+└── req-system-hooks.example.json  # Hooks 配置示例（参考）
 ```
 
 ### 工作目录
 
 ```
 .requirements/
-├── features/       # 新功能需求
+├── features/       # 新功能
 ├── bugs/          # Bug 修复
 ├── questions/     # 技术问题
 ├── adjustments/   # 需求调整
@@ -178,38 +150,37 @@ node install.js
 
 ## 常见问题
 
+### Q: 安装脚本会覆盖我的 settings.json 吗？
+
+**A**: 不会。安装脚本只复制命令和脚本文件，不会修改你现有的 `settings.json`。
+
+Hooks 配保存在 `req-system-hooks.example.json` 中，你可以选择性地合并到 `settings.json`。
+
 ### Q: 命令不生效？
 
 **检查项**：
-1. `.claude/commands/requirement.md` 是否存在
-2. 重启 Claude Code
-3. 检查 settings.json 语法
+1. 确认在正确的项目目录
+2. 检查 `.claude/commands/requirement.md` 是否存在
+3. 重启 Claude Code
 
-### Q: Hooks 不执行？
+### Q: 自动化功能不工作？
 
-**检查项**：
-1. Node.js 版本 >= 18.0.0
-2. 依赖是否安装：`npm list js-yaml`
-3. 查看日志：`.requirements/_system/logs/`
+**A**: 需要手动配置 Hooks：
+
+1. 查看 `.claude/req-system-hooks.example.json`
+2. 将 hooks 配置合并到 `settings.json`
+3. 重启 Claude Code
 
 ### Q: 如何卸载？
 
 ```bash
-# 删除文件
+# 删除系统文件
 rm -rf .claude/commands/requirement.md
 rm -rf .claude/scripts/requirement-manager
-rm -rf .claude/scripts/hooks/post-req-update.js
-rm -rf .claude/scripts/hooks/stop-req-summary.js
+rm -rf .claude/scripts/hooks
 rm -rf .requirements/
 
-# 编辑 settings.json，移除相关 hooks
-```
-
-### Q: 如何更新？
-
-```bash
-# 重新运行安装脚本
-node install.js
+# settings.json 不会被修改，无需恢复
 ```
 
 ---
