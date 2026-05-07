@@ -5,9 +5,13 @@
   "type": "module",
   "main": ".claude/scripts/requirement-manager/index.js",
   "scripts": {
+    "install": "node install.js",
     "test": "node tests/run-all.js",
     "lint": "eslint .claude/scripts/",
     "format": "prettier --write .claude/scripts/"
+  },
+  "bin": {
+    "claude-req-install": "./install.js"
   },
   "keywords": ["claude-code", "requirement-management", "automation"],
   "author": "19944",
