@@ -1,5 +1,4 @@
 ---
-name: requirement
 description: 智能需求管理系统 - 从需求到测试的全流程自动化
 ---
 
