@@ -11,6 +11,7 @@ import { execSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -186,7 +187,6 @@ if (!fs.existsSync(metricsConfigPath)) {
 // 初始化度量数据
 const metricsDataPath = path.join(projectRoot, '.requirements/metrics/data.yaml');
 if (!fs.existsSync(metricsDataPath)) {
-  const yaml = require('js-yaml');
   const metricsData = {
     metrics: {
       cycle_time: [],
