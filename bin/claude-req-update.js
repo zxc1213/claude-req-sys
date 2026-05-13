@@ -2,7 +2,7 @@
 
 /**
  * ClaudeReqSys 更新命令
- * 使用: claude-req-update
+ * 使用: claude-req-update [--version|-v]
  */
 
 import { execSync } from 'child_process';
@@ -12,6 +12,13 @@ import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
+
+// 检查版本参数
+if (process.argv.includes('--version') || process.argv.includes('-v')) {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  console.log(`claude-req-sys v${packageJson.version}`);
+  process.exit(0);
+}
 
 console.log('🔄 ClaudeReqSys 更新\n');
 

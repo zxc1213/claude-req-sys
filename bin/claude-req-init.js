@@ -2,7 +2,7 @@
 
 /**
  * ClaudeReqSys 项目初始化命令
- * 使用: claude-req-init
+ * 使用: claude-req-init [--version|-v]
  *
  * 首次运行时自动安装全局配置到 ~/.claude/
  */
@@ -14,6 +14,14 @@ import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
+
+// 检查版本参数
+if (process.argv.includes('--version') || process.argv.includes('-v')) {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  console.log(`claude-req-sys v${packageJson.version}`);
+  process.exit(0);
+}
+
 const GLOBAL_CLAUDE = path.join(process.env.HOME || process.env.USERPROFILE, '.claude');
 
 // 检查是否需要安装全局配置
