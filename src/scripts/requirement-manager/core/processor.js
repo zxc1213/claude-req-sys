@@ -74,7 +74,7 @@ export class Processor {
     // 初始化默认值
     let type = 'feature';
     let mode = 'semi_auto';
-    // let description = '';
+    let description;
 
     // 检查是否是 --auto 模式
     if (cleanedInput.startsWith('--auto')) {
