@@ -14,7 +14,7 @@
     "lint:fix": "eslint src/ tests/ --fix",
     "format": "prettier --write src/ tests/",
     "format:check": "prettier --check src/ tests/",
-    "prepare": "husky"
+    "prepare": "husky || exit 0"
   },
   "bin": {
     "claude-req-init": "./bin/claude-req-init.js",
