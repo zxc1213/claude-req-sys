@@ -171,7 +171,7 @@ node install.js /path/to/target/project
 └── skills/                     # 符号链接（指向仓库）
     ├── req-manager.md          # → 仓库/skills/core/
     ├── req-brainstorm.md
-    ├── req-setup.md
+    ├── req-init.md
     └── ...                     # 其他 req- 技能
 ```
 

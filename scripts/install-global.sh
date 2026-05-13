@@ -48,7 +48,13 @@ done
 echo "🛠️  安装脚本工具..."
 cp "$REPO/scripts/update.sh" "$GLOBAL_CLAUDE/scripts/" 2>/dev/null || true
 cp "$REPO/scripts/link-skills.sh" "$GLOBAL_CLAUDE/scripts/" 2>/dev/null || true
-echo "✓ 脚本工具"
+
+# 5. 复制 hooks 配置和脚本
+echo "⚙️  安装 hooks 配置..."
+mkdir -p "$GLOBAL_CLAUDE/scripts/hooks"
+cp "$REPO/.claude/hooks.json" "$GLOBAL_CLAUDE/" 2>/dev/null || true
+cp "$REPO/.claude/scripts/hooks/"*.js "$GLOBAL_CLAUDE/scripts/hooks/" 2>/dev/null || true
+echo "✓ hooks 配置"
 
 # 5. 创建项目初始化脚本
 cat > "$GLOBAL_CLAUDE/scripts/init-project.sh" << 'INITSCRIPT'
