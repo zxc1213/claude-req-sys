@@ -62,18 +62,18 @@ node install.js
 .claude/
 ├── commands/
 │   ├── req.md
-│   └── metrics.md
+│   └── req-metrics.md
 ├── scripts/
-│   └── metrics/
+│   └── req-metrics/
 │       └── collect.js
 ├── skills/
 │   ├── req-manager.md
-│   ├── priority-estimator.md
-│   ├── quality-gates.md
-│   ├── doc-unifier.md
-│   ├── migrate-docs.md
-│   ├── verification-checklist.md
-│   └── metrics.md
+│   ├── req-priority.md
+│   ├── req-quality.md
+│   ├── req-unify.md
+│   ├── req-migrate.md
+│   ├── req-verify.md
+│   └── req-metrics.md
 
 # 注意：不要复制 settings.json，避免覆盖现有配置
 docs/
@@ -148,20 +148,20 @@ node install.js
 .claude/
 ├── commands/              # 自定义命令
 │   ├── req.md            # 需求管理命令
-│   └── metrics.md        # 度量命令 ⭐ 新增
+│   └── req-metrics.md        # 度量命令 ⭐ 新增
 ├── skills/               # Skills 集合 ⭐ 新增
 │   ├── req-manager.md           # 统一入口
-│   ├── brainstorm-grill.md      # 深度分析
-│   ├── handle-req-change.md     # 变更处理
-│   ├── test-plan-generator.md   # 测试计划
-│   ├── priority-estimator.md    # 优先级评估 ⭐
-│   ├── quality-gates.md         # 质量门禁 ⭐
-│   ├── doc-unifier.md           # 文档统一 ⭐
-│   ├── migrate-docs.md          # 文档迁移 ⭐
-│   ├── verification-checklist.md # 验证检查 ⭐
-│   └── metrics.md                # 度量体系 ⭐
+│   ├── req-brainstorm.md      # 深度分析
+│   ├── req-change.md     # 变更处理
+│   ├── req-test-plan.md   # 测试计划
+│   ├── req-priority.md    # 优先级评估 ⭐
+│   ├── req-quality.md         # 质量门禁 ⭐
+│   ├── req-unify.md           # 文档统一 ⭐
+│   ├── req-migrate.md          # 文档迁移 ⭐
+│   ├── req-verify.md # 验证检查 ⭐
+│   └── req-metrics.md                # 度量体系 ⭐
 ├── scripts/              # 脚本工具
-│   └── metrics/
+│   └── req-metrics/
 │       └── collect.js   # 数据收集脚本 ⭐ 新增
 └── hooks.json            # Hooks 配置模板（自动合并）
 ```
@@ -175,7 +175,7 @@ node install.js
 ├── questions/     # 技术问题
 ├── adjustments/   # 需求调整
 ├── refactorings/  # 重构任务
-├── metrics/       # 度量数据 ⭐ 新增
+├── req-metrics/       # 度量数据 ⭐ 新增
 │   ├── config.json      # 配置文件
 │   ├── data.yaml        # 度量数据
 │   ├── reports/         # 报告目录
@@ -209,7 +209,7 @@ REQ-XXX/
 /req 如何实现OAuth?      # 自动推断为 question + semi_auto
 ```
 
-### 2. 优先级评估（priority-estimator）
+### 2. 优先级评估（req-priority）
 
 **功能**：5维度科学评估优先级
 
@@ -219,7 +219,7 @@ REQ-XXX/
 /priority REQ-20260513-001 # 评估单个需求
 ```
 
-### 3. 质量门禁（quality-gates）
+### 3. 质量门禁（req-quality）
 
 **功能**：4个关键阶段自动检查
 
@@ -228,7 +228,7 @@ REQ-XXX/
 /quality-gate check-all REQ-20260513-001 # 检查所有门禁
 ```
 
-### 4. 文档统一（doc-unifier）
+### 4. 文档统一（req-unify）
 
 **功能**：5个文件简化为2个文件
 
@@ -237,23 +237,23 @@ REQ-XXX/
 - 消除信息冗余
 - 单一信息源
 
-### 5. 文档迁移（migrate-docs）
+### 5. 文档迁移（req-migrate）
 
 **功能**：将旧格式迁移到新格式
 
 **使用**：
 ```bash
-/migrate-docs REQ-20260513-001 # 单个迁移
-/migrate-docs --all               # 批量迁移
+/req-migrate REQ-20260513-001 # 单个迁移
+/req-migrate --all               # 批量迁移
 ```
 
-### 6. 验证检查清单（verification-checklist）
+### 6. 验证检查清单（req-verify）
 
 **功能**：20+验证项确保质量
 
 **使用**：
 ```bash
-/verification-checklist --all REQ-20260513-001
+/req-verify --all REQ-20260513-001
 ```
 
 ### 7. 度量体系（metrics）
@@ -262,9 +262,9 @@ REQ-XXX/
 
 **使用**：
 ```bash
-/metrics                    # 查看所有指标
-/metrics --report week       # 生成周报
-/metrics --trend cycle_time  # 查看趋势
+/req-metrics                    # 查看所有指标
+/req-metrics --report week       # 生成周报
+/req-metrics --trend cycle_time  # 查看趋势
 ```
 
 ---
@@ -302,10 +302,10 @@ REQ-XXX/
 /quality-gate check-all REQ-20260513-001
 
 # 度量分析
-/metrics --report week
+/req-metrics --report week
 
 # 文档迁移
-/migrate-docs --all
+/req-migrate --all
 ```
 
 详细使用方法请参考 [用户指南](docs/guides/user-guide.md)
@@ -316,13 +316,13 @@ REQ-XXX/
 
 ```bash
 # 迁移单个需求
-/migrate-docs REQ-20260507-001
+/req-migrate REQ-20260507-001
 
 # 批量迁移所有需求
-/migrate-docs --all
+/req-migrate --all
 
 # 预览迁移（不实际修改）
-/migrate-docs REQ-20260507-001 --dry-run
+/req-migrate REQ-20260507-001 --dry-run
 ```
 
 迁移工具会：
@@ -335,10 +335,10 @@ REQ-XXX/
 ```bash
 # 删除系统文件
 rm -rf .claude/commands/req.md
-rm -rf .claude/commands/metrics.md
+rm -rf .claude/commands/req-metrics.md
 rm -rf .claude/skills/
-rm -rf .claude/scripts/metrics/
-rm -rf .requirements/metrics/
+rm -rf .claude/scripts/req-metrics/
+rm -rf .requirements/req-metrics/
 
 # 手动从 settings.json 中删除 hooks 配置（可选）
 # 查找与需求管理相关的 hooks
@@ -358,10 +358,10 @@ rm -rf .requirements/metrics/
 /priority --list
 
 # 3. 查看度量指标
-/metrics
+/req-metrics
 
 # 4. 生成周报
-/metrics --report week
+/req-metrics --report week
 
 # 5. 查看帮助
 /req --help
@@ -375,11 +375,11 @@ rm -rf .requirements/metrics/
 
 **新增功能**：
 - ✅ 统一入口（req-manager）- 智能路由
-- ✅ 优先级评估（priority-estimator）- 5维度科学评估
-- ✅ 质量门禁（quality-gates）- 4阶段自动检查
-- ✅ 文档统一（doc-unifier）- 5文件→2文件
-- ✅ 文档迁移（migrate-docs）- 自动备份和验证
-- ✅ 验证检查清单（verification-checklist）- 20+验证项
+- ✅ 优先级评估（req-priority）- 5维度科学评估
+- ✅ 质量门禁（req-quality）- 4阶段自动检查
+- ✅ 文档统一（req-unify）- 5文件→2文件
+- ✅ 文档迁移（req-migrate）- 自动备份和验证
+- ✅ 验证检查清单（req-verify）- 20+验证项
 - ✅ 度量体系（metrics）- 4维度16指标
 
 **优化**：
@@ -391,9 +391,9 @@ rm -rf .requirements/metrics/
 
 ### v0.2.0
 
-- 添加 brainstorm-grill skill
-- 添加 handle-req-change skill
-- 添加 test-plan-generator skill
+- 添加 req-brainstorm skill
+- 添加 req-change skill
+- 添加 req-test-plan skill
 - 智能配置合并
 
 ### v0.1.0

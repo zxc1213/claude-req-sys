@@ -320,9 +320,9 @@ onRequirementCompleted(req) {
 
 **数据来源**：
 - `meta.yaml`: 需求元数据（创建时间、状态等）
-- `quality-gates`: 质量检查结果
-- `verification-checklist`: 验证检查结果
-- `handle-req-change`: 变更记录
+- `req-quality`: 质量检查结果
+- `req-verify`: 验证检查结果
+- `req-change`: 变更记录
 
 **相关命令**：
 - `/req`: 创建需求时自动收集数据

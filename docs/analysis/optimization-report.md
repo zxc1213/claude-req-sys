@@ -26,7 +26,7 @@
 #### 问题1: Skills 触发机制不清晰
 
 **现状**：
-- `brainstorm-grill`、`test-plan-generator`、`handle-req-change` 三个 skills 各自独立
+- `req-brainstorm`、`req-test-plan`、`req-change` 三个 skills 各自独立
 - 用户不清楚何时应该手动调用哪个 skill
 - 自动触发时机分散在多个文档中
 
@@ -34,8 +34,8 @@
 ```bash
 # 用户困惑场景
 用户: "我想要修改一个需求，应该用哪个？"
-- /brainstorm-grill? 
-- /handle-req-change?
+- /req-brainstorm? 
+- /req-change?
 - 还是直接修改文件？
 ```
 
@@ -56,8 +56,8 @@ description: 需求管理统一入口 - 智能路由到相应的处理流程
 
 | 用户意图 | 路由到 | 触发条件 |
 |----------|--------|----------|
-| 创建新需求 | brainstorm-grill | "添加"、"实现"、"新建" |
-| 修改现有需求 | handle-req-change | "修改"、"改变"、"调整" |
+| 创建新需求 | req-brainstorm | "添加"、"实现"、"新建" |
+| 修改现有需求 | req-change | "修改"、"改变"、"调整" |
 | 查看需求状态 | req:query | "查看"、"状态"、"列表" |
 | 分析需求影响 | req:impact | "影响"、"依赖"、"风险" |
 ```
@@ -106,8 +106,8 @@ description: 需求管理统一入口 - 智能路由到相应的处理流程
    - 每层有明确的输入输出
 
 2. **反馈闭环**
-   - brainstorm-grill 的四阶段设计
-   - handle-req-change 的变更处理
+   - req-brainstorm 的四阶段设计
+   - req-change 的变更处理
 
 3. **可追溯性**
    - 需求 → 设计 → 测试 → 计划的文档链
@@ -142,7 +142,7 @@ description: 需求管理统一入口 - 智能路由到相应的处理流程
 2. **缺少假设验证环节**
 
 **问题**：
-- brainstorm-grill 的 Grill-me 是对抗式审查
+- req-brainstorm 的 Grill-me 是对抗式审查
 - 但没有明确的假设-验证循环
 - 缺少"基于证据的决策"机制
 
@@ -162,7 +162,7 @@ description: 需求管理统一入口 - 智能路由到相应的处理流程
 **简化测试计划生成**：
 
 ```markdown
-# test-plan-generator 优化
+# req-test-plan 优化
 
 ## 当前（509行，过于复杂）
 - 生成5种测试类型的完整用例
@@ -228,7 +228,7 @@ REQ-XXX/
 
 **现状**：
 ```
-/req → brainstorm-grill (4阶段) → test-plan-generator (5种测试) → writing-plans
+/req → req-brainstorm (4阶段) → req-test-plan (5种测试) → writing-plans
 预计时间：30-60分钟
 ```
 
@@ -247,7 +247,7 @@ REQ-XXX/
 ### 标准通道（中等需求）
 /req "添加搜索功能"
   ↓
-简化 brainstorm-grill（2阶段）
+简化 req-brainstorm（2阶段）
   ↓
 生成测试策略（非详细用例）
   ↓
@@ -256,7 +256,7 @@ REQ-XXX/
 ### 完整通道（复杂需求）
 /req --deep "重构认证系统"
   ↓
-完整 brainstorm-grill
+完整 req-brainstorm
   ↓
 完整测试计划
   ↓
@@ -421,7 +421,7 @@ class RequirementCache {
 
 #### 优化2: 简化测试计划生成
 
-**修改**: `.claude/skills/test-plan-generator.md`
+**修改**: `.claude/skills/req-test-plan.md`
 
 **变更**:
 1. 将 509 行精简到 ~200 行
@@ -435,7 +435,7 @@ class RequirementCache {
 
 #### 优化3: 添加质量门禁
 
-**创建**: `.claude/quality-gates.md`
+**创建**: `.claude/req-quality.md`
 
 **预期收益**：
 - 减少 60% 的返工
@@ -483,7 +483,7 @@ class RequirementCache {
 ### 阶段1: 快速优化（1-2天）
 
 1. ✅ 创建 `req-manager` skill
-2. ✅ 简化 `test-plan-generator`
+2. ✅ 简化 `req-test-plan`
 3. ✅ 更新命令文档
 4. ✅ 添加快速通道示例
 
@@ -590,8 +590,8 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
   - 路由到最优处理流程
 - **预期收益**：学习成本降低 50%
 
-#### 2. 优先级评估 - priority-estimator ✅
-- **文件**：`.claude/skills/priority-estimator.md`
+#### 2. 优先级评估 - req-priority ✅
+- **文件**：`.claude/skills/req-priority.md`
 - **功能**：
   - 5维度评估（业务价值40%、紧急程度30%、依赖关系15%、实现成本10%、风险评估5%）
   - 自动计算综合评分和优先级等级（P0-P4）
@@ -599,8 +599,8 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
   - 优先级排序报告
 - **预期收益**：科学排定优先级，优化资源分配
 
-#### 3. 质量门禁 - quality-gates ✅
-- **文件**：`.claude/skills/quality-gates.md`
+#### 3. 质量门禁 - req-quality ✅
+- **文件**：`.claude/skills/req-quality.md`
 - **功能**：
   - 4个关键阶段检查点（设计、测试策略、实施计划、变更完成）
   - 自动检查（占位符、矛盾检测、决策完整性、依赖循环）
@@ -608,8 +608,8 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
   - 严格/宽松模式
 - **预期收益**：返工率减少 60%
 
-#### 4. 文档统一 - doc-unifier ✅
-- **文件**：`.claude/skills/doc-unifier.md`
+#### 4. 文档统一 - req-unify ✅
+- **文件**：`.claude/skills/req-unify.md`
 - **功能**：
   - 5个文件简化为2个文件（spec.md + test-cases.md）
   - 消除冗余，单一信息源
@@ -640,8 +640,8 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
 
 **已完成项目**：
 
-#### 6. 验证检查清单 - verification-checklist ✅
-- **文件**：`.claude/skills/verification-checklist.md`
+#### 6. 验证检查清单 - req-verify ✅
+- **文件**：`.claude/skills/req-verify.md`
 - **功能**：
   - 3个验证检查点（设计、实现、部署）
   - 20+验证项（技术可行性、架构完整性、安全风险、代码质量、测试覆盖、性能验证等）
@@ -649,8 +649,8 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
   - 验证报告生成
 - **预期收益**：提高交付质量，减少问题遗漏
 
-#### 7. 度量体系 - metrics ✅
-- **文件**：`.claude/skills/metrics.md`
+#### 7. 度量体系 - req-metrics ✅
+- **文件**：`.claude/skills/req-metrics.md`
 - **功能**：
   - 4维度度量（效率、质量、变更、价值）
   - 16+关键指标
@@ -663,15 +663,15 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
 
 **已创建的新 Skills**：10个
 1. req-manager - 统一入口
-2. brainstorm-grill - 深度分析
-3. handle-req-change - 变更处理
-4. test-plan-generator - 测试计划
-5. priority-estimator - 优先级评估
-6. quality-gates - 质量门禁
-7. doc-unifier - 文档统一
-8. migrate-docs - 文档迁移 ⭐ 新增
-9. verification-checklist - 验证检查清单 ⭐ 新增
-10. metrics - 度量体系 ⭐ 新增
+2. req-brainstorm - 深度分析
+3. req-change - 变更处理
+4. req-test-plan - 测试计划
+5. req-priority - 优先级评估
+6. req-quality - 质量门禁
+7. req-unify - 文档统一
+8. req-migrate - 文档迁移 ⭐ 新增
+9. req-verify - 验证检查清单 ⭐ 新增
+10. req-metrics - 度量体系 ⭐ 新增
 
 **已创建的脚本**：1个
 1. collect.js - 度量数据收集脚本 ⭐ 新增
@@ -680,11 +680,11 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
 1. AGENTS.md - 全面更新（含所有新 skills）⭐ 更新
 2. req.md - 全面更新
 3. README.md - 版本更新到 v0.3.0
-4. metrics.md - 度量命令文档 ⭐ 新增
+4. req-metrics.md - 度量命令文档 ⭐ 新增
 5. user-guide.md - 用户指南更新到 v0.3.0 ⭐ 更新
 
 **已创建的目录结构**：1个
-1. .requirements/metrics/ - 度量数据存储目录 ⭐ 新增
+1. .requirements/req-metrics/ - 度量数据存储目录 ⭐ 新增
 
 **预期收益达成**：
 - ✅ 创建需求时间减少 50-70%
@@ -696,7 +696,7 @@ ClaudeReqSys 项目基础良好，但存在以下**关键优化机会**：
 ### 下一步工作
 
 **阶段3：完善体系**（可选）
-1. 实施文档结构迁移（使用 migrate-docs 工具）
+1. 实施文档结构迁移（使用 req-migrate 工具）
 2. 建立度量数据收集（使用 collect.js 脚本）
 3. 集成 AI 辅助决策
 4. 完善测试覆盖
