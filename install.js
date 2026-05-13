@@ -89,17 +89,21 @@ if (!fs.existsSync(targetGit)) {
 console.log('📁 创建目录结构...');
 const dirs = [
   '.claude/commands',
-  '.claude/scripts/hooks',
-  '.claude/scripts/requirement-manager',
+  '.claude/scripts',
+  '.claude/skills',
   'docs/specs',
   'docs/guides',
+  'docs/analysis',
   '.requirements/features',
   '.requirements/bugs',
   '.requirements/questions',
   '.requirements/adjustments',
   '.requirements/refactorings',
+  '.requirements/metrics',
+  '.requirements/metrics/reports',
+  '.requirements/metrics/exports',
+  '.requirements/metrics/trends',
   '.requirements/_system/versions',
-  '.requirements/_system/metrics',
   'tests'
 ];
 
@@ -205,31 +209,74 @@ try {
 
 // 6. 初始化系统文件
 console.log('🎯 初始化系统...');
-const metricsPath = path.join(TARGET, '.requirements/_system/metrics.yaml');
-if (!fs.existsSync(metricsPath)) {
-  fs.writeFileSync(metricsPath, `# 系统性能指标
-version: "0.1.0"
-created: ${new Date().toISOString()}
 
-metrics:
-  requirements_created: 0
-  requirements_completed: 0
-  skill_usage: {}
-  token_usage: 0
-  cache_hit_rate: 0
-`);
+// 初始化度量系统
+const metricsConfigPath = path.join(TARGET, '.requirements/metrics/config.json');
+if (!fs.existsSync(metricsConfigPath)) {
+  const metricsConfig = {
+    metrics: {
+      collection: {
+        enabled: true,
+        interval: 'daily',
+        retentionDays: 90
+      },
+      targets: {
+        cycle_time: 2.0,
+        rework_rate: 0.15,
+        quality_gate_pass_rate: 0.90,
+        user_satisfaction: 4.0,
+        completion_rate: 0.90
+      },
+      alerts: {
+        enabled: true,
+        thresholds: {
+          cycle_time: { warning: 2.5, critical: 3.0 },
+          rework_rate: { warning: 0.15, critical: 0.20 }
+        }
+      },
+      reporting: {
+        frequency: 'weekly',
+        autoGenerate: false,
+        includeCharts: false
+      }
+    }
+  };
+  fs.writeFileSync(metricsConfigPath, JSON.stringify(metricsConfig, null, 2));
+}
+
+// 初始化度量数据
+const metricsDataPath = path.join(TARGET, '.requirements/metrics/data.yaml');
+if (!fs.existsSync(metricsDataPath)) {
+  const metricsData = {
+    metrics: {
+      cycle_time: [],
+      rework_rate: [],
+      quality_gate_pass_rate: [],
+      completion_rate: [],
+      user_satisfaction: []
+    },
+    last_updated: new Date().toISOString()
+  };
+  fs.writeFileSync(metricsDataPath, require('js-yaml').dump(metricsData));
 }
 
 // 7. 完成
 console.log('\n✅ 安装完成!\n');
+console.log('📊 ClaudeReqSys v0.3.0 - 智能需求管理系统\n');
 console.log('开始使用:');
-console.log('  /req 添加你的第一个需求');
+console.log('  /req 添加你的第一个需求（智能推断）');
+console.log('  /priority --list 查看优先级排序');
+console.log('  /metrics 查看项目指标');
 console.log('  /req --dashboard 查看仪表板\n');
-console.log('📌 注意:');
-console.log('  - 自定义命令已安装，可直接使用 /req');
-console.log('  - Hooks 配置已自动合并到 settings.json');
-console.log('  - 系统文件已初始化\n');
-console.log('文档: docs/guides/user-guide.md');
+console.log('📌 新功能:');
+console.log('  ✅ 统一入口 - 智能路由到最优流程');
+console.log('  ✅ 优先级评估 - 5维度科学评估');
+console.log('  ✅ 质量门禁 - 4阶段自动检查');
+console.log('  ✅ 文档统一 - 5文件→2文件');
+console.log('  ✅ 度量体系 - 4维度16指标\n');
+console.log('📖 文档:');
+console.log('  - 用户指南: docs/guides/user-guide.md');
+console.log('  - 优化报告: docs/analysis/optimization-report.md\n');
 
 function copyDir(src, dst) {
   fs.mkdirSync(dst, { recursive: true });
