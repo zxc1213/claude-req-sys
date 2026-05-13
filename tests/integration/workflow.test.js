@@ -1,8 +1,8 @@
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, beforeEach, afterEach } from 'vitest';
+import { expect } from 'vitest';
 import fs from 'node:fs/promises';
 import yaml from 'js-yaml';
-import RequirementManager from '../../.claude/scripts/requirement-manager/index.js';
+import RequirementManager from '../../src/scripts/requirement-manager/index.js';
 
 describe('需求管理系统集成测试', () => {
   const testDir = '.test-workflow';
@@ -21,11 +21,11 @@ describe('需求管理系统集成测试', () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('实现用户登录功能');
 
-      assert.ok(result.success);
-      assert.ok(result.requirement);
-      assert.ok(result.requirement.id);
-      assert.ok(result.requirement.type);
-      assert.strictEqual(result.requirement.type, 'feature');
+      expect(toBeTruthy();result.success);
+      expect(toBeTruthy();result.requirement);
+      expect(toBeTruthy();result.requirement.id);
+      expect(toBeTruthy();result.requirement.type);
+      expect().toBe(result.requirement.type, 'feature');
     });
 
     it('应该为不同类型需求创建正确的前缀', async () => {
@@ -33,18 +33,18 @@ describe('需求管理系统集成测试', () => {
 
       // Feature
       const featureResult = await manager.handle('/req --feature 添加用户注册');
-      assert.ok(featureResult.requirement.id);
-      assert.strictEqual(featureResult.requirement.type, 'feature');
+      expect(toBeTruthy();featureResult.requirement.id);
+      expect().toBe(featureResult.requirement.type, 'feature');
 
       // Bug
       const bugResult = await manager.handle('/req --bug 登录页面崩溃');
-      assert.ok(bugResult.requirement.id);
-      assert.strictEqual(bugResult.requirement.type, 'bug');
+      expect(toBeTruthy();bugResult.requirement.id);
+      expect().toBe(bugResult.requirement.type, 'bug');
 
       // Question
       const questionResult = await manager.handle('/req --question 如何优化性能');
-      assert.ok(questionResult.requirement.id);
-      assert.strictEqual(questionResult.requirement.type, 'question');
+      expect(toBeTruthy();questionResult.requirement.id);
+      expect().toBe(questionResult.requirement.type, 'question');
     });
 
     it('应该检测敏感信息', async () => {
@@ -53,10 +53,10 @@ describe('需求管理系统集成测试', () => {
 
       // 敏感信息检测会阻止创建
       if (!result.success && result.error === 'security_check_failed') {
-        assert.ok(result.message.includes('敏感信息'));
+        expect(toBeTruthy();result.message.includes('敏感信息'));
       } else {
         // 如果实现了过滤而非阻止，则应该成功
-        assert.ok(result.success);
+        expect(toBeTruthy();result.success);
       }
     });
   });
@@ -67,10 +67,10 @@ describe('需求管理系统集成测试', () => {
       const result = await manager.handle('实现测试功能');
 
       // 验证需求成功创建，包含必要信息
-      assert.ok(result.success);
-      assert.ok(result.requirement);
-      assert.ok(result.requirement.id);
-      assert.ok(result.executionPlan);
+      expect(toBeTruthy();result.success);
+      expect(toBeTruthy();result.requirement);
+      expect(toBeTruthy();result.requirement.id);
+      expect(toBeTruthy();result.executionPlan);
     });
   });
 
@@ -79,17 +79,17 @@ describe('需求管理系统集成测试', () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('新功能需求');
 
-      assert.ok(result.executionPlan);
-      assert.ok(typeof result.executionPlan.totalSteps === 'number');
+      expect(toBeTruthy();result.executionPlan);
+      expect(toBeTruthy();typeof result.executionPlan.totalSteps === 'number');
     });
 
     it('应该提供下一步操作指导', async () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('分析用户行为');
 
-      assert.ok(result.nextSteps);
-      assert.ok(Array.isArray(result.nextSteps));
-      assert.ok(result.nextSteps.length > 0);
+      expect(toBeTruthy();result.nextSteps);
+      expect(toBeTruthy();Array.isArray(result.nextSteps));
+      expect(toBeTruthy();result.nextSteps.length > 0);
     });
   });
 
@@ -98,24 +98,24 @@ describe('需求管理系统集成测试', () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('/req --list');
 
-      assert.ok(result.success);
-      assert.strictEqual(result.action, 'list_requirements');
+      expect(toBeTruthy();result.success);
+      expect().toBe(result.action, 'list_requirements');
     });
 
     it('应该处理 dashboard 命令', async () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('/req --dashboard');
 
-      assert.ok(result.success);
-      assert.strictEqual(result.action, 'show_dashboard');
+      expect(toBeTruthy();result.success);
+      expect().toBe(result.action, 'show_dashboard');
     });
 
     it('应该处理 status 命令', async () => {
       const manager = new RequirementManager(testDir);
       const result = await manager.handle('/req --status REQ-001');
 
-      assert.ok(result.success);
-      assert.strictEqual(result.action, 'show_status');
+      expect(toBeTruthy();result.success);
+      expect().toBe(result.action, 'show_status');
     });
   });
 
@@ -125,7 +125,7 @@ describe('需求管理系统集成测试', () => {
       const result = await manager.handle('');
 
       // 目前空输入会被解析，但不应该崩溃
-      assert.ok(result !== undefined);
+      expect(toBeTruthy();result !== undefined);
     });
   });
 
@@ -141,14 +141,14 @@ describe('需求管理系统集成测试', () => {
 
       const results = await Promise.all(promises);
 
-      assert.ok(results.every(r => r.success));
-      assert.ok(results.every(r => r.requirement));
-      assert.ok(results.every(r => r.requirement.id));
+      expect(toBeTruthy();results.every(r => r.success));
+      expect(toBeTruthy();results.every(r => r.requirement));
+      expect(toBeTruthy();results.every(r => r.requirement.id));
 
       // 验证 ID 是唯一的
       const ids = results.map(r => r.requirement.id);
       const uniqueIds = new Set(ids);
-      assert.strictEqual(uniqueIds.size, 3);
+      expect().toBe(uniqueIds.size, 3);
     });
   });
 });
