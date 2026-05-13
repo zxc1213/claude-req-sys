@@ -54,48 +54,42 @@ node install.js /path/to/target/project
 
 ## 安装
 
-### 方式一：全局安装（推荐）⭐ v0.5.0
+### 方式一：npm 全局安装（推荐）⭐ v0.5.0
+
+```bash
+# 从 GitHub npm 全局安装
+npm install -g github:zxc1213/claude-req-sys
+
+# 或克隆后安装
+git clone https://github.com/zxc1213/claude-req-sys.git
+cd claude-req-sys
+npm install -g .
+
+# 初始化你的项目
+cd /path/to/your/project
+claude-req-init
+```
+
+**优点**：
+- 🌍 **一次安装，全局使用** - 所有项目自动可用
+- 🚀 **快速更新** - `claude-req-update` 一键更新
+- 📦 **项目更干净** - 项目只包含数据，不包含系统文件
+- 🔄 **npm 管理** - 使用 npm 标准流程，跨平台支持
+
+### 方式二：手动全局安装
 
 ```bash
 # 克隆仓库
 git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
 
-# 全局安装到 ~/.claude/（一次安装，所有项目共享）
-bash scripts/install-global.sh
+# 运行安装脚本
+node scripts/npm-install.js
 
 # 初始化你的项目
 cd /path/to/your/project
-~/.claude/scripts/init-project.sh
+claude-req-init
 ```
-
-**优点**：
-- 🌍 **一次安装，全局使用** - 所有项目自动可用
-- 🚀 **快速更新** - 只需更新全局安装
-- 📦 **项目更干净** - 项目只包含数据，不包含系统文件
-- 🔄 **自动同步** - 符号链接自动同步最新版本
-
-### 方式二：项目本地安装
-
-```bash
-# 安装到当前项目（智能合并配置）
-node install.js
-
-# 或安装到指定目录
-node install.js /path/to/target/project
-```
-
-**智能配置合并**：
-- 自动检测现有 settings.json
-- 智能合并 hooks 配置，不覆盖现有设置
-- 保留所有现有配置和权限
-
-### 方式三：手动安装
-
-1. 复制 `.claude/commands/` 和 `.claude/scripts/` 到你的项目
-2. 安装依赖：`npm install js-yaml`
-3. 重启 Claude Code
-4. （可选）手动合并 `.claude/req-system-hooks.example.json` 到 settings.json
 
 **详细安装指南**：[INSTALL.md](INSTALL.md) | [MANUAL.md](MANUAL.md)
 

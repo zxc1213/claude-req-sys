@@ -20,23 +20,34 @@
 ### 为什么选择全局安装？
 
 - 🌍 **一次安装，全局使用** - 所有项目自动可用
-- 🚀 **快速更新** - 只需更新全局安装
+- 🚀 **快速更新** - `claude-req-update` 一键更新
 - 📦 **项目更干净** - 项目只包含数据，不包含系统文件
-- 🔄 **自动同步** - 符号链接自动同步最新版本
+- 🔄 **npm 管理** - 使用 npm 标准流程，跨平台支持
 
-### 安装步骤
+### 方式一：直接从 GitHub 安装
+
+```bash
+# npm 全局安装
+npm install -g github:zxc1213/claude-req-sys
+
+# 初始化你的项目
+cd /path/to/your/project
+claude-req-init
+```
+
+### 方式二：克隆后安装
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
 
-# 2. 全局安装到 ~/.claude/
-bash scripts/install-global.sh
+# 2. npm 全局安装
+npm install -g .
 
 # 3. 初始化你的项目
 cd /path/to/your/project
-~/.claude/scripts/init-project.sh
+claude-req-init
 ```
 
 ### 使用新项目
@@ -49,114 +60,29 @@ cd /path/to/new/project
 
 ---
 
-## 项目本地安装
+## 更新系统
 
-### 传统安装方式
+### 快速更新
 
 ```bash
-# 进入目标项目目录
-cd /path/to/your/project
+# 使用 npm 更新
+npm update -g claude-req-sys
 
-# 克隆或复制 ClaudeReqSys
-git clone https://github.com/zxc1213/claude-req-sys.git ClaudeReqSys-temp
-cd ClaudeReqSys-temp
-
-# 运行安装脚本（将系统安装到父目录）
-node install.js ..
-
-# 或直接安装到当前目录
-node install.js
+# 或使用更新命令
+claude-req-update
 ```
 
-**智能配置合并**：
-- ✅ 自动检测现有 `.claude/settings.json`
-- ✅ 智能合并 hooks 配置，不覆盖现有设置
-- ✅ 保留所有现有配置（permissions、env、plugins 等）
-- ✅ 数组合并：自动去重，保留新增项
-- ✅ 对象合并：深度递归，保留用户自定义字段
-
-**方式二：手动安装**
-
-1. **复制文件和目录**
-```bash
-# 复制以下到目标项目
-.claude/
-├── commands/
-│   ├── req.md
-│   └── req-metrics.md
-├── scripts/
-│   └── req-metrics/
-│       └── collect.js
-├── skills/
-│   ├── req-manager.md
-│   ├── req-priority.md
-│   ├── req-quality.md
-│   ├── req-unify.md
-│   ├── req-migrate.md
-│   ├── req-verify.md
-│   └── req-metrics.md
-
-# 注意：不要复制 settings.json，避免覆盖现有配置
-docs/
-```
-
-2. **安装依赖**
-```bash
-npm install js-yaml
-```
-
-3. **验证安装**
-```bash
-# 在 Claude Code 中运行
-/req --dashboard
-```
-
----
-
-## 分发到其他人的电脑
-
-### 方法一：npm 包（推荐）
-
-1. **从 GitHub 安装**
-```bash
-# 全局安装
-npm install -g https://github.com/zxc1213/claude-req-sys.git
-
-# 或安装到项目
-npm install --save-dev https://github.com/zxc1213/claude-req-sys.git
-```
-
-2. **运行安装脚本**
-```bash
-# 进入目标项目
-cd /path/to/project
-
-# 运行安装
-claude-req-install
-```
-
-### 方法二：Git Submodule
+### 手动更新
 
 ```bash
-# 在目标项目中
-git submodule add https://github.com/zxc1213/claude-req-sys.git .claude-reqsys
-cd .claude-reqsys
-node install.js
-```
+# 进入仓库目录
+cd claude-req-sys
 
-### 方法三：直接下载
+# 拉取最新代码
+git pull
 
-1. **下载并解压**
-```bash
-# 下载项目
-wget https://github.com/zxc1213/claude-req-sys/archive/refs/heads/master.zip
-unzip master.zip
-cd claude-req-sys-master
-```
-
-2. **运行安装**
-```bash
-node install.js
+# 重新安装
+npm install -g .
 ```
 
 ---
@@ -205,11 +131,16 @@ claude-req-sys/
 │   ├── change/                 # 变更处理
 │   └── utils/                  # 辅助工具
 ├── scripts/                    # 管理脚本
-│   ├── install-global.sh       # 全局安装脚本
-│   ├── update.sh               # 更新脚本
-│   └── link-skills.sh          # 符号链接脚本
+│   ├── npm-install.js          # npm 安装脚本
+│   ├── link-skills.sh          # 符号链接脚本
+│   └── update.sh               # 更新脚本
+├── bin/                        # 全局命令
+│   ├── claude-req-init.js      # 初始化命令
+│   └── claude-req-update.js    # 更新命令
 ├── .claude/
-│   └── commands/               # 命令定义（源文件）
+│   ├── commands/               # 命令定义（源文件）
+│   ├── scripts/                # hooks 脚本
+│   └── hooks.json              # hooks 配置
 └── docs/                       # 文档
 ```
 
