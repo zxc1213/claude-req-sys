@@ -54,17 +54,35 @@ node install.js /path/to/target/project
 
 ## 安装
 
-### 方式一：自动安装（推荐）
+### 方式一：符号链接安装（推荐）⭐ v0.4.0
 
 ```bash
 # 克隆仓库
 git clone https://github.com/zxc1213/claude-req-sys.git
 cd claude-req-sys
 
-# 安装到当前项目
+# Unix/Linux/macOS - 链接技能
+bash scripts/link-skills.sh
+
+# Windows (PowerShell，需要管理员权限)
+powershell scripts/link-skills.ps1
+
+# 运行初始化配置
+/setup
+```
+
+**优点**：
+- 🚀 快速更新：`git pull && bash scripts/link-skills.sh`
+- 📦 集中管理：所有技能在 `skills/` 目录
+- 🔄 自动同步：符号链接自动同步最新版本
+
+### 方式二：自动安装
+
+```bash
+# 安装到当前项目（智能合并配置）
 node install.js
 
-# 或安装到指定项目
+# 或安装到指定目录
 node install.js /path/to/target/project
 ```
 
@@ -73,7 +91,7 @@ node install.js /path/to/target/project
 - 智能合并 hooks 配置，不覆盖现有设置
 - 保留所有现有配置和权限
 
-### 方式二：手动安装
+### 方式三：手动安装
 
 1. 复制 `.claude/commands/` 和 `.claude/scripts/` 到你的项目
 2. 安装依赖：`npm install js-yaml`
@@ -143,13 +161,39 @@ node install.js /path/to/target/project
 ## 项目结构
 
 ```
-.claude/
-├── commands/
-│   └── requirement.md          # 自定义命令定义
-├── scripts/
-│   ├── hooks/                  # 自动化钩子（可选）
-│   └── requirement-manager/    # 核心逻辑
-└── req-system-hooks.example.json  # Hooks 配置示例
+claude-req-sys/
+├── skills/                     # 技能集合（符号链接源）
+│   ├── core/                   # 核心需求管理
+│   │   ├── req-manager.md
+│   │   ├── brainstorm-grill.md
+│   │   └── setup.md
+│   ├── quality/                # 质量保证
+│   │   ├── quality-gates.md
+│   │   ├── verification-checklist.md
+│   │   └── test-plan-generator.md
+│   ├── analysis/               # 分析评估
+│   │   ├── priority-estimator.md
+│   │   └── metrics.md
+│   ├── change/                 # 变更处理
+│   │   ├── handle-req-change.md
+│   │   └── migrate-docs.md
+│   └── utils/                  # 辅助工具
+│       └── doc-unifier.md
+├── scripts/                    # 管理脚本
+│   ├── link-skills.sh          # Unix 符号链接脚本
+│   ├── link-skills.ps1         # Windows 符号链接脚本
+│   └── list-skills.sh          # 技能列表脚本
+├── .claude/
+│   ├── commands/               # 命令定义
+│   │   ├── req.md
+│   │   └── metrics.md
+│   └── skills/                 # 符号链接目标（自动生成）
+│       └── [链接到 skills/ 的各个技能]
+├── docs/                       # 文档
+│   ├── guides/
+│   ├── analysis/
+│   └── specs/
+└── install.js                  # 传统安装脚本
 ```
 
 ## 文档
@@ -161,7 +205,14 @@ node install.js /path/to/target/project
 
 ## 版本
 
-v0.3.0 - 系统优化升级 ⭐ 新增
+v0.4.0 - 技能管理优化 ⭐ 新增
+- ✅ **符号链接安装**：参考 mattpocock/skills，使用符号链接管理技能
+- ✅ **分类组织**：技能按功能分类（core/quality/analysis/change/utils）
+- ✅ **快速更新**：`git pull && bash scripts/link-skills.sh` 即可更新
+- ✅ **setup 技能**：一次性初始化配置，交互式设置
+- ✅ **跨平台支持**：提供 Unix (bash) 和 Windows (PowerShell) 脚本
+
+v0.3.0 - 系统优化升级
 - ✅ **req-manager**：统一入口，智能路由到最优流程
 - ✅ **priority-estimator**：科学评估优先级（5维度评分）
 - ✅ **quality-gates**：4个质量门禁，自动检查质量标准
