@@ -4,13 +4,13 @@
 
 ## 技能列表
 
-### quality-gates
+### req-quality
 质量门禁系统 - 4阶段自动质量检查（创建、分析、实现、完成）。
 
-### verification-checklist
+### req-verify
 验证清单 - 系统化质量验证检查项，覆盖关键阶段。
 
-### test-plan-generator
+### req-test-plan
 测试计划生成器 - 自动生成测试计划和测试用例。
 
 ## 质量流程

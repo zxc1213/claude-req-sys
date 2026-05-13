@@ -7,7 +7,7 @@
 ### req-manager
 需求管理统一入口 - 智能路由到相应的处理流程，简化用户操作。
 
-### brainstorm-grill
+### req-brainstorm
 深度需求分析模式 - 结合头脑风暴与无情审查，确保需求分析的深度和完整性。
 
 ### setup
@@ -17,4 +17,4 @@
 
 1. 运行 `/setup` 完成初始化
 2. 使用 `/req` 添加需求（自动路由）
-3. 对于复杂需求，使用 `/brainstorm-grill` 深度分析
+3. 对于复杂需求，使用 `/req-brainstorm` 深度分析

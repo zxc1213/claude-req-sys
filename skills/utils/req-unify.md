@@ -1,5 +1,5 @@
 ---
-name: doc-unifier
+name: req-unify
 description: 文档结构统一 - 将5个冗余文件简化为2个精简文件，降低70%维护成本
 ---
 

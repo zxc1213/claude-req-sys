@@ -1,5 +1,5 @@
 ---
-name: setup
+name: req-setup
 description: ClaudeReqSys 初始化配置 - 一次性设置，配置问题追踪系统、标签体系和文档存储位置
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: test-plan-generator
+name: req-test-plan
 description: 测试计划生成器 - 基于设计文档自动生成完整的测试计划、测试用例和测试文档
 ---
 

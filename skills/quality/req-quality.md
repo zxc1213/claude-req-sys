@@ -1,5 +1,5 @@
 ---
-name: quality-gates
+name: req-quality
 description: 质量门禁系统 - 在关键阶段自动检查质量标准，确保交付质量
 ---
 
