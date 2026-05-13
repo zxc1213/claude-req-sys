@@ -35,6 +35,11 @@ cd /path/to/your/project
 claude-req-init
 ```
 
+**安装说明**：
+- 首次运行 `claude-req-init` 时，会自动安装全局配置到 `~/.claude/`
+- 无需手动配置，开箱即用
+- 所有项目共享同一套工具
+
 ### 方式二：克隆后安装
 
 ```bash

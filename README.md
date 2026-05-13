@@ -78,17 +78,19 @@ claude-req-init
 ### 方式二：npm 全局安装
 
 ```bash
-# 克隆仓库
-git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
-cd claude-req-sys
-
-# 运行安装脚本
-bash install.sh
+# 直接从 GitHub 安装
+npm install -g github:zxc1213/claude-req-sys
 
 # 初始化你的项目
 cd /path/to/your/project
 claude-req-init
 ```
+
+**优点**：
+- 📦 **标准 npm 包管理** - 使用熟悉的 npm 生态
+- 🚀 **一键安装** - 无需手动克隆和配置
+- 🔄 **自动更新** - `npm update -g claude-req-sys` 更新
+- 🌍 **全局可用** - 所有项目共享同一套工具
 
 **详细安装指南**：[INSTALL.md](INSTALL.md) | [MANUAL.md](MANUAL.md)
 
