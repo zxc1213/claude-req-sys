@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ClaudeReqSys 技能链接脚本
-# 将 skills/ 目录中的技能链接到 .claude/skills/
+# 将 src/claude/skills/ 目录中的技能链接到 .claude/skills/
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 DEST="$REPO/.claude/skills"
@@ -22,12 +22,12 @@ fi
 mkdir -p "$DEST"
 
 echo "🔗 ClaudeReqSys 技能链接"
-echo "源目录: $REPO/skills"
+echo "源目录: $REPO/src/claude/skills"
 echo "目标目录: $DEST"
 echo
 
 # 查找所有技能 .md 文件（排除 README.md）并创建符号链接
-find "$REPO/skills" -name "*.md" -not -name "README.md" -not -path '*/node_modules/*' | sort | while read -r skill_md; do
+find "$REPO/src/claude/skills" -name "*.md" -not -name "README.md" -not -path '*/node_modules/*' | sort | while read -r skill_md; do
   # 获取技能文件名
   name="$(basename "$skill_md")"
   target="$DEST/$name"
