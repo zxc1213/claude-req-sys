@@ -6,6 +6,7 @@ import { generate } from '../utils/id-generator.js';
 import { createRequirementDir, readMeta, writeMeta, exists } from '../utils/storage.js';
 import path from 'path';
 import fs from 'fs/promises';
+import { getKnowledgeGraph } from '../../knowledge-graph/index.js';
 
 /**
  * 类型到前缀的映射
@@ -153,6 +154,25 @@ export class Processor {
     // 更新索引
     this.index.set(id, reqPath);
 
+    // 同步到知识图谱
+    try {
+      const graph = await getKnowledgeGraph(this.baseDir);
+      await graph.addRequirement({
+        id,
+        type,
+        title: meta.title,
+        description: meta.description,
+        priority: { level: meta.priority, score: 7.0 },
+        status: meta.status,
+        tags: meta.tags || [],
+        keywords: [],
+        createdAt: meta.created,
+        updatedAt: meta.created,
+      });
+    } catch (_error) {
+      // 知识图谱同步失败不影响主流程
+    }
+
     return {
       id,
       path: reqPath,
@@ -188,6 +208,18 @@ export class Processor {
 
     // 写回元数据
     await writeMeta(this.baseDir, reqPath, updatedMeta);
+
+    // 同步到知识图谱
+    try {
+      const graph = await getKnowledgeGraph(this.baseDir);
+      await graph.updateRequirement(id, {
+        status: updatedMeta.status,
+        title: updatedMeta.title,
+        description: updatedMeta.description,
+      });
+    } catch (_error) {
+      // 知识图谱同步失败不影响主流程
+    }
   }
 
   /**
@@ -236,6 +268,39 @@ export class Processor {
 
     // 验证路径是否存在
     return reqPath;
+  }
+
+  /**
+   * 删除需求
+   * @param {string} id - 需求 ID
+   * @returns {Promise<boolean>}
+   */
+  async delete(id) {
+    const reqPath = this.getRequirementPath(id);
+
+    if (!reqPath) {
+      return false;
+    }
+
+    try {
+      // 删除目录
+      await fs.rm(reqPath, { recursive: true, force: true });
+
+      // 从索引中移除
+      this.index.delete(id);
+
+      // 从知识图谱中移除
+      try {
+        const graph = await getKnowledgeGraph(this.baseDir);
+        await graph.deleteRequirement(id);
+      } catch (_error) {
+        // 知识图谱同步失败不影响主流程
+      }
+
+      return true;
+    } catch (error) {
+      throw new Error(`Failed to delete requirement: ${error.message}`, { cause: error });
+    }
   }
 
   /**
