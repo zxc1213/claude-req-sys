@@ -1,17 +1,15 @@
-const { describe, it, before, beforeEach } = require('node:test');
-const assert = require('node:assert');
+const { describe, it, before, beforeEach } = from 'vitest';
+import { expect } from 'vitest';
 const path = require('path');
-const { pathToFileURL } = require('url');
+const { 
 
-const ID_GENERATOR_MODULE = pathToFileURL(path.join(__dirname, '../../.claude/scripts/requirement-manager/utils/id-generator.js')).href;
 
 describe('ID Generator Utility', () => {
   let idGenerator;
 
   before(async () => {
     // 动态导入模块
-    const module = await import(ID_GENERATOR_MODULE);
-    idGenerator = module.default || module;
+    idGenerator = default || module;
   });
 
   beforeEach(() => {
@@ -42,7 +40,7 @@ describe('ID Generator Utility', () => {
       const num1 = parseInt(id1.split('-')[1]);
       const num2 = parseInt(id2.split('-')[1]);
 
-      assert.strictEqual(num2, num1 + 1);
+      expect().toBe(num2, num1 + 1);
     });
 
     it('should maintain separate counters for different types', () => {
@@ -55,15 +53,15 @@ describe('ID Generator Utility', () => {
       const debtNum = parseInt(debtId.split('-')[1]);
 
       // 所有类型的第一条记录应该都是 0001
-      assert.strictEqual(featNum, bugNum);
-      assert.strictEqual(bugNum, debtNum);
+      expect().toBe(featNum, bugNum);
+      expect().toBe(bugNum, debtNum);
     });
   });
 
   describe('parse(id)', () => {
     it('should parse feature ID correctly', () => {
       const parsed = idGenerator.parse('FEAT-0001');
-      assert.deepStrictEqual(parsed, {
+      expect().toEqual(parsed, {
         type: 'feature',
         number: 1,
         prefix: 'FEAT'
@@ -72,7 +70,7 @@ describe('ID Generator Utility', () => {
 
     it('should parse bug ID correctly', () => {
       const parsed = idGenerator.parse('BUG-0042');
-      assert.deepStrictEqual(parsed, {
+      expect().toEqual(parsed, {
         type: 'bug',
         number: 42,
         prefix: 'BUG'
@@ -81,7 +79,7 @@ describe('ID Generator Utility', () => {
 
     it('should parse tech-debt ID correctly', () => {
       const parsed = idGenerator.parse('DEBT-1234');
-      assert.deepStrictEqual(parsed, {
+      expect().toEqual(parsed, {
         type: 'tech-debt',
         number: 1234,
         prefix: 'DEBT'
@@ -90,17 +88,17 @@ describe('ID Generator Utility', () => {
 
     it('should return null for invalid format', () => {
       const parsed = idGenerator.parse('INVALID-ID');
-      assert.strictEqual(parsed, null);
+      expect().toBe(parsed, null);
     });
 
     it('should return null for invalid prefix', () => {
       const parsed = idGenerator.parse('UNKNOWN-0001');
-      assert.strictEqual(parsed, null);
+      expect().toBe(parsed, null);
     });
 
     it('should return null for malformed ID', () => {
       const parsed = idGenerator.parse('FEAT-ABC');
-      assert.strictEqual(parsed, null);
+      expect().toBe(parsed, null);
     });
   });
 });

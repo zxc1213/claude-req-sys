@@ -43,6 +43,12 @@ echo "🔧 安装 hooks 脚本..."
 cp "$REPO/src/scripts/hooks"/*.js "$GLOBAL_CLAUDE/scripts/hooks/" 2>/dev/null || true
 echo "  ✓ hooks 脚本"
 
+# 复制 requirement-manager 脚本
+echo "📊 安装需求管理器..."
+mkdir -p "$GLOBAL_CLAUDE/scripts/requirement-manager"
+cp -r "$REPO/src/scripts/requirement-manager"/*.js "$GLOBAL_CLAUDE/scripts/requirement-manager/" 2>/dev/null || true
+echo "  ✓ 需求管理器"
+
 # 创建技能符号链接
 echo "🔗 链接技能文件..."
 find "$REPO/src/claude/skills" -name "req-*.md" -not -name "README.md" | sort | while read -r skill_md; do

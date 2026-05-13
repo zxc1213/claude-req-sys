@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/run-all.js",
+    "test": "vitest run tests/",
+    "test:watch": "vitest watch tests/",
     "lint": "eslint src/scripts/",
     "format": "prettier --write src/scripts/"
   },
@@ -31,16 +32,17 @@
   },
   "homepage": "https://github.com/zxc1213/claude-req-sys#readme",
   "dependencies": {
-    "fuse.js": "^7.0.0",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.3",
-    "ora": "^8.0.1",
+    "commander": "^12.0.0",
+    "fuse.js": "^7.0.0",
     "js-yaml": "^4.1.0",
-    "commander": "^12.0.0"
+    "ora": "^8.0.1"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
-    "prettier": "^3.2.0"
+    "prettier": "^3.2.0",
+    "vitest": "^1.6.1"
   },
   "engines": {
     "node": ">=18.0.0"
