@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "postinstall": "node scripts/setup.js",
     "test": "node tests/run-all.js",
     "lint": "eslint src/scripts/",
     "format": "prettier --write src/scripts/"
