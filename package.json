@@ -5,8 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "install": "node scripts/npm-install.js",
-    "postinstall": "bash scripts/link-skills.sh",
+    "postinstall": "bash scripts/postinstall.sh",
     "test": "node tests/run-all.js",
     "lint": "eslint src/scripts/",
     "format": "prettier --write src/scripts/"
