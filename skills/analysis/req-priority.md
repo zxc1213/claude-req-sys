@@ -1,5 +1,5 @@
 ---
-name: priority-estimator
+name: req-priority
 description: 需求优先级科学评估 - 基于业务价值、紧急程度、依赖关系和ROI进行多维度评分
 ---
 

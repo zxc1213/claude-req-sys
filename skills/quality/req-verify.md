@@ -1,5 +1,5 @@
 ---
-name: verification-checklist
+name: req-verify
 description: 验证检查清单 - 在关键阶段提供系统性的验证项，确保质量和完整性
 ---
 

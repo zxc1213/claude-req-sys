@@ -4,10 +4,10 @@
 
 ## 技能列表
 
-### handle-req-change
+### req-change
 需求变更处理 - 处理需求变更请求，评估影响并更新文档。
 
-### migrate-docs
+### req-migrate
 文档迁移 - 将旧格式文档迁移到新的统一格式。
 
 ## 变更流程

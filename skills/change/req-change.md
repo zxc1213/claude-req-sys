@@ -1,5 +1,5 @@
 ---
-name: handle-req-change
+name: req-change
 description: 处理任务执行过程中的需求变更 - 通过深度分析评估变更影响，确保变更经过完整审查后再执行
 ---
 

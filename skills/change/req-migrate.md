@@ -1,5 +1,5 @@
 ---
-name: migrate-docs
+name: req-migrate
 description: 文档迁移工具 - 将旧格式需求文档迁移到新的统一格式（spec.md + test-cases.md）
 ---
 

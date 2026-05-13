@@ -1,5 +1,5 @@
 ---
-name: brainstorm-grill
+name: req-brainstorm
 description: 深度需求分析模式 - 结合头脑风暴与无情审查，确保需求分析的深度和完整性。适用于复杂需求、架构设计、技术方案评审等场景。
 ---
 

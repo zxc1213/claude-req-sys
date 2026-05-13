@@ -4,10 +4,10 @@
 
 ## 技能列表
 
-### priority-estimator
+### req-priority
 优先级评估 - 5维度科学评估（业务价值、紧急程度、技术可行性、依赖关系、ROI）。
 
-### metrics
+### req-metrics
 度量系统 - 4维度16指标，追踪项目健康状态。
 
 ## 评估维度

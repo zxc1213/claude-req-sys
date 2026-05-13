@@ -129,8 +129,8 @@ node install.js /path/to/target/project
 
 **文档迁移**：
 ```bash
-/doc-unifier REQ-001          # 迁移到新文档格式
-/doc-unifier --all            # 批量迁移所有需求
+/req-unify REQ-001          # 迁移到新文档格式
+/req-unify --all            # 批量迁移所有需求
 ```
 
 ### 工作流程 ⭐ 更新
@@ -139,9 +139,9 @@ node install.js /path/to/target/project
 # 1. 创建需求（自动触发完整流程）
 /req 添加用户头像上传功能
   → req-manager 智能路由
-  → brainstorm-grill 深度分析
-  → priority-estimator 优先级评估
-  → quality-gates 质量检查
+  → req-brainstorm 深度分析
+  → req-priority 优先级评估
+  → req-quality 质量检查
   → 生成 spec.md 统一文档
 
 # 2. 查看需求
@@ -149,13 +149,13 @@ node install.js /path/to/target/project
 /req --active                  # 当前活跃需求
 
 # 3. 查看优先级
-/priority --list               # 按优先级排序
+/req-priority --list               # 按优先级排序
 
 # 4. 开始实现
 # 自动进入 executing-plans
 
 # 5. 需要修改？
-# 在执行中提出变更，自动触发 handle-req-change
+# 在执行中提出变更，自动触发 req-change
 ```
 
 ## 项目结构
@@ -165,20 +165,20 @@ claude-req-sys/
 ├── skills/                     # 技能集合（符号链接源）
 │   ├── core/                   # 核心需求管理
 │   │   ├── req-manager.md
-│   │   ├── brainstorm-grill.md
-│   │   └── setup.md
+│   │   ├── req-brainstorm.md
+│   │   └── req-setup.md
 │   ├── quality/                # 质量保证
-│   │   ├── quality-gates.md
-│   │   ├── verification-checklist.md
-│   │   └── test-plan-generator.md
+│   │   ├── req-quality.md
+│   │   ├── req-verify.md
+│   │   └── req-test-plan.md
 │   ├── analysis/               # 分析评估
-│   │   ├── priority-estimator.md
-│   │   └── metrics.md
+│   │   ├── req-priority.md
+│   │   └── req-metrics.md
 │   ├── change/                 # 变更处理
-│   │   ├── handle-req-change.md
-│   │   └── migrate-docs.md
+│   │   ├── req-change.md
+│   │   └── req-migrate.md
 │   └── utils/                  # 辅助工具
-│       └── doc-unifier.md
+│       └── req-unify.md
 ├── scripts/                    # 管理脚本
 │   ├── link-skills.sh          # Unix 符号链接脚本
 │   ├── link-skills.ps1         # Windows 符号链接脚本
@@ -214,9 +214,9 @@ v0.4.0 - 技能管理优化 ⭐ 新增
 
 v0.3.0 - 系统优化升级
 - ✅ **req-manager**：统一入口，智能路由到最优流程
-- ✅ **priority-estimator**：科学评估优先级（5维度评分）
-- ✅ **quality-gates**：4个质量门禁，自动检查质量标准
-- ✅ **doc-unifier**：统一文档结构（5文件→2文件）
+- ✅ **req-priority**：科学评估优先级（5维度评分）
+- ✅ **req-quality**：4个质量门禁，自动检查质量标准
+- ✅ **req-unify**：统一文档结构（5文件→2文件）
 - ✅ 命令简化：自动推断类型和模式
 - ✅ 维护成本降低70%
 - ✅ 返工率减少60%

@@ -1,5 +1,5 @@
 ---
-name: metrics
+name: req-metrics
 description: 需求度量体系 - 收集和分析项目指标，持续优化流程效率
 ---
 
