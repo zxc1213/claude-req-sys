@@ -7,11 +7,6 @@ node_modules/
 # 日志
 *.log
 npm-debug.log*
-.claude/logs/*.log
-
-# 系统文件
-.DS_Store
-Thumbs.db
 
 # 系统文件
 .DS_Store
@@ -35,6 +30,5 @@ coverage/
 .tmp/
 temp/
 
-# ClaudeReqSys 自动生成的文件
-.claude/skills/
-.requireances/_system/metrics/data.yaml
+# ClaudeReqSys 安装目录（自动生成）
+.claude/

@@ -35,7 +35,7 @@ try {
 
   // 2. 复制命令文件
   console.log('\n📋 安装命令文件...');
-  const commandsDir = path.join(ROOT, '.claude', 'commands');
+  const commandsDir = path.join(ROOT, 'commands');
   if (fs.existsSync(commandsDir)) {
     fs.readdirSync(commandsDir).forEach(file => {
       if (file.endsWith('.md')) {
@@ -50,13 +50,13 @@ try {
 
   // 3. 复制 hooks 配置和脚本
   console.log('\n⚙️  安装 hooks 配置...');
-  const hooksJson = path.join(ROOT, '.claude', 'hooks.json');
+  const hooksJson = path.join(ROOT, 'hooks.json');
   if (fs.existsSync(hooksJson)) {
     fs.copyFileSync(hooksJson, path.join(GLOBAL_CLAUDE, 'hooks.json'));
     console.log('  ✓ hooks.json');
   }
 
-  const hooksDir = path.join(ROOT, '.claude', 'scripts', 'hooks');
+  const hooksDir = path.join(ROOT, 'scripts', 'hooks');
   if (fs.existsSync(hooksDir)) {
     fs.readdirSync(hooksDir).forEach(file => {
       if (file.endsWith('.js')) {
