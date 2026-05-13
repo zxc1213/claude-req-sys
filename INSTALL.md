@@ -70,14 +70,23 @@ cd /path/to/new/project
 ### 快速更新
 
 ```bash
-# 使用 npm 更新
-npm update -g claude-req-sys
+# 重新安装来更新（从 GitHub）
+npm install -g github:zxc1213/claude-req-sys
 
-# 或使用更新命令
-claude-req-update
+# 或使用 git+ 协议
+npm install -g git+https://github.com/zxc1213/claude-req-sys.git
 ```
 
-### 手动更新
+### 验证更新
+
+```bash
+# 查看当前版本
+claude-req-init --version
+```
+
+### 本地克隆仓库更新
+
+如果你是克隆仓库后安装的：
 
 ```bash
 # 进入仓库目录
