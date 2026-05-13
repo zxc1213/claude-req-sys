@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterEach } from 'vitest';
 import { expect } from 'vitest';
 import fs from 'node:fs/promises';
 import yaml from 'js-yaml';
-import { Upgrader } from '../../src/scripts/requirement-manager/optimization/scripts/requirement-manager/optimization/../.claude/scripts/requirement-manager/optimization/upgrader.js';
+import { Upgrader } from '../../src/scripts/requirement-manager/optimization/upgrader.js';
 
 describe('Upgrader', () => {
   const testDir = '.test-upgrader';
@@ -26,16 +26,16 @@ describe('Upgrader', () => {
             id: 'act-1',
             type: 'config_change',
             category: 'cost',
-            changes: { cache_ttl: 7200 }
-          }
-        ]
+            changes: { cache_ttl: 7200 },
+          },
+        ],
       };
 
       const result = await upgrader.applyUpgrade(decision);
 
-      expect(toBeTruthy();result.success);
-      expect(toBeTruthy();result.version);
-      expect(toBeTruthy();result.applied_actions.length > 0);
+      expect(result.success).toBeTruthy();
+      expect(result.version).toBeTruthy();
+      expect(result.applied_actions.length > 0).toBeTruthy();
     });
 
     it('应该创建升级版本快照', async () => {
@@ -47,17 +47,20 @@ describe('Upgrader', () => {
             id: 'act-1',
             type: 'config_change',
             category: 'cost',
-            changes: { enable_feature_x: true }
-          }
-        ]
+            changes: { enable_feature_x: true },
+          },
+        ],
       };
 
       const result = await upgrader.applyUpgrade(decision);
 
       // 验证版本文件已创建
       const versionPath = `${testDir}/.requirements/_system/versions/${result.version}.yaml`;
-      const exists = await fs.access(versionPath).then(() => true).catch(() => false);
-      expect(toBeTruthy();exists);
+      const exists = await fs
+        .access(versionPath)
+        .then(() => true)
+        .catch(() => false);
+      expect(exists).toBeTruthy();
     });
 
     it('应该在升级前备份配置', async () => {
@@ -74,17 +77,20 @@ describe('Upgrader', () => {
             id: 'act-1',
             type: 'config_change',
             category: 'cost',
-            changes: { key2: 'value2' }
-          }
-        ]
+            changes: { key2: 'value2' },
+          },
+        ],
       };
 
       const result = await upgrader.applyUpgrade(decision);
 
       // 验证备份已创建（result.backup 已经包含完整文件名）
       const backupPath = `${testDir}/.requirements/_system/versions/${result.backup}`;
-      const backupExists = await fs.access(backupPath).then(() => true).catch(() => false);
-      expect(toBeTruthy();backupExists);
+      const backupExists = await fs
+        .access(backupPath)
+        .then(() => true)
+        .catch(() => false);
+      expect(backupExists).toBeTruthy();
     });
   });
 
@@ -100,9 +106,9 @@ describe('Upgrader', () => {
             id: 'act-1',
             type: 'config_change',
             category: 'cost',
-            changes: { new_setting: true }
-          }
-        ]
+            changes: { new_setting: true },
+          },
+        ],
       };
 
       const upgradeResult = await upgrader.applyUpgrade(decision);
@@ -111,8 +117,8 @@ describe('Upgrader', () => {
       // 回滚
       const rollbackResult = await upgrader.rollback(version);
 
-      expect(toBeTruthy();rollbackResult.success);
-      expect().toBe(rollbackResult.rollback_to, version);
+      expect(rollbackResult.success).toBeTruthy();
+      expect(rollbackResult.rollback_to).toBe(version);
     });
 
     it('应该恢复升级前的配置', async () => {
@@ -131,9 +137,9 @@ describe('Upgrader', () => {
             id: 'act-1',
             type: 'config_change',
             category: 'cost',
-            changes: { setting: 'modified' }
-          }
-        ]
+            changes: { setting: 'modified' },
+          },
+        ],
       };
 
       const upgradeResult = await upgrader.applyUpgrade(decision);
@@ -143,7 +149,7 @@ describe('Upgrader', () => {
 
       // 验证配置已恢复
       const restoredConfig = yaml.load(await fs.readFile(configPath, 'utf8'));
-      expect().toEqual(restoredConfig, originalConfig);
+      expect(restoredConfig).toEqual(originalConfig);
     });
   });
 
@@ -152,8 +158,8 @@ describe('Upgrader', () => {
       const upgrader = new Upgrader(testDir);
       const version = await upgrader.getVersion();
 
-      expect(toBeTruthy();version);
-      expect(toBeTruthy();typeof version === 'string');
+      expect(version).toBeTruthy();
+      expect(typeof version === 'string').toBeTruthy();
     });
 
     it('应该返回系统版本历史', async () => {
@@ -162,17 +168,17 @@ describe('Upgrader', () => {
       // 创建几个版本
       await upgrader.applyUpgrade({
         id: 'OPT-001',
-        actions: [{ id: 'act-1', type: 'config_change', changes: {} }]
+        actions: [{ id: 'act-1', type: 'config_change', changes: {} }],
       });
       await upgrader.applyUpgrade({
         id: 'OPT-002',
-        actions: [{ id: 'act-2', type: 'config_change', changes: {} }]
+        actions: [{ id: 'act-2', type: 'config_change', changes: {} }],
       });
 
       const versions = await upgrader.getVersions();
 
-      expect(toBeTruthy();Array.isArray(versions));
-      expect(toBeTruthy();versions.length >= 2);
+      expect(Array.isArray(versions)).toBeTruthy();
+      expect(versions.length >= 2).toBeTruthy();
     });
   });
 
@@ -181,29 +187,25 @@ describe('Upgrader', () => {
       const upgrader = new Upgrader(testDir);
       const decision = {
         id: 'OPT-001',
-        actions: [
-          { id: 'act-1', type: 'config_change', category: 'cost' }
-        ]
+        actions: [{ id: 'act-1', type: 'config_change', category: 'cost' }],
       };
 
       const validation = await upgrader.validateUpgrade(decision);
 
-      expect(toBeTruthy();validation.valid);
+      expect(validation.valid).toBeTruthy();
     });
 
     it('应该拒绝危险升级', async () => {
       const upgrader = new Upgrader(testDir);
       const decision = {
         id: 'OPT-001',
-        actions: [
-          { id: 'act-1', type: 'destructive', category: 'dangerous' }
-        ]
+        actions: [{ id: 'act-1', type: 'destructive', category: 'dangerous' }],
       };
 
       const validation = await upgrader.validateUpgrade(decision);
 
-      expect(toBeTruthy();!validation.valid);
-      expect(toBeTruthy();validation.errors.length > 0);
+      expect(!validation.valid).toBeTruthy();
+      expect(validation.errors.length > 0).toBeTruthy();
     });
 
     it('应该检查升级前置条件', async () => {
@@ -211,14 +213,14 @@ describe('Upgrader', () => {
       const decision = {
         id: 'OPT-001',
         actions: [
-          { id: 'act-1', type: 'config_change', category: 'cost', requires: ['feature_x'] }
-        ]
+          { id: 'act-1', type: 'config_change', category: 'cost', requires: ['feature_x'] },
+        ],
       };
 
       const validation = await upgrader.validateUpgrade(decision);
 
       // 缺少前置条件
-      expect(toBeTruthy();!validation.valid);
+      expect(!validation.valid).toBeTruthy();
     });
   });
 
@@ -227,27 +229,27 @@ describe('Upgrader', () => {
       const upgrader = new Upgrader(testDir);
       const version = await upgrader.createVersion('test-upgrade', {
         config: { key: 'value' },
-        changes: ['change1', 'change2']
+        changes: ['change1', 'change2'],
       });
 
-      expect(toBeTruthy();version);
-      expect(toBeTruthy();version.version_number);
-      expect(toBeTruthy();version.timestamp);
+      expect(version).toBeTruthy();
+      expect(version.version_number).toBeTruthy();
+      expect(version.timestamp).toBeTruthy();
     });
 
     it('应该保存版本元数据', async () => {
       const upgrader = new Upgrader(testDir);
       const version = await upgrader.createVersion('test-upgrade', {
         config: { key: 'value' },
-        changes: ['change1']
+        changes: ['change1'],
       });
 
       const versionPath = `${testDir}/.requirements/_system/versions/${version.version_number}.yaml`;
       const versionData = yaml.load(await fs.readFile(versionPath, 'utf8'));
 
-      expect().toBe(versionData.name, 'test-upgrade');
-      expect(toBeTruthy();versionData.config);
-      expect(toBeTruthy();versionData.changes);
+      expect(versionData.name).toBe('test-upgrade');
+      expect(versionData.config).toBeTruthy();
+      expect(versionData.changes).toBeTruthy();
     });
   });
 
@@ -257,14 +259,14 @@ describe('Upgrader', () => {
 
       await upgrader.applyUpgrade({
         id: 'OPT-001',
-        actions: [{ id: 'act-1', type: 'config_change', changes: {} }]
+        actions: [{ id: 'act-1', type: 'config_change', changes: {} }],
       });
 
       const history = await upgrader.getUpgradeHistory();
 
-      expect(toBeTruthy();Array.isArray(history));
-      expect(toBeTruthy();history.length > 0);
-      expect().toBe(history[0].decision_id, 'OPT-001');
+      expect(Array.isArray(history)).toBeTruthy();
+      expect(history.length > 0).toBeTruthy();
+      expect(history[0].decision_id).toBe('OPT-001');
     });
   });
 });

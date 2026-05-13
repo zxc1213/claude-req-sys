@@ -23,7 +23,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  white: '\x1b[37m'
+  white: '\x1b[37m',
 };
 
 /**
@@ -35,15 +35,16 @@ async function runTest(testPath) {
     const output = execSync(`node ${testPath}`, {
       cwd: rootDir,
       encoding: 'utf8',
-      stdio: 'pipe'
+      stdio: 'pipe',
     });
     const duration = Date.now() - startTime;
 
     // 解析测试结果
     const lines = output.split('\n');
-    const resultLine = lines.find(l => l.includes('# pass') && l.includes('# fail'));
+    const resultLine = lines.find((l) => l.includes('# pass') && l.includes('# fail'));
 
-    let pass = 0, fail = 0;
+    let pass = 0,
+      fail = 0;
     if (resultLine) {
       const match = resultLine.match(/# pass (\d+)/);
       if (match) pass = parseInt(match[1]);
@@ -57,7 +58,7 @@ async function runTest(testPath) {
       fail,
       duration,
       success: true,
-      output
+      output,
     };
   } catch (error) {
     return {
@@ -66,7 +67,7 @@ async function runTest(testPath) {
       fail: 1,
       duration: 0,
       success: false,
-      output: error.stdout || error.message
+      output: error.stdout || error.message,
     };
   }
 }
@@ -125,7 +126,9 @@ async function main() {
     if (result.success && result.fail === 0) {
       console.log(`\r${colors.green}✓${colors.reset} ${result.file} (${result.duration}ms)`);
     } else if (result.success) {
-      console.log(`\r${colors.yellow}⚠${colors.reset} ${result.file} (${result.pass}✓ ${result.fail}✗ ${result.duration}ms)`);
+      console.log(
+        `\r${colors.yellow}⚠${colors.reset} ${result.file} (${result.pass}✓ ${result.fail}✗ ${result.duration}ms)`
+      );
     } else {
       console.log(`\r${colors.red}✗${colors.reset} ${result.file} (错误)`);
     }
@@ -146,9 +149,11 @@ async function main() {
   // 详细结果
   if (totalFail > 0) {
     console.log(`\n${colors.yellow}失败的测试:${colors.reset}`);
-    results.filter(r => r.fail > 0).forEach(r => {
-      console.log(`  - ${r.file}`);
-    });
+    results
+      .filter((r) => r.fail > 0)
+      .forEach((r) => {
+        console.log(`  - ${r.file}`);
+      });
   }
 
   // 退出码
@@ -156,7 +161,7 @@ async function main() {
   process.exit(exitCode);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(`${colors.red}错误: ${error.message}${colors.reset}`);
   process.exit(1);
 });

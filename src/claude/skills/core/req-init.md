@@ -16,14 +16,17 @@ description: ClaudeReqSys 初始化配置 - 一次性设置，配置问题追踪
 请选择你使用的问题追踪系统：
 
 **选项 A：GitHub Issues**
+
 - 适合：开源项目、团队协作项目
 - 需要：GitHub 仓库、Personal Access Token
 
 **选项 B：本地文件系统**
+
 - 适合：个人项目、快速原型、本地开发
 - 优点：无需外部依赖，完全本地化
 
 **选项 C：Linear**
+
 - 适合：使用 Linear 的专业团队
 - 需要：Linear API Key
 
@@ -34,6 +37,7 @@ description: ClaudeReqSys 初始化配置 - 一次性设置，配置问题追踪
 配置需求分类标签，用于 `/triage` 和优先级排序：
 
 **推荐标签**：
+
 - `feature` - 新功能
 - `bug` - 缺陷修复
 - `enhancement` - 功能增强
@@ -43,6 +47,7 @@ description: ClaudeReqSys 初始化配置 - 一次性设置，配置问题追踪
 - `performance` - 性能优化
 
 **优先级标签**（可选）：
+
 - `priority:critical` - 紧急重要
 - `priority:high` - 重要不紧急
 - `priority:medium` - 一般
@@ -55,6 +60,7 @@ description: ClaudeReqSys 初始化配置 - 一次性设置，配置问题追踪
 配置项目文档的存储路径：
 
 **默认配置**：
+
 - 需求规格：`.requirements/features/`
 - 缺陷跟踪：`.requirements/bugs/`
 - 问题记录：`.requirements/questions/`

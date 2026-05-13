@@ -9,38 +9,41 @@ class SecurityFilter {
     this.patterns = {
       // 凭证类：password, token, key, secret, api_key
       credentials: {
-        regex: /(?:password|passwd|pwd|token|key|secret|api[_-]?key|authorization|auth)[:\s]*[=:]?\s*[^\s'"{>]+/gi,
+        regex:
+          /(?:password|passwd|pwd|token|key|secret|api[_-]?key|authorization|auth)[:\s]*[=:]?\s*[^\s'"{>]+/gi,
         label: 'credentials',
-        replacement: '[REDACTED_CREDENTIAL]'
+        replacement: '[REDACTED_CREDENTIAL]',
       },
 
       // 个人身份信息：SSN, 邮箱, 身份证
       pii: {
-        regex: /\b\d{3}[-]?\d{2}[-]?\d{4}\b|[\w.%+-]+@[\w.-]+\.[a-z]{2,}\b|\b[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]\b|\b[1-9]\d{5}\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}\b/gi,
+        regex:
+          /\b\d{3}[-]?\d{2}[-]?\d{4}\b|[\w.%+-]+@[\w.-]+\.[a-z]{2,}\b|\b[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]\b|\b[1-9]\d{5}\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}\b/gi,
         label: 'pii',
-        replacement: '[REDACTED_PII]'
+        replacement: '[REDACTED_PII]',
       },
 
       // 内部标记
       internal: {
         regex: /\b(confidential|internal|secret|restricted|proprietary|do not share|private)\b/gi,
         label: 'internal',
-        replacement: '[INTERNAL]'
+        replacement: '[INTERNAL]',
       },
 
       // API密钥：32字符以上的字符串
       apiKeys: {
-        regex: /\b[a-zA-Z0-9_\-]{32,}\b/g,
+        regex: /\b[a-zA-Z0-9_-]{32,}\b/g,
         label: 'apiKeys',
-        replacement: '[REDACTED_KEY]'
+        replacement: '[REDACTED_KEY]',
       },
 
       // IP地址
       ips: {
-        regex: /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g,
+        regex:
+          /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g,
         label: 'ips',
-        replacement: '[REDACTED_IP]'
-      }
+        replacement: '[REDACTED_IP]',
+      },
     };
   }
 
@@ -54,7 +57,7 @@ class SecurityFilter {
       return {
         detected: false,
         findings: [],
-        details: {}
+        details: {},
       };
     }
 
@@ -68,7 +71,7 @@ class SecurityFilter {
           category,
           label: config.label,
           count: matches.length,
-          samples: matches.slice(0, 3) // 最多显示3个样本
+          samples: matches.slice(0, 3), // 最多显示3个样本
         });
         details[category] = matches;
       }
@@ -77,7 +80,7 @@ class SecurityFilter {
     return {
       detected: findings.length > 0,
       findings,
-      details
+      details,
     };
   }
 
@@ -93,8 +96,8 @@ class SecurityFilter {
         report: {
           originalLength: 0,
           sanitizedLength: 0,
-          redactions: []
-        }
+          redactions: [],
+        },
       };
     }
 
@@ -108,7 +111,7 @@ class SecurityFilter {
           category,
           label: config.label,
           count: matches.length,
-          replacement: config.replacement
+          replacement: config.replacement,
         });
         sanitized = sanitized.replace(config.regex, config.replacement);
       }
@@ -119,8 +122,8 @@ class SecurityFilter {
       report: {
         originalLength: text.length,
         sanitizedLength: sanitized.length,
-        redactions
-      }
+        redactions,
+      },
     };
   }
 
@@ -138,7 +141,7 @@ class SecurityFilter {
       return {
         valid: true,
         warnings: [],
-        severity: 'none'
+        severity: 'none',
       };
     }
 
@@ -173,7 +176,7 @@ class SecurityFilter {
         category: finding.label,
         severity: warningSeverity,
         message,
-        samples: finding.samples
+        samples: finding.samples,
       });
 
       // 更新整体严重级别
@@ -186,7 +189,7 @@ class SecurityFilter {
     return {
       valid: severity === 'none' || severity === 'low',
       warnings,
-      severity
+      severity,
     };
   }
 
@@ -203,8 +206,8 @@ class SecurityFilter {
         report: {
           originalLength: 0,
           filteredLength: 0,
-          changes: []
-        }
+          changes: [],
+        },
       };
     }
 
@@ -219,8 +222,8 @@ class SecurityFilter {
         filteredLength: sanitization.sanitized.length,
         changes: sanitization.report.redactions,
         warnings: validation.warnings,
-        severity: validation.severity
-      }
+        severity: validation.severity,
+      },
     };
   }
 
@@ -236,7 +239,7 @@ class SecurityFilter {
       return {
         hasSensitiveInfo: false,
         totalDetections: 0,
-        breakdown: {}
+        breakdown: {},
       };
     }
 
@@ -252,7 +255,7 @@ class SecurityFilter {
       hasSensitiveInfo: true,
       totalDetections,
       breakdown,
-      severity: this.validate(text).severity
+      severity: this.validate(text).severity,
     };
   }
 }

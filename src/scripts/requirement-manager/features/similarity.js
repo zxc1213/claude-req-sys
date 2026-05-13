@@ -16,13 +16,13 @@ class SimilarityDetector {
       keys: [
         {
           name: 'title',
-          weight: 0.4 // title 权重 40%
+          weight: 0.4, // title 权重 40%
         },
         {
           name: 'description',
-          weight: 0.6 // description 权重 60%
-        }
-      ]
+          weight: 0.6, // description 权重 60%
+        },
+      ],
     };
 
     // 需求存储路径
@@ -70,7 +70,7 @@ class SimilarityDetector {
             status: meta.status,
             priority: meta.priority,
             created: meta.created,
-            tags: meta.tags || []
+            tags: meta.tags || [],
           });
         } catch (error) {
           console.warn(`Failed to load requirement from ${metaPath}:`, error.message);
@@ -95,7 +95,7 @@ class SimilarityDetector {
       status: 'open',
       priority: 'medium',
       created: '',
-      tags: []
+      tags: [],
     };
 
     const lines = content.split('\n');
@@ -129,7 +129,7 @@ class SimilarityDetector {
       return {
         similar: [],
         count: 0,
-        topMatch: null
+        topMatch: null,
       };
     }
 
@@ -140,7 +140,7 @@ class SimilarityDetector {
       return {
         similar: [],
         count: 0,
-        topMatch: null
+        topMatch: null,
       };
     }
 
@@ -154,7 +154,7 @@ class SimilarityDetector {
     const results = fuse.search(description);
 
     // 格式化结果
-    const similar = results.map(result => ({
+    const similar = results.map((result) => ({
       id: result.item.id,
       type: result.item.type,
       title: result.item.title,
@@ -162,7 +162,7 @@ class SimilarityDetector {
       status: result.item.status,
       priority: result.item.priority,
       similarity: 1 - result.score, // 转换为相似度分数
-      score: result.score
+      score: result.score,
     }));
 
     // 按相似度排序
@@ -171,7 +171,7 @@ class SimilarityDetector {
     return {
       similar,
       count: similar.length,
-      topMatch: similar.length > 0 ? similar[0] : null
+      topMatch: similar.length > 0 ? similar[0] : null,
     };
   }
 
@@ -188,7 +188,7 @@ class SimilarityDetector {
       return {
         isDuplicate: false,
         duplicates: [],
-        confidence: 0
+        confidence: 0,
       };
     }
 
@@ -198,7 +198,7 @@ class SimilarityDetector {
     return {
       isDuplicate: confidence >= threshold,
       duplicates: result.similar,
-      confidence
+      confidence,
     };
   }
 
@@ -219,19 +219,20 @@ class SimilarityDetector {
       summary: {
         totalRequirements: requirements.length,
         similarFound: result.count,
-        highConfidence: result.similar.filter(r => r.similarity >= 0.8).length,
-        mediumConfidence: result.similar.filter(r => r.similarity >= 0.6 && r.similarity < 0.8).length,
-        lowConfidence: result.similar.filter(r => r.similarity < 0.6).length
+        highConfidence: result.similar.filter((r) => r.similarity >= 0.8).length,
+        mediumConfidence: result.similar.filter((r) => r.similarity >= 0.6 && r.similarity < 0.8)
+          .length,
+        lowConfidence: result.similar.filter((r) => r.similarity < 0.6).length,
       },
-      matches: result.similar.map(match => ({
+      matches: result.similar.map((match) => ({
         id: match.id,
         title: match.title,
         similarity: match.similarity,
         confidence: this.getConfidenceLevel(match.similarity),
         status: match.status,
-        priority: match.priority
+        priority: match.priority,
       })),
-      recommendation: this.getRecommendation(result)
+      recommendation: this.getRecommendation(result),
     };
 
     return report;
@@ -282,9 +283,9 @@ class SimilarityDetector {
    * @returns {Array} - 每个需求的相似度结果
    */
   batchCheck(descriptions, threshold = 0.7) {
-    return descriptions.map(description => ({
+    return descriptions.map((description) => ({
       description,
-      ...this.findSimilar(description, threshold)
+      ...this.findSimilar(description, threshold),
     }));
   }
 
@@ -299,7 +300,7 @@ class SimilarityDetector {
       total: requirements.length,
       byType: {},
       byStatus: {},
-      byPriority: {}
+      byPriority: {},
     };
 
     for (const req of requirements) {

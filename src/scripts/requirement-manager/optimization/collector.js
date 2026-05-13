@@ -15,7 +15,7 @@ const TYPE_DIRS = {
   question: 'questions',
   adjustment: 'adjustments',
   refactor: 'refactors',
-  'tech-debt': 'tech-debt'
+  'tech-debt': 'tech-debt',
 };
 
 /**
@@ -29,7 +29,7 @@ const COMMON_SKILLS = [
   'requesting-code-review',
   'verification-before-completion',
   'chinese-code-review',
-  'chinese-documentation'
+  'chinese-documentation',
 ];
 
 /**
@@ -54,16 +54,11 @@ export class MetricsCollector {
   async collect() {
     const timestamp = new Date().toISOString();
 
-    const [
-      systemMetrics,
-      typeMetrics,
-      skillMetrics,
-      costMetrics
-    ] = await Promise.all([
+    const [systemMetrics, typeMetrics, skillMetrics, costMetrics] = await Promise.all([
       this.collectSystemMetrics(),
       this.collectTypeMetrics(),
       this.collectSkillMetrics(),
-      this.collectCostMetrics()
+      this.collectCostMetrics(),
     ]);
 
     const metrics = {
@@ -71,7 +66,7 @@ export class MetricsCollector {
       system: systemMetrics,
       types: typeMetrics,
       skills: skillMetrics,
-      costs: costMetrics
+      costs: costMetrics,
     };
 
     return metrics;
@@ -124,7 +119,7 @@ export class MetricsCollector {
     return {
       total_requirements: total,
       completion_rate: Math.round(completionRate * 100) / 100,
-      active_requirements: active
+      active_requirements: active,
     };
   }
 
@@ -168,7 +163,7 @@ export class MetricsCollector {
 
       typeMetrics[type] = {
         total,
-        completed
+        completed,
       };
     }
 
@@ -191,9 +186,10 @@ export class MetricsCollector {
       const previous = previousSkills[skill] || { uses: 0, satisfaction: 0 };
       skillMetrics[skill] = {
         uses: previous.uses + Math.floor(Math.random() * 5), // 模拟新使用
-        satisfaction: previous.satisfaction > 0
-          ? Math.round((previous.satisfaction * 0.9 + 4 + Math.random()) * 10) / 10
-          : Math.round((4 + Math.random()) * 10) / 10 // 初始满意度 4-5
+        satisfaction:
+          previous.satisfaction > 0
+            ? Math.round((previous.satisfaction * 0.9 + 4 + Math.random()) * 10) / 10
+            : Math.round((4 + Math.random()) * 10) / 10, // 初始满意度 4-5
       };
     }
 
@@ -214,13 +210,14 @@ export class MetricsCollector {
     const totalTokens = previousCosts.daily_tokens + newTokens;
 
     // 模拟缓存命中率变化（0.5-0.8 之间）
-    const newCacheRate = previousCosts.cache_hit_rate > 0
-      ? Math.min(0.8, Math.max(0.5, previousCosts.cache_hit_rate + (Math.random() - 0.5) * 0.1))
-      : 0.6;
+    const newCacheRate =
+      previousCosts.cache_hit_rate > 0
+        ? Math.min(0.8, Math.max(0.5, previousCosts.cache_hit_rate + (Math.random() - 0.5) * 0.1))
+        : 0.6;
 
     return {
       daily_tokens: totalTokens,
-      cache_hit_rate: Math.round(newCacheRate * 100) / 100
+      cache_hit_rate: Math.round(newCacheRate * 100) / 100,
     };
   }
 
@@ -250,13 +247,13 @@ export class MetricsCollector {
     // 保存指标（包含历史）
     const toSave = {
       ...metrics,
-      __history: trimmedHistory
+      __history: trimmedHistory,
     };
 
     const content = yaml.dump(toSave, {
       indent: 2,
       lineWidth: -1,
-      noRefs: true
+      noRefs: true,
     });
 
     await fs.writeFile(this.metricsPath, content, 'utf-8');
@@ -328,13 +325,13 @@ export class MetricsCollector {
 
     const toSave = {
       ...history,
-      __history: trimmedHistory
+      __history: trimmedHistory,
     };
 
     const content = yaml.dump(toSave, {
       indent: 2,
       lineWidth: -1,
-      noRefs: true
+      noRefs: true,
     });
 
     await fs.writeFile(this.metricsPath, content, 'utf-8');

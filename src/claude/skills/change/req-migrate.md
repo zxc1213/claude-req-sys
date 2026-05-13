@@ -116,11 +116,11 @@ const docs = {
   testPlan: readMarkdown(path.join(reqPath, 'test-plan.md')),
   plan: readMarkdown(path.join(reqPath, 'plan.md')),
   analysisReport: readMarkdown(path.join(reqPath, 'analysis-report.md')),
-  changelog: readMarkdown(path.join(reqPath, 'CHANGELOG.md'))
+  changelog: readMarkdown(path.join(reqPath, 'CHANGELOG.md')),
 };
 
 // 记录哪些文件实际存在
-const existingFiles = Object.keys(docs).filter(key => docs[key] !== null);
+const existingFiles = Object.keys(docs).filter((key) => docs[key] !== null);
 console.log(`找到 ${existingFiles.length} 个文件: ${existingFiles.join(', ')}`);
 ```
 
@@ -145,7 +145,7 @@ const spec = {
   implementation: extractImplementation(docs.plan),
 
   // 从 CHANGELOG.md 提取变更历史
-  changelog: extractChangelog(docs.changelog)
+  changelog: extractChangelog(docs.changelog),
 };
 
 // 提取详细测试用例（如果有）
@@ -175,7 +175,7 @@ console.log('✓ 新格式文档已生成');
 const validation = validateSpec(reqPath);
 if (!validation.valid) {
   console.error('❌ 生成的文档验证失败:');
-  validation.errors.forEach(err => console.error(`  - ${err}`));
+  validation.errors.forEach((err) => console.error(`  - ${err}`));
 
   // 询问是否回滚
   const shouldRollback = await prompt('是否回滚迁移？(y/n)');
@@ -210,17 +210,20 @@ function extractAnalysis(analysisReport, design) {
 
   // 优先从 analysis-report.md 提取
   if (analysisReport) {
-    if (analysisReport.background) sections.push({ title: '背景与目标', content: analysisReport.background });
-    if (analysisReport.userStory) sections.push({ title: '用户故事', content: analysisReport.userStory });
-    if (analysisReport.acceptanceCriteria) sections.push({ title: '验收标准', content: analysisReport.acceptanceCriteria });
+    if (analysisReport.background)
+      sections.push({ title: '背景与目标', content: analysisReport.background });
+    if (analysisReport.userStory)
+      sections.push({ title: '用户故事', content: analysisReport.userStory });
+    if (analysisReport.acceptanceCriteria)
+      sections.push({ title: '验收标准', content: analysisReport.acceptanceCriteria });
   }
 
   // 从 design.md 补充
   if (design) {
-    if (!sections.find(s => s.title === '背景与目标') && design.background) {
+    if (!sections.find((s) => s.title === '背景与目标') && design.background) {
       sections.push({ title: '背景与目标', content: design.background });
     }
-    if (!sections.find(s => s.title === '用户故事') && design.userStory) {
+    if (!sections.find((s) => s.title === '用户故事') && design.userStory) {
       sections.push({ title: '用户故事', content: design.userStory });
     }
   }
@@ -243,7 +246,7 @@ function extractDesign(design) {
     techStack: design.techStack || {},
     decisions: design.decisions || [],
     errorHandling: design.errorHandling || '',
-    security: design.security || ''
+    security: design.security || '',
   };
 }
 ```
@@ -258,7 +261,7 @@ function extractTestStrategy(testPlan) {
     scope: testPlan.scope || '',
     types: testPlan.types || [],
     acceptanceCriteria: testPlan.acceptanceCriteria || '',
-    performanceMetrics: testPlan.performanceMetrics || {}
+    performanceMetrics: testPlan.performanceMetrics || {},
   };
 }
 ```
@@ -270,7 +273,7 @@ function extractTestCases(testPlan) {
   if (!testPlan || !testPlan.cases) return [];
 
   // 只返回需要详细描述的测试用例
-  return testPlan.cases.filter(tc => tc.steps && tc.steps.length > 0);
+  return testPlan.cases.filter((tc) => tc.steps && tc.steps.length > 0);
 }
 ```
 
@@ -283,7 +286,7 @@ function extractImplementation(plan) {
   return {
     tasks: plan.tasks || [],
     dependencies: plan.dependencies || {},
-    risks: plan.risks || []
+    risks: plan.risks || [],
   };
 }
 ```
@@ -455,7 +458,10 @@ function generateSpecMarkdown(spec) {
       md += '\n';
     }
 
-    if (spec.implementation.dependencies && Object.keys(spec.implementation.dependencies).length > 0) {
+    if (
+      spec.implementation.dependencies &&
+      Object.keys(spec.implementation.dependencies).length > 0
+    ) {
       md += '### 依赖关系\n\n';
       for (const [task, deps] of Object.entries(spec.implementation.dependencies)) {
         md += `- **${task}**: 依赖 ${deps.join(', ')}\n`;
@@ -540,7 +546,7 @@ function validateSpec(reqPath) {
 
   return {
     valid: errors.length === 0,
-    errors: errors
+    errors: errors,
   };
 }
 ```
@@ -582,24 +588,28 @@ function rollbackMigration(reqPath, backupPath) {
 # 文档迁移报告
 
 ## 总体统计
+
 - 总需求数: 15
 - 已迁移: 10 (67%)
 - 待迁移: 5 (33%)
 - 迁移失败: 0
 
 ## 已迁移需求
-| ID | 标题 | 迁移时间 | 状态 |
-|----|------|----------|------|
+
+| ID               | 标题         | 迁移时间         | 状态    |
+| ---------------- | ------------ | ---------------- | ------- |
 | REQ-20260513-001 | 用户登录功能 | 2026-05-13 10:30 | ✅ 成功 |
 | REQ-20260513-002 | 数据导出功能 | 2026-05-13 10:35 | ✅ 成功 |
 
 ## 待迁移需求
-| ID | 标题 | 类型 | 状态 |
-|----|------|------|------|
-| REQ-20260513-011 | 性能优化 | refactor | completed |
-| REQ-20260513-012 | Bug修复 | bug | in_progress |
+
+| ID               | 标题     | 类型     | 状态        |
+| ---------------- | -------- | -------- | ----------- |
+| REQ-20260513-011 | 性能优化 | refactor | completed   |
+| REQ-20260513-012 | Bug修复  | bug      | in_progress |
 
 ## 问题记录
+
 - REQ-20260513-005: 缺少 design.md，只生成了部分内容
 - REQ-20260513-008: plan.md 格式异常，需要手动调整
 ```
@@ -633,15 +643,18 @@ function rollbackMigration(reqPath, backupPath) {
 ## 集成说明
 
 **触发时机**：
+
 - 用户手动调用 `/migrate-docs` 时
 - 批量迁移时 `/migrate-docs --all`
 
 **相关 skills**：
+
 - `doc-unifier`: 定义新格式规范
 - `brainstorm-grill`: 新需求直接生成新格式
 - `test-plan-generator`: 测试策略整合到 spec.md
 
 **输出**：
+
 - spec.md: 统一的主文档
 - test-cases.md: 可选的详细测试用例
 - .backup/: 备份目录

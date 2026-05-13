@@ -9,7 +9,7 @@ const counters = {
   question: 0,
   adjustment: 0,
   refactor: 0,
-  'tech-debt': 0
+  'tech-debt': 0,
 };
 
 /**
@@ -18,7 +18,7 @@ const counters = {
  * @returns {string}
  */
 export function generate(type) {
-  if (!counters.hasOwnProperty(type)) {
+  if (!Object.prototype.hasOwnProperty.call(counters, type)) {
     throw new Error(`Unknown requirement type: ${type}`);
   }
 
@@ -27,12 +27,12 @@ export function generate(type) {
 
   // 生成前缀
   const prefixMap = {
-    'feature': 'FEAT',
-    'bug': 'BUG',
-    'question': 'QUES',
-    'adjustment': 'ADJU',
-    'refactor': 'REF',
-    'tech-debt': 'DEBT'
+    feature: 'FEAT',
+    bug: 'BUG',
+    question: 'QUES',
+    adjustment: 'ADJU',
+    refactor: 'REF',
+    'tech-debt': 'DEBT',
   };
   const prefix = prefixMap[type];
 
@@ -60,12 +60,12 @@ export function parse(id) {
 
   // 映射前缀到类型
   const prefixToType = {
-    'FEAT': 'feature',
-    'BUG': 'bug',
-    'QUES': 'question',
-    'ADJU': 'adjustment',
-    'REF': 'refactor',
-    'DEBT': 'tech-debt'
+    FEAT: 'feature',
+    BUG: 'bug',
+    QUES: 'question',
+    ADJU: 'adjustment',
+    REF: 'refactor',
+    DEBT: 'tech-debt',
   };
 
   const type = prefixToType[prefix];
@@ -77,7 +77,7 @@ export function parse(id) {
   return {
     type,
     number,
-    prefix
+    prefix,
   };
 }
 
@@ -87,7 +87,7 @@ export function parse(id) {
  */
 export function reset(type) {
   if (type) {
-    if (counters.hasOwnProperty(type)) {
+    if (Object.prototype.hasOwnProperty.call(counters, type)) {
       counters[type] = 0;
     }
   } else {
@@ -103,5 +103,5 @@ export function reset(type) {
 export default {
   generate,
   parse,
-  reset
+  reset,
 };

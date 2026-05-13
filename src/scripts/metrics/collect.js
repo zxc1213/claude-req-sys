@@ -27,14 +27,14 @@ function loadConfig() {
     metrics: {
       collection: {
         enabled: true,
-        retentionDays: 90
+        retentionDays: 90,
       },
       targets: {
         cycle_time: 2.0,
         rework_rate: 0.15,
-        quality_gate_pass_rate: 0.90
-      }
-    }
+        quality_gate_pass_rate: 0.9,
+      },
+    },
   };
 }
 
@@ -52,8 +52,8 @@ function loadMetricsData() {
       rework_rate: [],
       quality_gate_pass_rate: [],
       completion_rate: [],
-      user_satisfaction: []
-    }
+      user_satisfaction: [],
+    },
   };
 }
 
@@ -81,9 +81,10 @@ function scanRequirements() {
     const typeDir = path.join(REQUIREMENTS_DIR, type);
     if (!fs.existsSync(typeDir)) continue;
 
-    const reqDirs = fs.readdirSync(typeDir, { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
+    const reqDirs = fs
+      .readdirSync(typeDir, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name);
 
     for (const reqId of reqDirs) {
       const reqPath = path.join(typeDir, reqId);
@@ -98,7 +99,7 @@ function scanRequirements() {
             id: reqId,
             type: type,
             path: reqPath,
-            meta: meta
+            meta: meta,
           });
         } catch (error) {
           console.warn(`无法解析 ${metaFile}: ${error.message}`);
@@ -118,18 +119,18 @@ function collectEfficiencyMetrics(requirements) {
   const metrics = [];
 
   // 需求交付周期
-  const completedReqs = requirements.filter(r =>
-    r.meta.status === 'completed' || r.meta.status === 'testing'
+  const completedReqs = requirements.filter(
+    (r) => r.meta.status === 'completed' || r.meta.status === 'testing'
   );
 
   if (completedReqs.length > 0) {
     const cycleTimes = completedReqs
-      .map(r => {
+      .map((r) => {
         const created = new Date(r.meta.created_at);
         const updated = new Date(r.meta.updated_at);
         return (updated - created) / (1000 * 60 * 60 * 24); // 天数
       })
-      .filter(t => t > 0 && t < 365); // 过滤异常值
+      .filter((t) => t > 0 && t < 365); // 过滤异常值
 
     if (cycleTimes.length > 0) {
       const avgCycleTime = cycleTimes.reduce((a, b) => a + b, 0) / cycleTimes.length;
@@ -138,7 +139,7 @@ function collectEfficiencyMetrics(requirements) {
         metric: 'cycle_time',
         value: Number(avgCycleTime.toFixed(2)),
         sample_size: cycleTimes.length,
-        details: `平均 ${cycleTimes.length} 个已完成需求`
+        details: `平均 ${cycleTimes.length} 个已完成需求`,
       });
     }
   }
@@ -156,8 +157,8 @@ function collectQualityMetrics(requirements) {
   // 返工率
   const allReqs = requirements;
   if (allReqs.length > 0) {
-    const reworkedCount = allReqs.filter(r =>
-      r.meta.rework_count && r.meta.rework_count > 0
+    const reworkedCount = allReqs.filter(
+      (r) => r.meta.rework_count && r.meta.rework_count > 0
     ).length;
 
     const reworkRate = reworkedCount / allReqs.length;
@@ -167,7 +168,7 @@ function collectQualityMetrics(requirements) {
       value: Number(reworkRate.toFixed(3)),
       total: allReqs.length,
       reworked: reworkedCount,
-      details: `${reworkedCount}/${allReqs.length} 需求有返工记录`
+      details: `${reworkedCount}/${allReqs.length} 需求有返工记录`,
     });
   }
 
@@ -179,7 +180,7 @@ function collectQualityMetrics(requirements) {
     value: 0.94, // 模拟数据
     passed: 47,
     total: 50,
-    details: '基于最近质量门禁检查结果'
+    details: '基于最近质量门禁检查结果',
   });
 
   return metrics;
@@ -193,9 +194,7 @@ function collectChangeMetrics(requirements) {
   const metrics = [];
 
   // 变更频率
-  const activeReqs = requirements.filter(r =>
-    ['in_progress', 'testing'].includes(r.meta.status)
-  );
+  const activeReqs = requirements.filter((r) => ['in_progress', 'testing'].includes(r.meta.status));
 
   if (activeReqs.length > 0) {
     let totalChanges = 0;
@@ -225,7 +224,7 @@ function collectChangeMetrics(requirements) {
         value: Number(changeFreq.toFixed(2)),
         total_changes: totalChanges,
         active_requirements: activeReqs.length,
-        details: `平均每个需求 ${changeFreq.toFixed(1)} 次变更`
+        details: `平均每个需求 ${changeFreq.toFixed(1)} 次变更`,
       });
 
       metrics.push({
@@ -234,7 +233,7 @@ function collectChangeMetrics(requirements) {
         value: Number((majorChangeRate * 100).toFixed(1)) + '%',
         major_changes: majorChanges,
         total_changes: totalChanges,
-        details: `${majorChanges}/${totalChanges} 为重大变更`
+        details: `${majorChanges}/${totalChanges} 为重大变更`,
       });
     }
   }
@@ -251,8 +250,8 @@ function collectValueMetrics(requirements) {
 
   // 需求完成率
   const allReqs = requirements;
-  const completedReqs = requirements.filter(r =>
-    r.meta.status === 'completed' || r.meta.status === 'testing'
+  const completedReqs = requirements.filter(
+    (r) => r.meta.status === 'completed' || r.meta.status === 'testing'
   );
 
   if (allReqs.length > 0) {
@@ -263,18 +262,16 @@ function collectValueMetrics(requirements) {
       value: Number((completionRate * 100).toFixed(1)) + '%',
       completed: completedReqs.length,
       total: allReqs.length,
-      details: `${completedReqs.length}/${allReqs.length} 需求已完成`
+      details: `${completedReqs.length}/${allReqs.length} 需求已完成`,
     });
   }
 
   // 优先级准确率（基于优先级变更次数）
-  const withPriority = requirements.filter(r =>
-    r.meta.priority && r.meta.priority.level
-  );
+  const withPriority = requirements.filter((r) => r.meta.priority && r.meta.priority.level);
 
   if (withPriority.length > 0) {
     // 简化计算：假设优先级调整越少越准确
-    const stablePriority = withPriority.filter(r => !r.meta.priority_adjusted).length;
+    const stablePriority = withPriority.filter((r) => !r.meta.priority_adjusted).length;
     const accuracyRate = stablePriority / withPriority.length;
 
     metrics.push({
@@ -283,7 +280,7 @@ function collectValueMetrics(requirements) {
       value: Number((accuracyRate * 100).toFixed(1)) + '%',
       stable: stablePriority,
       total: withPriority.length,
-      details: `${stablePriority}/${withPriority.length} 优先级未调整`
+      details: `${stablePriority}/${withPriority.length} 优先级未调整`,
     });
   }
 
@@ -313,12 +310,7 @@ function collectAllMetrics() {
   const changeMetrics = collectChangeMetrics(requirements);
   const valueMetrics = collectValueMetrics(requirements);
 
-  const allMetrics = [
-    ...efficiencyMetrics,
-    ...qualityMetrics,
-    ...changeMetrics,
-    ...valueMetrics
-  ];
+  const allMetrics = [...efficiencyMetrics, ...qualityMetrics, ...changeMetrics, ...valueMetrics];
 
   // 更新数据文件
   for (const metric of allMetrics) {
@@ -330,7 +322,7 @@ function collectAllMetrics() {
 
     // 检查是否已存在今天的记录
     const today = metric.date;
-    const existingIndex = data.metrics[metricType].findIndex(m => m.date === today);
+    const existingIndex = data.metrics[metricType].findIndex((m) => m.date === today);
 
     if (existingIndex >= 0) {
       // 更新现有记录
@@ -374,7 +366,7 @@ function displayMetricsSummary(metrics) {
     change_frequency: '变更频率',
     major_change_rate: '重大变更占比',
     completion_rate: '需求完成率',
-    priority_accuracy: '优先级准确率'
+    priority_accuracy: '优先级准确率',
   };
 
   for (const [key, value] of Object.entries(summary)) {
@@ -394,7 +386,7 @@ function initMetricsSystem() {
     METRICS_DIR,
     path.join(METRICS_DIR, 'reports'),
     path.join(METRICS_DIR, 'exports'),
-    path.join(METRICS_DIR, 'trends')
+    path.join(METRICS_DIR, 'trends'),
   ];
 
   for (const dir of dirs) {
@@ -411,28 +403,28 @@ function initMetricsSystem() {
         collection: {
           enabled: true,
           interval: 'daily',
-          retentionDays: 90
+          retentionDays: 90,
         },
         targets: {
           cycle_time: 2.0,
           rework_rate: 0.15,
-          quality_gate_pass_rate: 0.90,
+          quality_gate_pass_rate: 0.9,
           user_satisfaction: 4.0,
-          completion_rate: 0.90
+          completion_rate: 0.9,
         },
         alerts: {
           enabled: true,
           thresholds: {
             cycle_time: { warning: 2.5, critical: 3.0 },
-            rework_rate: { warning: 0.15, critical: 0.20 }
-          }
+            rework_rate: { warning: 0.15, critical: 0.2 },
+          },
         },
         reporting: {
           frequency: 'weekly',
           autoGenerate: false,
-          includeCharts: false
-        }
-      }
+          includeCharts: false,
+        },
+      },
     };
 
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(defaultConfig, null, 2));
@@ -447,9 +439,9 @@ function initMetricsSystem() {
         rework_rate: [],
         quality_gate_pass_rate: [],
         completion_rate: [],
-        user_satisfaction: []
+        user_satisfaction: [],
       },
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
 
     const yamlContent = yaml.dump(initialData);
@@ -512,13 +504,15 @@ function convertToCSV(data) {
 
   for (const [metricType, records] of Object.entries(data.metrics)) {
     for (const record of records) {
-      lines.push([
-        record.date,
-        record.metric,
-        record.value,
-        record.sample_size || record.total || 'N/A',
-        record.details || ''
-      ].join(','));
+      lines.push(
+        [
+          record.date,
+          record.metric,
+          record.value,
+          record.sample_size || record.total || 'N/A',
+          record.details || '',
+        ].join(',')
+      );
     }
   }
 

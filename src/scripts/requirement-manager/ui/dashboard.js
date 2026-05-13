@@ -16,7 +16,7 @@ const TYPE_DIRS = {
   bug: 'bugs',
   question: 'questions',
   adjustment: 'adjustments',
-  refactor: 'refactors'
+  refactor: 'refactors',
 };
 
 /**
@@ -27,7 +27,7 @@ const STATUS_LABELS = {
   in_progress: '进行中',
   completed: '已完成',
   closed: '已关闭',
-  blocked: '已阻塞'
+  blocked: '已阻塞',
 };
 
 /**
@@ -38,7 +38,7 @@ const STATUS_COLORS = {
   in_progress: 'blue',
   completed: 'green',
   closed: 'gray',
-  blocked: 'red'
+  blocked: 'red',
 };
 
 /**
@@ -75,7 +75,11 @@ export class Dashboard {
   showHeader() {
     console.log('');
     console.log(chalk.cyan('╔══════════════════════════════════════════════════════════════╗'));
-    console.log(chalk.cyan('║') + chalk.white.bold('          需求管理系统仪表板                    ') + chalk.cyan('║'));
+    console.log(
+      chalk.cyan('║') +
+        chalk.white.bold('          需求管理系统仪表板                    ') +
+        chalk.cyan('║')
+    );
     console.log(chalk.cyan('╚══════════════════════════════════════════════════════════════╝'));
     console.log('');
   }
@@ -95,8 +99,8 @@ export class Dashboard {
         bug: 0,
         question: 0,
         adjustment: 0,
-        refactor: 0
-      }
+        refactor: 0,
+      },
     };
 
     // 遍历所有类型目录
@@ -148,8 +152,8 @@ export class Dashboard {
       colWidths: [20, 10],
       style: {
         head: [],
-        border: ['gray']
-      }
+        border: ['gray'],
+      },
     });
 
     table.push(
@@ -206,7 +210,11 @@ export class Dashboard {
     if (!active) {
       console.log(chalk.gray('  暂无活跃需求'));
     } else {
-      console.log(chalk.white(`  ${active.id}: ${active.title || active.description?.substring(0, 50) || '无标题'}`));
+      console.log(
+        chalk.white(
+          `  ${active.id}: ${active.title || active.description?.substring(0, 50) || '无标题'}`
+        )
+      );
       const statusLabel = STATUS_LABELS[active.status] || active.status;
       const statusColor = STATUS_COLORS[active.status] || 'white';
       console.log(chalk[statusColor](`  状态: ${statusLabel}`));
@@ -234,19 +242,15 @@ export class Dashboard {
       colWidths: [20, 30, 10],
       style: {
         head: [],
-        border: ['gray']
-      }
+        border: ['gray'],
+      },
     });
 
     for (const req of recent) {
       const title = req.title || req.description?.substring(0, 25) || '无标题';
       const statusLabel = STATUS_LABELS[req.status] || req.status;
 
-      table.push([
-        req.id,
-        title.substring(0, 30),
-        statusLabel
-      ]);
+      table.push([req.id, title.substring(0, 30), statusLabel]);
     }
 
     console.log(table.toString());

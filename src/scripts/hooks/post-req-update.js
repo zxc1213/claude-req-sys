@@ -22,7 +22,7 @@ function readStdin() {
   return new Promise((resolve, reject) => {
     let data = '';
     process.stdin.setEncoding('utf8');
-    process.stdin.on('data', chunk => data += chunk);
+    process.stdin.on('data', (chunk) => (data += chunk));
     process.stdin.on('end', () => {
       try {
         resolve(data ? JSON.parse(data) : {});
@@ -66,7 +66,6 @@ async function main() {
 
     // 将原样输出到 stdout
     process.stdout.write(JSON.stringify(input));
-
   } catch (error) {
     // 静默失败，不影响正常流程
     process.stdout.write(JSON.stringify({}));

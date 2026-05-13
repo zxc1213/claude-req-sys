@@ -33,7 +33,7 @@ export class GitIntegration {
   async isGitRepo() {
     try {
       const { stdout } = await execAsync('git rev-parse --git-dir', {
-        cwd: this.baseDir
+        cwd: this.baseDir,
       });
       return stdout.trim().length > 0;
     } catch (error) {
@@ -48,7 +48,7 @@ export class GitIntegration {
   async getCurrentBranch() {
     try {
       const { stdout } = await execAsync('git rev-parse --abbrev-ref HEAD', {
-        cwd: this.baseDir
+        cwd: this.baseDir,
       });
       return stdout.trim();
     } catch (error) {
@@ -71,7 +71,7 @@ export class GitIntegration {
         return {
           success: false,
           branch: '',
-          error: '当前目录不是 Git 仓库'
+          error: '当前目录不是 Git 仓库',
         };
       }
 
@@ -85,33 +85,32 @@ export class GitIntegration {
       const branchName = `${type}/${id}-${shortTitle}`;
 
       // 检查分支是否已存在
-      const { stdout: existingBranch } = await execAsync(
-        `git branch --list "${branchName}"`,
-        { cwd: this.baseDir }
-      );
+      const { stdout: existingBranch } = await execAsync(`git branch --list "${branchName}"`, {
+        cwd: this.baseDir,
+      });
 
       if (existingBranch.trim()) {
         return {
           success: false,
           branch: branchName,
-          error: `分支 ${branchName} 已存在`
+          error: `分支 ${branchName} 已存在`,
         };
       }
 
       // 创建并切换到新分支
       await execAsync(`git checkout -b ${branchName}`, {
-        cwd: this.baseDir
+        cwd: this.baseDir,
       });
 
       return {
         success: true,
-        branch: branchName
+        branch: branchName,
       };
     } catch (error) {
       return {
         success: false,
         branch: '',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -144,7 +143,7 @@ export class GitIntegration {
       if (!isRepo) {
         return {
           success: false,
-          error: '当前目录不是 Git 仓库'
+          error: '当前目录不是 Git 仓库',
         };
       }
 
@@ -155,10 +154,7 @@ export class GitIntegration {
       await execAsync('git add .', { cwd: this.baseDir });
 
       // 提交变更
-      const { stdout } = await execAsync(
-        `git commit -m "${commitMessage}"`,
-        { cwd: this.baseDir }
-      );
+      const { stdout } = await execAsync(`git commit -m "${commitMessage}"`, { cwd: this.baseDir });
 
       // 提取 commit hash
       const commitMatch = stdout.match(/\[([a-f0-9]+)\]/);
@@ -167,20 +163,20 @@ export class GitIntegration {
       return {
         success: true,
         commit: commitHash,
-        message: commitMessage
+        message: commitMessage,
       };
     } catch (error) {
       // 检查是否是没有变更的情况
       if (error.message.includes('nothing to commit')) {
         return {
           success: false,
-          error: '没有需要提交的变更'
+          error: '没有需要提交的变更',
         };
       }
 
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -208,12 +204,12 @@ export class GitIntegration {
     const prefix = id.split('-')[0];
 
     const typeMapping = {
-      'FEAT': 'feature',
-      'BUG': 'bugfix',
-      'QUES': 'question',
-      'ADJU': 'adjustment',
-      'REF': 'refactor',
-      'DEBT': 'tech-debt'
+      FEAT: 'feature',
+      BUG: 'bugfix',
+      QUES: 'question',
+      ADJU: 'adjustment',
+      REF: 'refactor',
+      DEBT: 'tech-debt',
     };
 
     return typeMapping[prefix] || 'feature';
@@ -229,22 +225,22 @@ export class GitIntegration {
       if (!isRepo) {
         return {
           success: false,
-          error: '当前目录不是 Git 仓库'
+          error: '当前目录不是 Git 仓库',
         };
       }
 
       const { stdout } = await execAsync('git status --short', {
-        cwd: this.baseDir
+        cwd: this.baseDir,
       });
 
       return {
         success: true,
-        status: stdout.trim()
+        status: stdout.trim(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }

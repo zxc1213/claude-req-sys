@@ -83,7 +83,7 @@ class RequirementManager {
       safe: filterResult.safe,
       warnings: filterResult.report.warnings,
       severity: filterResult.report.severity,
-      filtered: filterResult.filtered
+      filtered: filterResult.filtered,
     };
   }
 
@@ -93,7 +93,7 @@ class RequirementManager {
    * @returns {object} 格式化的警告
    */
   formatSecurityWarning(securityCheck) {
-    const warnings = securityCheck.warnings.map(w => w.message).join('\n  ');
+    const warnings = securityCheck.warnings.map((w) => w.message).join('\n  ');
 
     return {
       success: false,
@@ -103,8 +103,8 @@ class RequirementManager {
       suggestions: [
         '请移除敏感信息后重试',
         '不要包含密码、密钥、个人身份信息等',
-        '使用占位符代替真实数据'
-      ]
+        '使用占位符代替真实数据',
+      ],
     };
   }
 
@@ -120,16 +120,16 @@ class RequirementManager {
 
     // 转换模式名称以匹配 scheduler 的期望
     const modeMapping = {
-      'full_auto': 'fully',
-      'semi_auto': 'semi',
-      'manual': 'manual'
+      full_auto: 'fully',
+      semi_auto: 'semi',
+      manual: 'manual',
     };
 
     // 合并选项
     return {
       ...parsed,
       mode: modeMapping[parsed.mode] || 'semi',
-      ...options
+      ...options,
     };
   }
 
@@ -140,7 +140,7 @@ class RequirementManager {
    */
   isQueryCommand(parsed) {
     const queryCommands = ['--list', '--active', '--status', '--dashboard'];
-    return queryCommands.some(cmd => parsed.description.includes(cmd));
+    return queryCommands.some((cmd) => parsed.description.includes(cmd));
   }
 
   /**
@@ -157,7 +157,7 @@ class RequirementManager {
       return {
         success: true,
         action: 'list_requirements',
-        message: '已显示所有需求'
+        message: '已显示所有需求',
       };
     }
 
@@ -167,7 +167,7 @@ class RequirementManager {
       return {
         success: true,
         action: 'list_active',
-        message: '已显示活跃需求'
+        message: '已显示活跃需求',
       };
     }
 
@@ -176,7 +176,7 @@ class RequirementManager {
       return {
         success: true,
         action: 'show_dashboard',
-        message: '已显示需求仪表板'
+        message: '已显示需求仪表板',
       };
     }
 
@@ -188,14 +188,14 @@ class RequirementManager {
         action: 'show_status',
         requirementId: id,
         message: `显示需求 ${id} 的状态`,
-        implementation: 'TODO: 实现状态查询'
+        implementation: 'TODO: 实现状态查询',
       };
     }
 
     return {
       success: false,
       error: 'unknown_query_command',
-      message: '未知的查询命令'
+      message: '未知的查询命令',
     };
   }
 
@@ -216,7 +216,7 @@ class RequirementManager {
       path: result.path,
       type,
       mode,
-      description
+      description,
     };
   }
 
@@ -241,9 +241,9 @@ class RequirementManager {
           primarySkill: 'brainstorming',
           optionalSkills: [],
           totalSteps: 0,
-          totalCheckpoints: 0
+          totalCheckpoints: 0,
         },
-        error: err.message
+        error: err.message,
       };
     }
   }
@@ -276,9 +276,8 @@ class RequirementManager {
    */
   formatResult(requirement, executionPlan) {
     // 获取第一个步骤（通常是 brainstorming）
-    const firstStep = executionPlan.steps && executionPlan.steps.length > 0
-      ? executionPlan.steps[0]
-      : null;
+    const firstStep =
+      executionPlan.steps && executionPlan.steps.length > 0 ? executionPlan.steps[0] : null;
 
     return {
       success: true,
@@ -286,15 +285,15 @@ class RequirementManager {
         id: requirement.id,
         type: requirement.type,
         mode: requirement.mode,
-        description: requirement.description
+        description: requirement.description,
       },
       executionPlan: {
         mode: executionPlan.mode,
         modeDescription: executionPlan.modeDescription,
         totalSteps: executionPlan.metadata?.totalSteps || 0,
-        checkpoints: executionPlan.checkpoints?.length || 0
+        checkpoints: executionPlan.checkpoints?.length || 0,
       },
-      nextSteps: this.generateNextSteps(requirement, executionPlan, firstStep)
+      nextSteps: this.generateNextSteps(requirement, executionPlan, firstStep),
     };
   }
 
@@ -317,8 +316,8 @@ class RequirementManager {
         prompt: generateSkillPrompt(firstStep.skill, {
           id: requirement.id,
           type: requirement.type,
-          description: requirement.description
-        })
+          description: requirement.description,
+        }),
       });
     }
 
@@ -326,7 +325,7 @@ class RequirementManager {
     if (executionPlan.steps.length > 1) {
       steps.push({
         action: 'continue_workflow',
-        description: `完成后继续执行剩余 ${executionPlan.steps.length - 1} 个步骤`
+        description: `完成后继续执行剩余 ${executionPlan.steps.length - 1} 个步骤`,
       });
     }
 
@@ -343,11 +342,7 @@ class RequirementManager {
       success: false,
       error: err.code || 'processing_error',
       message: err.message,
-      suggestions: [
-        '检查输入格式是否正确',
-        '查看日志获取详细信息',
-        '确保有足够的文件系统权限'
-      ]
+      suggestions: ['检查输入格式是否正确', '查看日志获取详细信息', '确保有足够的文件系统权限'],
     };
   }
 
@@ -387,15 +382,20 @@ class RequirementManager {
         options.mode = 'manual';
       } else if (arg.startsWith('--status=')) {
         input = `--status ${arg.replace('--status=', '')}`;
-      } else if (arg === '--dashboard' || arg === '--list' || arg === '--active' || arg === '--status') {
+      } else if (
+        arg === '--dashboard' ||
+        arg === '--list' ||
+        arg === '--active' ||
+        arg === '--status'
+      ) {
         // 查询命令，添加到输入前面
-        input = (input ? `${input} ${arg}` : arg);
+        input = input ? `${input} ${arg}` : arg;
       } else if (!arg.startsWith('--')) {
         // 不是选项的参数作为描述
-        input = (input ? `${input} ${arg}` : arg);
+        input = input ? `${input} ${arg}` : arg;
       } else {
         // 其他选项添加到输入中
-        input = (input ? `${input} ${arg}` : arg);
+        input = input ? `${input} ${arg}` : arg;
       }
     }
 
@@ -408,7 +408,10 @@ class RequirementManager {
     const result = await manager.handle(input, options);
 
     // 对于查询命令，不需要格式化输出（Dashboard 已经输出）
-    if (result.action && ['show_dashboard', 'list_requirements', 'list_active'].includes(result.action)) {
+    if (
+      result.action &&
+      ['show_dashboard', 'list_requirements', 'list_active'].includes(result.action)
+    ) {
       return;
     }
 
@@ -428,7 +431,7 @@ function formatOutput(result) {
     console.log(chalk.red(`✗ 错误: ${result.message}`));
     if (result.suggestions) {
       console.log(chalk.yellow('\n建议:'));
-      result.suggestions.forEach(s => console.log(`  • ${s}`));
+      result.suggestions.forEach((s) => console.log(`  • ${s}`));
     }
     return;
   }
@@ -479,8 +482,11 @@ export default RequirementManager;
 export { formatOutput };
 
 // CLI 入口（如果直接运行此文件）
-if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
-  RequirementManager.cli(process.argv.slice(2)).catch(err => {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`
+) {
+  RequirementManager.cli(process.argv.slice(2)).catch((err) => {
     console.error('CLI 错误:', err);
     process.exit(1);
   });

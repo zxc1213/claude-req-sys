@@ -38,13 +38,13 @@ export class Upgrader {
         await this._applyAction(action);
         appliedActions.push({
           action_id: action.id,
-          status: 'success'
+          status: 'success',
         });
       } catch (error) {
         appliedActions.push({
           action_id: action.id,
           status: 'failed',
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -53,7 +53,7 @@ export class Upgrader {
     const version = await this.createVersion(`OPT-${decision.id}`, {
       decision_id: decision.id,
       actions: decision.actions,
-      backup_name: backupName
+      backup_name: backupName,
     });
 
     // 5. 记录升级历史
@@ -62,14 +62,14 @@ export class Upgrader {
       decision_id: decision.id,
       timestamp: version.timestamp,
       applied_actions: appliedActions,
-      backup: backupName
+      backup: backupName,
     });
 
     return {
-      success: appliedActions.filter(a => a.status === 'success').length > 0,
+      success: appliedActions.filter((a) => a.status === 'success').length > 0,
       version: version.version_number,
       applied_actions: appliedActions,
-      backup: backupName
+      backup: backupName,
     };
   }
 
@@ -91,13 +91,13 @@ export class Upgrader {
       type: 'rollback',
       rollback_to: version,
       timestamp: new Date().toISOString(),
-      original_version: versionData.version_number
+      original_version: versionData.version_number,
     });
 
     return {
       success: true,
       rollback_to: version,
-      restored_from_backup: versionData.backup_name
+      restored_from_backup: versionData.backup_name,
     };
   }
 
@@ -115,7 +115,7 @@ export class Upgrader {
   async getVersions() {
     try {
       const files = await fs.readdir(this.versionsDir);
-      const versionFiles = files.filter(f => f.endsWith('.yaml') && !f.startsWith('backup_'));
+      const versionFiles = files.filter((f) => f.endsWith('.yaml') && !f.startsWith('backup_'));
 
       const versions = [];
       for (const file of versionFiles) {
@@ -125,7 +125,7 @@ export class Upgrader {
           version_number: file.replace('.yaml', ''),
           name: versionData.name,
           timestamp: versionData.timestamp,
-          decision_id: versionData.decision_id
+          decision_id: versionData.decision_id,
         });
       }
 
@@ -167,7 +167,7 @@ export class Upgrader {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -189,8 +189,8 @@ export class Upgrader {
       backup_name: metadata.backup_name,
       metadata: {
         created_by: 'system',
-        environment: process.env.NODE_ENV || 'development'
-      }
+        environment: process.env.NODE_ENV || 'development',
+      },
     };
 
     // 保存版本文件
@@ -317,16 +317,20 @@ export class Upgrader {
       console.log(chalk.green(`✓ 升级成功`));
       console.log(chalk.gray(`版本: ${result.version}`));
       console.log(chalk.gray(`备份: ${result.backup}`));
-      console.log(chalk.gray(`应用动作: ${result.applied_actions.filter(a => a.status === 'success').length}/${result.applied_actions.length}\n`));
+      console.log(
+        chalk.gray(
+          `应用动作: ${result.applied_actions.filter((a) => a.status === 'success').length}/${result.applied_actions.length}\n`
+        )
+      );
     } else {
       console.log(chalk.red(`✗ 升级失败\n`));
     }
 
-    if (result.applied_actions.some(a => a.status === 'failed')) {
+    if (result.applied_actions.some((a) => a.status === 'failed')) {
       console.log(chalk.yellow('失败的动作:'));
       result.applied_actions
-        .filter(a => a.status === 'failed')
-        .forEach(a => console.log(chalk.red(`  - ${a.action_id}: ${a.error}`)));
+        .filter((a) => a.status === 'failed')
+        .forEach((a) => console.log(chalk.red(`  - ${a.action_id}: ${a.error}`)));
     }
   }
 }
