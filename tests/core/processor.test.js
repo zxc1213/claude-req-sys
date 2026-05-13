@@ -5,7 +5,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Processor } from '../../src/scripts/requirement-manager/core/processor.js';
 import { reset as resetIdGenerator } from '../../src/scripts/requirement-manager/utils/id-generator.js';
-import { init, cleanup, readMeta, exists } from '../../src/scripts/requirement-manager/utils/storage.js';
+import {
+  init,
+  cleanup,
+  readMeta,
+  exists,
+} from '../../src/scripts/requirement-manager/utils/storage.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -21,7 +26,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'something is broken'
+      description: 'something is broken',
     });
   });
 
@@ -30,7 +35,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'login error'
+      description: 'login error',
     });
   });
 
@@ -39,7 +44,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'question',
       mode: 'semi_auto',
-      description: 'how to use router?'
+      description: 'how to use router?',
     });
   });
 
@@ -48,7 +53,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'question',
       mode: 'semi_auto',
-      description: 'what is this?'
+      description: 'what is this?',
     });
   });
 
@@ -57,7 +62,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'adjustment',
       mode: 'semi_auto',
-      description: 'fix the layout'
+      description: 'fix the layout',
     });
   });
 
@@ -66,7 +71,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'adjustment',
       mode: 'semi_auto',
-      description: 'change color'
+      description: 'change color',
     });
   });
 
@@ -75,7 +80,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'adjustment',
       mode: 'semi_auto',
-      description: 'update text'
+      description: 'update text',
     });
   });
 
@@ -84,7 +89,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'refactor',
       mode: 'semi_auto',
-      description: 'cleanup code'
+      description: 'cleanup code',
     });
   });
 
@@ -93,7 +98,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'refactor',
       mode: 'semi_auto',
-      description: 'optimize'
+      description: 'optimize',
     });
   });
 
@@ -102,7 +107,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'refactor',
       mode: 'semi_auto',
-      description: 'simplify'
+      description: 'simplify',
     });
   });
 
@@ -111,7 +116,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'feature',
       mode: 'full_auto',
-      description: 'create new feature'
+      description: 'create new feature',
     });
   });
 
@@ -120,7 +125,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'add button'
+      description: 'add button',
     });
   });
 
@@ -129,7 +134,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'add component'
+      description: 'add component',
     });
   });
 
@@ -138,7 +143,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'build something new'
+      description: 'build something new',
     });
   });
 
@@ -147,7 +152,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'bug',
       mode: 'semi_auto',
-      description: ''
+      description: '',
     });
   });
 
@@ -156,7 +161,7 @@ describe('Processor - parseType', () => {
     expect(result).toEqual({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'broken'
+      description: 'broken',
     });
   });
 });
@@ -178,7 +183,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'bug',
       mode: 'semi_auto',
-      description: 'login page crashes'
+      description: 'login page crashes',
     };
 
     const result = await processor.create(parsed);
@@ -203,7 +208,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'feature',
       mode: 'semi_auto',
-      description: 'add user profile page'
+      description: 'add user profile page',
     };
 
     const result = await processor.create(parsed);
@@ -220,19 +225,19 @@ describe('Processor - create', () => {
     const bug1 = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'bug 1'
+      description: 'bug 1',
     });
 
     const bug2 = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'bug 2'
+      description: 'bug 2',
     });
 
     const feature1 = await processor.create({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'feature 1'
+      description: 'feature 1',
     });
 
     expect(bug1.id).toBe('BUG-0001');
@@ -244,7 +249,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'bug',
       mode: 'semi_auto',
-      description: 'critical error'
+      description: 'critical error',
     };
 
     const result = await processor.create(parsed);
@@ -258,13 +263,13 @@ describe('Processor - create', () => {
     const bug = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'bug'
+      description: 'bug',
     });
 
     const feature = await processor.create({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'feature'
+      description: 'feature',
     });
 
     expect(bug.path).toContain(path.join('requirements', 'bugs'));
@@ -275,7 +280,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'question',
       mode: 'semi_auto',
-      description: 'how does this work?'
+      description: 'how does this work?',
     };
 
     const result = await processor.create(parsed);
@@ -291,7 +296,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'adjustment',
       mode: 'semi_auto',
-      description: 'tweak the layout'
+      description: 'tweak the layout',
     };
 
     const result = await processor.create(parsed);
@@ -306,7 +311,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'refactor',
       mode: 'semi_auto',
-      description: 'clean up code'
+      description: 'clean up code',
     };
 
     const result = await processor.create(parsed);
@@ -321,7 +326,7 @@ describe('Processor - create', () => {
     const parsed = {
       type: 'feature',
       mode: 'full_auto',
-      description: 'automated feature'
+      description: 'automated feature',
     };
 
     const result = await processor.create(parsed);
@@ -348,7 +353,7 @@ describe('Processor - update', () => {
     const created = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'test bug'
+      description: 'test bug',
     });
 
     await processor.update(created.id, { status: 'in_progress' });
@@ -361,13 +366,13 @@ describe('Processor - update', () => {
     const created = await processor.create({
       type: 'feature',
       mode: 'semi_auto',
-      description: 'test feature'
+      description: 'test feature',
     });
 
     await processor.update(created.id, {
       status: 'completed',
       priority: 'high',
-      title: 'Updated Title'
+      title: 'Updated Title',
     });
 
     const meta = await readMeta(testBaseDir, created.path);
@@ -380,11 +385,11 @@ describe('Processor - update', () => {
     const created = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'test bug'
+      description: 'test bug',
     });
 
     await processor.update(created.id, {
-      tags: ['urgent', 'frontend']
+      tags: ['urgent', 'frontend'],
     });
 
     const meta = await readMeta(testBaseDir, created.path);
@@ -392,9 +397,7 @@ describe('Processor - update', () => {
   });
 
   it('should throw error for non-existent requirement', async () => {
-    await expect(
-      processor.update('NONEXISTENT-0001', { status: 'completed' })
-    ).rejects.toThrow();
+    await expect(processor.update('NONEXISTENT-0001', { status: 'completed' })).rejects.toThrow();
   });
 });
 
@@ -415,7 +418,7 @@ describe('Processor - get', () => {
     const created = await processor.create({
       type: 'bug',
       mode: 'semi_auto',
-      description: 'test bug'
+      description: 'test bug',
     });
 
     const result = await processor.get(created.id);
@@ -428,21 +431,19 @@ describe('Processor - get', () => {
   });
 
   it('should throw error for non-existent requirement', async () => {
-    await expect(
-      processor.get('NONEXISTENT-0001')
-    ).rejects.toThrow();
+    await expect(processor.get('NONEXISTENT-0001')).rejects.toThrow();
   });
 
   it('should return complete requirement with all metadata', async () => {
     const created = await processor.create({
       type: 'feature',
       mode: 'full_auto',
-      description: 'test feature'
+      description: 'test feature',
     });
 
     await processor.update(created.id, {
       title: 'Feature Title',
-      tags: ['api', 'backend']
+      tags: ['api', 'backend'],
     });
 
     const result = await processor.get(created.id);

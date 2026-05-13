@@ -28,7 +28,7 @@ export class Evaluator {
       skill_evaluation: await this.evaluateSkills(metrics),
       cost_efficiency: await this.analyzeCosts(metrics),
       trend_analysis: await this.analyzeTrends(metrics),
-      suggestions: []
+      suggestions: [],
     };
   }
 
@@ -49,38 +49,39 @@ export class Evaluator {
     if (!metrics) metrics = await this._loadMetrics();
 
     let score = 0;
-    let factors = 0;
+    // let factors = 0; // unused
 
     // 完成率 (0-30 分)
     if (metrics.system_metrics?.completion_rate !== undefined) {
       score += metrics.system_metrics.completion_rate * 30;
-      factors++;
+      // factors++; // unused
     }
 
     // 用户满意度 (0-20 分)
     if (metrics.system_metrics?.user_satisfaction !== undefined) {
       score += (metrics.system_metrics.user_satisfaction / 5) * 20;
-      factors++;
+      // factors++; // unused
     }
 
     // 自动化率 (0-15 分)
     if (metrics.system_metrics?.automation_rate !== undefined) {
       score += metrics.system_metrics.automation_rate * 15;
-      factors++;
+      // factors++; // unused
     }
 
     // Skill 满意度 (0-20 分)
     if (metrics.skill_performance) {
-      const avgSatisfaction = Object.values(metrics.skill_performance)
-        .reduce((sum, s) => sum + s.satisfaction, 0) / Object.keys(metrics.skill_performance).length;
+      const avgSatisfaction =
+        Object.values(metrics.skill_performance).reduce((sum, s) => sum + s.satisfaction, 0) /
+        Object.keys(metrics.skill_performance).length;
       score += (avgSatisfaction / 5) * 20;
-      factors++;
+      // factors++; // unused
     }
 
     // 缓存效率 (0-15 分)
     if (metrics.cost_metrics?.cache_hit_rate !== undefined) {
       score += metrics.cost_metrics.cache_hit_rate * 15;
-      factors++;
+      // factors++; // unused
     }
 
     return score;
@@ -103,7 +104,7 @@ export class Evaluator {
           lowCompletion.push({
             type,
             rate,
-            count: `${data.completed}/${data.total}`
+            count: `${data.completed}/${data.total}`,
           });
         }
       }
@@ -111,7 +112,7 @@ export class Evaluator {
         bottlenecks.push({
           type: 'low_completion',
           severity: 'medium',
-          types: lowCompletion
+          types: lowCompletion,
         });
       }
     }
@@ -124,7 +125,7 @@ export class Evaluator {
           lowSatisfaction.push({
             skill,
             satisfaction: data.satisfaction,
-            uses: data.uses
+            uses: data.uses,
           });
         }
       }
@@ -132,7 +133,7 @@ export class Evaluator {
         bottlenecks.push({
           type: 'low_satisfaction',
           severity: 'high',
-          skills: lowSatisfaction
+          skills: lowSatisfaction,
         });
       }
     }
@@ -147,13 +148,13 @@ export class Evaluator {
           type: 'high_cost',
           severity: 'critical',
           usage_ratio: ratio,
-          over_budget: daily_tokens - daily_budget
+          over_budget: daily_tokens - daily_budget,
         });
       } else if (ratio > 0.9) {
         bottlenecks.push({
           type: 'high_cost',
           severity: 'warning',
-          usage_ratio: ratio
+          usage_ratio: ratio,
         });
       }
     }
@@ -163,7 +164,7 @@ export class Evaluator {
       bottlenecks.push({
         type: 'low_cache',
         severity: 'medium',
-        cache_hit_rate: metrics.cost_metrics.cache_hit_rate
+        cache_hit_rate: metrics.cost_metrics.cache_hit_rate,
       });
     }
 
@@ -185,7 +186,7 @@ export class Evaluator {
       uses: data.uses,
       satisfaction: data.satisfaction,
       time_saved: data.avg_time_saved,
-      score: this._calculateSkillScore(data)
+      score: this._calculateSkillScore(data),
     }));
 
     skills.sort((a, b) => b.score - a.score);
@@ -193,7 +194,7 @@ export class Evaluator {
     return {
       ranked_skills: skills,
       best_skill: skills[0]?.name || null,
-      worst_skill: skills[skills.length - 1]?.name || null
+      worst_skill: skills[skills.length - 1]?.name || null,
     };
   }
 
@@ -220,7 +221,7 @@ export class Evaluator {
       token_usage_ratio: usage_ratio,
       cache_efficiency,
       overhead,
-      over_budget: usage_ratio > 1.0
+      over_budget: usage_ratio > 1.0,
     };
   }
 
@@ -236,7 +237,8 @@ export class Evaluator {
 
     const history = metrics.history;
     const recent = history.slice(-5);
-    const avgCompletion = recent.reduce((sum, h) => sum + (h.completion_rate || 0), 0) / recent.length;
+    const avgCompletion =
+      recent.reduce((sum, h) => sum + (h.completion_rate || 0), 0) / recent.length;
     const current = history[history.length - 1].completion_rate || 0;
     const previous = history[history.length - 2].completion_rate || 0;
     const change_rate = ((current - previous) / previous) * 100;
@@ -245,17 +247,20 @@ export class Evaluator {
     if (change_rate > 5) direction = 'up';
     else if (change_rate < -5) direction = 'down';
 
-    let completion_trend = 'stable';
-    if (avgCompletion > 0.8) completion_trend = 'excellent';
-    else if (avgCompletion > 0.7) completion_trend = 'good';
-    else if (avgCompletion > 0.6) completion_trend = 'fair';
-    else completion_trend = 'poor';
+    const completion_trend =
+      avgCompletion > 0.8
+        ? 'excellent'
+        : avgCompletion > 0.7
+          ? 'good'
+          : avgCompletion > 0.6
+            ? 'fair'
+            : 'poor';
 
     return {
       completion_trend,
       direction,
       change_rate,
-      avg_completion: avgCompletion
+      avg_completion: avgCompletion,
     };
   }
 
@@ -277,12 +282,8 @@ export class Evaluator {
             category: 'completion',
             priority: 'medium',
             title: '提高低完成率类型的完成率',
-            description: `类型 ${bottleneck.types.map(t => t.type).join(', ')} 完成率较低`,
-            actions: [
-              '分析该类型需求的阻塞原因',
-              '考虑增加自动化支持',
-              '提供更多指导模板'
-            ]
+            description: `类型 ${bottleneck.types.map((t) => t.type).join(', ')} 完成率较低`,
+            actions: ['分析该类型需求的阻塞原因', '考虑增加自动化支持', '提供更多指导模板'],
           });
           break;
 
@@ -291,12 +292,8 @@ export class Evaluator {
             category: 'skill',
             priority: 'high',
             title: '改进低满意度 Skill',
-            description: `Skill ${bottleneck.skills.map(s => s.skill).join(', ')} 满意度低于 4.0`,
-            actions: [
-              '收集用户反馈',
-              '优化 Skill 提示词',
-              '调整 Skill 执行流程'
-            ]
+            description: `Skill ${bottleneck.skills.map((s) => s.skill).join(', ')} 满意度低于 4.0`,
+            actions: ['收集用户反馈', '优化 Skill 提示词', '调整 Skill 执行流程'],
           });
           break;
 
@@ -308,11 +305,7 @@ export class Evaluator {
             description: bottleneck.over_budget
               ? `超出预算 ${bottleneck.over_budget} tokens`
               : 'Token 使用接近预算上限',
-            actions: [
-              '增加缓存命中率',
-              '优化提示词长度',
-              '启用智能跳过机制'
-            ]
+            actions: ['增加缓存命中率', '优化提示词长度', '启用智能跳过机制'],
           });
           break;
 
@@ -322,11 +315,7 @@ export class Evaluator {
             priority: 'medium',
             title: '提高缓存命中率',
             description: `当前缓存命中率仅为 ${(bottleneck.cache_hit_rate * 100).toFixed(1)}%`,
-            actions: [
-              '增加可缓存内容',
-              '调整缓存策略',
-              '启用预测性缓存'
-            ]
+            actions: ['增加可缓存内容', '调整缓存策略', '启用预测性缓存'],
           });
           break;
       }
@@ -339,11 +328,7 @@ export class Evaluator {
         priority: 'high',
         title: '阻止完成率下降',
         description: `完成率下降了 ${Math.abs(evaluationReport.trend_analysis.change_rate).toFixed(1)}%`,
-        actions: [
-          '识别最近变更的问题',
-          '回退可能有问题的修改',
-          '加强质量检查'
-        ]
+        actions: ['识别最近变更的问题', '回退可能有问题的修改', '加强质量检查'],
       });
     }
 
@@ -357,48 +342,42 @@ export class Evaluator {
     if (!metrics) metrics = await this._loadMetrics();
 
     let score = 0;
-    let factors = 0;
+    // let factors = 0; // unused
 
     // 完成率 (0-30 分)
     if (metrics.system_metrics?.completion_rate !== undefined) {
       score += metrics.system_metrics.completion_rate * 30;
-      factors++;
+      // factors++; // unused
     }
 
     // 用户满意度 (0-20 分)
     if (metrics.system_metrics?.user_satisfaction !== undefined) {
       score += (metrics.system_metrics.user_satisfaction / 5) * 20;
-      factors++;
+      // factors++; // unused
     }
 
     // 自动化率 (0-15 分)
     if (metrics.system_metrics?.automation_rate !== undefined) {
       score += metrics.system_metrics.automation_rate * 15;
-      factors++;
+      // factors++; // unused
     }
 
     // Skill 满意度 (0-20 分)
     if (metrics.skill_performance) {
-      const avgSatisfaction = Object.values(metrics.skill_performance)
-        .reduce((sum, s) => sum + s.satisfaction, 0) / Object.keys(metrics.skill_performance).length;
+      const avgSatisfaction =
+        Object.values(metrics.skill_performance).reduce((sum, s) => sum + s.satisfaction, 0) /
+        Object.keys(metrics.skill_performance).length;
       score += (avgSatisfaction / 5) * 20;
-      factors++;
+      // factors++; // unused
     }
 
     // 缓存效率 (0-15 分)
     if (metrics.cost_metrics?.cache_hit_rate !== undefined) {
       score += metrics.cost_metrics.cache_hit_rate * 15;
-      factors++;
+      // factors++;
     }
 
     return Math.round(score);
-  }
-
-  /**
-   * 计算系统健康分数 (0-100)
-   */
-  async calculateHealthScore(metrics = null) {
-    return Math.round(await this._calculateHealthScoreInternal(metrics));
   }
 
   /**
@@ -448,7 +427,7 @@ export class Evaluator {
       excellent: chalk.green,
       good: chalk.blue,
       fair: chalk.yellow,
-      poor: chalk.red
+      poor: chalk.red,
     };
     const healthColor = healthColors[report.system_health] || chalk.gray;
     console.log(healthColor.bold(`系统健康: ${report.system_health.toUpperCase()}`));
@@ -463,7 +442,7 @@ export class Evaluator {
           critical: chalk.red.bold,
           high: chalk.red,
           medium: chalk.yellow,
-          warning: chalk.blue
+          warning: chalk.blue,
         };
         const color = severityColors[bottleneck.severity] || chalk.gray;
         console.log(color(`  [${bottleneck.severity.toUpperCase()}] ${bottleneck.type}`));

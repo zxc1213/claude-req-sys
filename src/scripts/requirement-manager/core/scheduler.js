@@ -47,7 +47,7 @@ ${context.researchScope ? `研究范围：${context.researchScope}` : ''}
 需求ID：${context.id || 'N/A'}
 ${context.targetPath ? `目标路径：${context.targetPath}` : ''}
 
-请分析代码结构、依赖关系和可能的改进点。`
+请分析代码结构、依赖关系和可能的改进点。`,
 };
 
 /**
@@ -57,18 +57,18 @@ const EXECUTION_MODES = {
   fully: {
     description: '全自动执行',
     requiresCheckpoints: false,
-    autoContinue: true
+    autoContinue: true,
   },
   semi: {
     description: '半自动执行',
     requiresCheckpoints: true,
-    autoContinue: false
+    autoContinue: false,
   },
   manual: {
     description: '手动执行',
     requiresCheckpoints: true,
-    autoContinue: false
-  }
+    autoContinue: false,
+  },
 };
 
 /**
@@ -137,9 +137,7 @@ class Scheduler {
     const steps = this.generateSteps(type, id, phases, skillChain, description);
 
     // 生成检查点（如果需要）
-    const checkpoints = modeConfig.requiresCheckpoints
-      ? this.generateCheckpoints(steps)
-      : [];
+    const checkpoints = modeConfig.requiresCheckpoints ? this.generateCheckpoints(steps) : [];
 
     return {
       requirementId: id,
@@ -153,8 +151,8 @@ class Scheduler {
         primarySkill: route.primarySkill,
         optionalSkills: route.optionalSkills || [],
         totalSteps: steps.length,
-        totalCheckpoints: checkpoints.length
-      }
+        totalCheckpoints: checkpoints.length,
+      },
     };
   }
 
@@ -189,7 +187,7 @@ class Scheduler {
         skill,
         action: this.getSkillAction(skill),
         required,
-        description: this.getStepDescription(skill, phase, description)
+        description: this.getStepDescription(skill, phase, description),
       });
     }
 
@@ -210,7 +208,7 @@ class Scheduler {
         checkpoints.push({
           afterStep: step.step,
           description: `完成 ${step.skill} (${step.phase} 阶段) 后确认`,
-          requiresConfirmation: true
+          requiresConfirmation: true,
         });
       }
     }
@@ -229,7 +227,7 @@ class Scheduler {
       'systematic-debugging': 'investigate',
       'writing-plans': 'plan',
       research: 'research',
-      'code-explorer': 'explore'
+      'code-explorer': 'explore',
     };
     return actionMap[skill] || 'execute';
   }
@@ -248,7 +246,7 @@ class Scheduler {
       investigate: '调查',
       plan: '规划',
       research: '研究',
-      explore: '探索'
+      explore: '探索',
     };
     const actionText = skillActionMap[action] || '执行';
 

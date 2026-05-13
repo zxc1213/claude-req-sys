@@ -70,6 +70,7 @@ claude-req-init
 ```
 
 **优点**：
+
 - 🌍 **一次安装，全局使用** - 所有项目自动可用
 - 🚀 **快速更新** - `claude-req-update` 一键更新
 - 📦 **项目更干净** - 项目只包含数据，不包含系统文件
@@ -87,6 +88,7 @@ claude-req-init
 ```
 
 **优点**：
+
 - 📦 **标准 npm 包管理** - 使用熟悉的 npm 生态
 - 🚀 **一键安装** - 无需手动克隆和配置
 - 🔄 **简单更新** - 重新安装即可更新：`npm install -g github:zxc1213/claude-req-sys`
@@ -109,6 +111,7 @@ claude-req-init
 ### 新增功能 ⭐
 
 **优先级管理**：
+
 ```bash
 /priority --list               # 查看所有需求的优先级排序
 /priority REQ-001              # 评估单个需求的优先级
@@ -116,12 +119,14 @@ claude-req-init
 ```
 
 **质量检查**：
+
 ```bash
 /quality-gate check design REQ-001  # 检查设计质量
 /quality-gate check-all REQ-001     # 检查所有门禁
 ```
 
 **文档迁移**：
+
 ```bash
 /req-unify REQ-001          # 迁移到新文档格式
 /req-unify --all            # 批量迁移所有需求
@@ -228,6 +233,7 @@ claude-req-sys/
 ## 版本
 
 v0.5.0 - 全局安装架构 ⭐ 推荐
+
 - ✅ **全局安装**：一次安装，所有项目共享
 - ✅ **项目分离**：工具在全局，数据在项目
 - ✅ **快速更新**：`git pull && bash scripts/link-skills.sh` 即可更新
@@ -235,6 +241,7 @@ v0.5.0 - 全局安装架构 ⭐ 推荐
 - ✅ **符号链接**：自动同步最新版本
 
 v0.4.0 - 技能管理优化
+
 - ✅ **符号链接安装**：参考 mattpocock/skills，使用符号链接管理技能
 - ✅ **分类组织**：技能按功能分类（core/quality/analysis/change/utils）
 - ✅ **快速更新**：`git pull && bash scripts/link-skills.sh` 即可更新
@@ -242,6 +249,7 @@ v0.4.0 - 技能管理优化
 - ✅ **跨平台支持**：提供 Unix (bash) 和 Windows (PowerShell) 脚本
 
 v0.3.0 - 系统优化升级
+
 - ✅ **req-manager**：统一入口，智能路由到最优流程
 - ✅ **req-priority**：科学评估优先级（5维度评分）
 - ✅ **req-quality**：4个质量门禁，自动检查质量标准
@@ -252,13 +260,158 @@ v0.3.0 - 系统优化升级
 - ✅ 用户学习成本降低50%
 
 v0.2.0 - 智能配置合并
+
 - ✅ 自动合并 settings.json，不覆盖现有配置
 - ✅ 深度合并 hooks、permissions 等配置
 - ✅ 保留所有现有用户设置
 - ✅ 修复命令文件格式（req.md + 无 name 字段）
 
 v0.1.0 - 初始版本
+
 - ✅ 多类型需求管理
 - ✅ 智能 Skill 集成
 - ✅ 可选自动化 Hooks
 - ✅ 非侵入式安装
+
+## 测试 ⭐ 新增
+
+项目包含完整的测试套件，确保代码质量和功能稳定性。
+
+### 运行测试
+
+```bash
+# 运行所有测试
+npm test
+
+# 运行测试并查看覆盖率
+npm run test:coverage
+
+# 监视模式（开发时使用）
+npm run test:watch
+
+# 显示详细输出
+npm run test:verbose
+```
+
+### 测试结构
+
+```
+tests/
+├── test-import.test.js     # 导入测试（1个测试）
+├── utils/                  # 工具函数测试
+│   ├── id-generator.test.js    # ID生成器测试（4个测试）
+│   ├── logger.test.js          # 日志工具测试（4个测试）
+│   └── storage.test.js         # 存储工具测试（4个测试）
+├── core/                   # 核心功能测试
+│   └── processor.test.js       # 需求处理器测试（32个测试）
+├── optimization/           # 优化模块测试
+│   ├── optimizer.test.js       # 优化器测试（12个测试）
+│   ├── evaluator.test.js       # 评估器测试（21个测试）
+│   └── upgrader.test.js        # 升级器测试（8个测试）
+└── integration/            # 集成测试
+    └── workflow.test.js        # 工作流测试（18个测试）
+```
+
+### 测试覆盖
+
+- ✅ **104个测试用例**全部通过
+- ✅ **9个测试文件**覆盖所有核心模块
+- ✅ **集成测试**确保端到端功能正常
+
+### 测试最佳实践
+
+1. **运行测试前提交代码**：确保测试环境干净
+2. **测试失败时**：检查修改是否影响现有功能
+3. **添加新功能**：同时添加对应测试用例
+4. **CI/CD**：GitHub Actions 自动运行所有测试
+
+## 开发指南
+
+### 环境要求
+
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+
+### 开发流程
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/zxc1213/claude-req-sys.git
+cd claude-req-sys
+
+# 2. 安装依赖
+npm install
+
+# 3. 运行测试
+npm test
+
+# 4. 代码检查
+npm run lint
+
+# 5. 格式化代码
+npm run format
+
+# 6. 提交代码（自动运行测试和lint）
+git commit -m "feat: 你的功能描述"
+```
+
+### 代码规范
+
+项目使用 **ESLint** 和 **Prettier** 确保代码质量：
+
+```bash
+# 检查代码规范
+npm run lint
+
+# 自动修复问题
+npm run lint:fix
+
+# 格式化代码
+npm run format
+
+# 检查格式
+npm run format:check
+```
+
+### Git Hooks
+
+项目配置了 **husky** 自动化Git钩子：
+
+- **pre-commit**: 自动运行lint和测试
+- **commit-msg**: 检查commit message格式
+
+## 贡献指南
+
+欢迎贡献！请遵循以下步骤：
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'feat: Add AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+### Commit Message 规范
+
+遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+
+- `feat:` 新功能
+- `fix:` Bug修复
+- `docs:` 文档更新
+- `style:` 代码格式（不影响功能）
+- `refactor:` 重构（既不是新功能也不是修复）
+- `perf:` 性能优化
+- `test:` 添加测试
+- `chore:` 构建过程或辅助工具的变动
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 联系方式
+
+- GitHub: [zxc1213/claude-req-sys](https://github.com/zxc1213/claude-req-sys)
+- Issues: [GitHub Issues](https://github.com/zxc1213/claude-req-sys/issues)
+
+---
+
+**享受使用 Claude Code 需求管理系统！** 🚀

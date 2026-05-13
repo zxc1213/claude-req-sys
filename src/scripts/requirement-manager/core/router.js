@@ -10,28 +10,28 @@ const ROUTES = {
   feature: {
     primarySkill: 'brainstorming',
     optionalSkills: ['writing-plans'],
-    phases: ['analysis', 'planning', 'implementation', 'testing']
+    phases: ['analysis', 'planning', 'implementation', 'testing'],
   },
   bug: {
     primarySkill: 'systematic-debugging',
     optionalSkills: ['writing-plans'],
-    phases: ['investigation', 'diagnosis', 'fix', 'verification']
+    phases: ['investigation', 'diagnosis', 'fix', 'verification'],
   },
   question: {
     primarySkill: 'research',
     optionalSkills: [],
-    phases: ['research', 'analysis', 'answer']
+    phases: ['research', 'analysis', 'answer'],
   },
   adjustment: {
     primarySkill: 'brainstorming',
     optionalSkills: ['writing-plans'],
-    phases: ['review', 'analysis', 'planning', 'implementation']
+    phases: ['review', 'analysis', 'planning', 'implementation'],
   },
   refactor: {
     primarySkill: 'code-explorer',
     optionalSkills: ['writing-plans'],
-    phases: ['exploration', 'planning', 'refactoring', 'testing']
-  }
+    phases: ['exploration', 'planning', 'refactoring', 'testing'],
+  },
 };
 
 /**

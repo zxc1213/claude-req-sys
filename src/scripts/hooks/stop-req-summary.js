@@ -23,7 +23,7 @@ const chalk = require('chalk');
 async function readStdin() {
   return new Promise((resolve) => {
     let data = '';
-    process.stdin.on('data', chunk => data += chunk);
+    process.stdin.on('data', (chunk) => (data += chunk));
     process.stdin.on('end', () => resolve(data));
   });
 }
@@ -55,7 +55,7 @@ async function main() {
 
       // 读取执行日志
       const logs = await fs.readFile(execLogPath, 'utf8');
-      const lines = logs.split('\n').filter(l => l.trim()).length;
+      const lines = logs.split('\n').filter((l) => l.trim()).length;
 
       // 输出总结（只有当有记录时）
       if (lines > 0) {

@@ -65,9 +65,9 @@ export class Optimizer {
       actions: prioritizedActions,
       metadata: {
         total_actions: prioritizedActions.length,
-        critical_actions: prioritizedActions.filter(a => a.priority === 'critical').length,
-        high_actions: prioritizedActions.filter(a => a.priority === 'high').length
-      }
+        critical_actions: prioritizedActions.filter((a) => a.priority === 'critical').length,
+        high_actions: prioritizedActions.filter((a) => a.priority === 'high').length,
+      },
     };
   }
 
@@ -85,11 +85,11 @@ export class Optimizer {
           category: 'completion',
           priority: 'medium',
           title: '提高低完成率类型的流程',
-          description: `类型 ${bottleneck.types.map(t => t.type).join(', ')} 完成率较低`,
+          description: `类型 ${bottleneck.types.map((t) => t.type).join(', ')} 完成率较低`,
           changes: {
             suggested_skills: ['writing-plans', 'test-driven-development'],
-            automation_increase: true
-          }
+            automation_increase: true,
+          },
         });
         break;
 
@@ -100,11 +100,11 @@ export class Optimizer {
           category: 'skill',
           priority: 'high',
           title: '优化低满意度 Skill',
-          description: `Skill ${bottleneck.skills.map(s => s.skill).join(', ')} 需要优化`,
+          description: `Skill ${bottleneck.skills.map((s) => s.skill).join(', ')} 需要优化`,
           changes: {
-            skills_to_review: bottleneck.skills.map(s => s.skill),
-            action: 'review_and_improve_prompts'
-          }
+            skills_to_review: bottleneck.skills.map((s) => s.skill),
+            action: 'review_and_improve_prompts',
+          },
         });
         break;
 
@@ -121,8 +121,8 @@ export class Optimizer {
           changes: {
             enable_smart_skipping: true,
             increase_cache_ttl: 7200,
-            reduce_prompt_complexity: true
-          }
+            reduce_prompt_complexity: true,
+          },
         });
         break;
 
@@ -137,8 +137,8 @@ export class Optimizer {
           changes: {
             cache_strategy: 'aggressive',
             prefetch_enabled: true,
-            cache_ttl_multiplier: 2
-          }
+            cache_ttl_multiplier: 2,
+          },
         });
         break;
     }
@@ -163,8 +163,8 @@ export class Optimizer {
         changes: {
           increase_cache_size: true,
           enable_compression: true,
-          cache_ttl: 3600
-        }
+          cache_ttl: 3600,
+        },
       });
     }
 
@@ -179,8 +179,8 @@ export class Optimizer {
         changes: {
           enable_emergency_mode: true,
           disable_non_critical_features: true,
-          reduce_ai_calls: true
-        }
+          reduce_ai_calls: true,
+        },
       });
     }
 
@@ -203,8 +203,8 @@ export class Optimizer {
         description: `Review ${skillEvaluation.worst_skill} skill`,
         changes: {
           skill_name: skillEvaluation.worst_skill,
-          action: 'analyze_and_optimize'
-        }
+          action: 'analyze_and_optimize',
+        },
       });
     }
 
@@ -224,8 +224,8 @@ export class Optimizer {
       description: `系统运行良好 (${evaluationReport.system_health})`,
       changes: {
         action: 'continue_monitoring',
-        next_review: 'weekly'
-      }
+        next_review: 'weekly',
+      },
     };
   }
 
@@ -256,14 +256,14 @@ export class Optimizer {
         appliedActions.push({
           action_id: action.id,
           status: 'success',
-          timestamp
+          timestamp,
         });
       } catch (error) {
         appliedActions.push({
           action_id: action.id,
           status: 'failed',
           error: error.message,
-          timestamp
+          timestamp,
         });
       }
     }
@@ -275,13 +275,13 @@ export class Optimizer {
       timestamp,
       applied_actions: appliedActions,
       total_actions: decision.actions.length,
-      success_count: appliedActions.filter(a => a.status === 'success').length
+      success_count: appliedActions.filter((a) => a.status === 'success').length,
     });
 
     return {
-      success: appliedActions.filter(a => a.status === 'success').length > 0,
+      success: appliedActions.filter((a) => a.status === 'success').length > 0,
       applied_actions: appliedActions,
-      timestamp
+      timestamp,
     };
   }
 
@@ -332,7 +332,7 @@ export class Optimizer {
    */
   async rollback(decisionId) {
     const history = await this.getHistory();
-    const applyRecord = history.find(h => h.decision_id === decisionId && h.type === 'apply');
+    const applyRecord = history.find((h) => h.decision_id === decisionId && h.type === 'apply');
 
     if (!applyRecord) {
       throw new Error(`Decision ${decisionId} not found in history`);
@@ -346,13 +346,13 @@ export class Optimizer {
           await this._rollbackAction(appliedAction.action_id);
           rolledBackActions.push({
             action_id: appliedAction.action_id,
-            status: 'success'
+            status: 'success',
           });
         } catch (error) {
           rolledBackActions.push({
             action_id: appliedAction.action_id,
             status: 'failed',
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -364,12 +364,12 @@ export class Optimizer {
       decision_id: decisionId,
       timestamp: new Date().toISOString(),
       rolled_back_actions: rolledBackActions,
-      original_apply: applyRecord
+      original_apply: applyRecord,
     });
 
     return {
-      success: rolledBackActions.filter(a => a.status === 'success').length > 0,
-      rolled_back_actions: rolledBackActions
+      success: rolledBackActions.filter((a) => a.status === 'success').length > 0,
+      rolled_back_actions: rolledBackActions,
     };
   }
 
@@ -401,16 +401,18 @@ export class Optimizer {
     const history = await this.getHistory();
     const oneHourAgo = Date.now() - 60 * 60 * 1000;
     const recentApplies = history.filter(
-      h => h.type === 'apply' && new Date(h.timestamp).getTime() > oneHourAgo
+      (h) => h.type === 'apply' && new Date(h.timestamp).getTime() > oneHourAgo
     );
 
     if (recentApplies.length >= this.maxActionsPerHour) {
-      errors.push(`Decision frequency limit exceeded: ${recentApplies.length}/${this.maxActionsPerHour} per hour`);
+      errors.push(
+        `Decision frequency limit exceeded: ${recentApplies.length}/${this.maxActionsPerHour} per hour`
+      );
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -440,7 +442,9 @@ export class Optimizer {
     // 确保唯一性：查找当天已有的决策数量
     const history = await this.getHistory();
     const todayPrefix = `OPT-${dateStr}`;
-    const todayCount = history.filter(h => h.decision_id && h.decision_id.startsWith(todayPrefix)).length;
+    const todayCount = history.filter(
+      (h) => h.decision_id && h.decision_id.startsWith(todayPrefix)
+    ).length;
     const counter = todayCount + 1;
 
     return `${todayPrefix}-${String(counter).padStart(3, '0')}`;
@@ -486,7 +490,7 @@ export class Optimizer {
    */
   async _decisionExists(decisionId) {
     const history = await this.getHistory();
-    return history.some(h => h.decision_id === decisionId);
+    return history.some((h) => h.decision_id === decisionId);
   }
 
   /**
@@ -503,7 +507,7 @@ export class Optimizer {
         critical: chalk.red.bold,
         high: chalk.red,
         medium: chalk.yellow,
-        low: chalk.blue
+        low: chalk.blue,
       };
       const color = priorityColors[action.priority] || chalk.gray;
 
@@ -512,7 +516,9 @@ export class Optimizer {
         console.log(chalk.gray(`  ${action.description}`));
       }
       if (action.changes) {
-        console.log(chalk.gray(`  变更: ${JSON.stringify(action.changes, null, 2).split('\n').join('\n  ')}`));
+        console.log(
+          chalk.gray(`  变更: ${JSON.stringify(action.changes, null, 2).split('\n').join('\n  ')}`)
+        );
       }
       console.log();
     }

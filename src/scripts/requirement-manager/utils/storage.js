@@ -21,7 +21,7 @@ export async function init(baseDir) {
     path.join(baseDir, 'requirements', 'refactors'),
     path.join(baseDir, 'requirements', 'tech-debt'),
     path.join(baseDir, 'templates'),
-    path.join(baseDir, 'logs')
+    path.join(baseDir, 'logs'),
   ];
 
   for (const dir of dirs) {
@@ -72,7 +72,7 @@ export async function createRequirementDir(baseDir, type, id) {
     status: 'open',
     priority: 'medium',
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 
   await writeMeta(baseDir, reqPath, meta);
@@ -111,7 +111,7 @@ export async function writeMeta(baseDir, reqPath, meta) {
   const content = yaml.dump(meta, {
     indent: 2,
     lineWidth: -1,
-    noRefs: true
+    noRefs: true,
   });
   await fs.writeFile(metaPath, content, 'utf-8');
 }
@@ -137,5 +137,5 @@ export default {
   createRequirementDir,
   readMeta,
   writeMeta,
-  cleanup
+  cleanup,
 };

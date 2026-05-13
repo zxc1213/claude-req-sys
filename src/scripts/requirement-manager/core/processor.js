@@ -15,7 +15,7 @@ const TYPE_PREFIXES = {
   bug: 'BUG',
   question: 'QUES',
   adjustment: 'ADJU',
-  refactor: 'REF'
+  refactor: 'REF',
 };
 
 /**
@@ -26,7 +26,7 @@ const TYPE_DIRS = {
   bug: 'bugs',
   question: 'questions',
   adjustment: 'adjustments',
-  refactor: 'refactors'
+  refactor: 'refactors',
 };
 
 /**
@@ -45,7 +45,7 @@ const FLAG_MAPPING = {
   '--ref': 'refactor',
   '--auto': 'auto',
   '--feature': 'feature',
-  '-f': 'feature'
+  '-f': 'feature',
 };
 
 /**
@@ -74,7 +74,7 @@ export class Processor {
     // 初始化默认值
     let type = 'feature';
     let mode = 'semi_auto';
-    let description = '';
+    // let description = '';
 
     // 检查是否是 --auto 模式
     if (cleanedInput.startsWith('--auto')) {
@@ -101,7 +101,7 @@ export class Processor {
     return {
       type,
       mode,
-      description
+      description,
     };
   }
 
@@ -126,7 +126,7 @@ export class Processor {
     try {
       await fs.mkdir(reqPath, { recursive: true });
     } catch (error) {
-      throw new Error(`Failed to create requirement directory: ${error.message}`);
+      throw new Error(`Failed to create requirement directory: ${error.message}`, { cause: error });
     }
 
     // 创建元数据
@@ -140,7 +140,7 @@ export class Processor {
       status: 'open',
       priority: 'medium',
       mode,
-      tags: []
+      tags: [],
     };
 
     await writeMeta(this.baseDir, reqPath, meta);
@@ -155,7 +155,7 @@ export class Processor {
 
     return {
       id,
-      path: reqPath
+      path: reqPath,
     };
   }
 
@@ -183,7 +183,7 @@ export class Processor {
     const updatedMeta = {
       ...meta,
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // 写回元数据
@@ -225,9 +225,7 @@ export class Processor {
     // 否则，搜索文件系统
     // 从 ID 解析类型
     const prefix = id.split('-')[0];
-    const type = Object.entries(TYPE_PREFIXES).find(
-      ([, p]) => p === prefix
-    )?.[0];
+    const type = Object.entries(TYPE_PREFIXES).find(([, p]) => p === prefix)?.[0];
 
     if (!type) {
       return null;
