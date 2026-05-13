@@ -34,3 +34,7 @@ coverage/
 # 临时文件
 .tmp/
 temp/
+
+# ClaudeReqSys 自动生成的文件
+.claude/skills/
+.requireances/_system/metrics/data.yaml
