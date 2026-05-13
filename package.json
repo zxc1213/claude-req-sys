@@ -1,27 +1,44 @@
 {
-  "name": "claude-requirement-system",
-  "version": "0.1.0",
-  "description": "智能需求管理与自动化执行系统",
+  "name": "claude-req-sys",
+  "version": "0.5.0",
+  "description": "ClaudeReqSys - 智能需求管理与自动化执行系统，为 Claude Code 提供从需求到测试的全流程管理能力",
   "type": "module",
-  "main": ".claude/scripts/requirement-manager/index.js",
+  "main": "index.js",
   "scripts": {
-    "install": "node install.js",
+    "install": "node scripts/npm-install.js",
+    "postinstall": "bash scripts/link-skills.sh",
     "test": "node tests/run-all.js",
     "lint": "eslint .claude/scripts/",
     "format": "prettier --write .claude/scripts/"
   },
   "bin": {
-    "claude-req-install": "./install.js"
+    "claude-req-init": "./bin/claude-req-init.js",
+    "claude-req-update": "./bin/claude-req-update.js"
   },
-  "keywords": ["claude-code", "requirement-management", "automation"],
+  "keywords": [
+    "claude-code",
+    "requirement-management",
+    "automation",
+    "skills",
+    "cli"
+  ],
   "author": "19944",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zxc1213/claude-req-sys.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zxc1213/claude-req-sys/issues"
+  },
+  "homepage": "https://github.com/zxc1213/claude-req-sys#readme",
   "dependencies": {
     "fuse.js": "^7.0.0",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.3",
     "ora": "^8.0.1",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "commander": "^12.0.0"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
@@ -29,5 +46,14 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "files": [
+    "skills/",
+    ".claude/commands/",
+    ".claude/scripts/",
+    "bin/",
+    "scripts/",
+    "docs/",
+    "package.json"
+  ]
 }
