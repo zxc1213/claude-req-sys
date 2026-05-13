@@ -18,7 +18,12 @@
   },
   "bin": {
     "claude-req-init": "./bin/claude-req-init.js",
-    "claude-req-update": "./bin/claude-req-update.js"
+    "claude-req-update": "./bin/claude-req-update.js",
+    "kg-search": "./bin/kg-cli.js",
+    "kg-stats": "./bin/kg-cli.js",
+    "kg-connections": "./bin/kg-cli.js",
+    "kg-recommend": "./bin/kg-cli.js",
+    "kg-rebuild": "./bin/kg-cli.js"
   },
   "keywords": [
     "claude-code",
