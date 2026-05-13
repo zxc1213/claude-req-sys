@@ -1,36 +1,57 @@
 # ClaudeReqSys 安装指南
 
-**版本**: v0.3.0  
+**版本**: v0.5.0
 **更新日期**: 2026-05-13
 
 ---
 
 ## 📋 目录
 
-- [安装到自己的电脑](#安装到自己的电脑)
-- [分发到其他人的电脑](#分发到其他人的电脑)
+- [全局安装（推荐）](#全局安装推荐)
+- [项目本地安装](#项目本地安装)
 - [文件结构说明](#文件结构说明)
-- [新功能概览](#新功能概览)
+- [更新系统](#更新系统)
 - [常见问题](#常见问题)
 
 ---
 
-## 安装到自己的电脑
+## 全局安装（推荐）⭐ v0.5.0
 
-### 当前项目（E:\AI_Project\ClaudeReqSys）
+### 为什么选择全局安装？
 
-项目已存在，直接使用：
+- 🌍 **一次安装，全局使用** - 所有项目自动可用
+- 🚀 **快速更新** - 只需更新全局安装
+- 📦 **项目更干净** - 项目只包含数据，不包含系统文件
+- 🔄 **自动同步** - 符号链接自动同步最新版本
+
+### 安装步骤
 
 ```bash
-cd E:\AI_Project\ClaudeReqSys
-npm install
+# 1. 克隆仓库
+git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
+cd claude-req-sys
+
+# 2. 全局安装到 ~/.claude/
+bash scripts/install-global.sh
+
+# 3. 初始化你的项目
+cd /path/to/your/project
+~/.claude/scripts/init-project.sh
 ```
 
-然后就可以用 `/req` 命令了。
+### 使用新项目
 
-### 安装到新项目
+```bash
+# 在任何项目中直接使用
+cd /path/to/new/project
+/req 添加新功能
+```
 
-**方式一：自动安装脚本（推荐）**
+---
+
+## 项目本地安装
+
+### 传统安装方式
 
 ```bash
 # 进入目标项目目录
@@ -142,47 +163,54 @@ node install.js
 
 ## 文件结构说明
 
-### 核心文件（v0.3.0）
+### 全局安装目录 (~/.claude/)
 
 ```
-.claude/
-├── commands/              # 自定义命令
-│   ├── req.md            # 需求管理命令
-│   └── req-metrics.md        # 度量命令 ⭐ 新增
-├── skills/               # Skills 集合 ⭐ 新增
-│   ├── req-manager.md           # 统一入口
-│   ├── req-brainstorm.md      # 深度分析
-│   ├── req-change.md     # 变更处理
-│   ├── req-test-plan.md   # 测试计划
-│   ├── req-priority.md    # 优先级评估 ⭐
-│   ├── req-quality.md         # 质量门禁 ⭐
-│   ├── req-unify.md           # 文档统一 ⭐
-│   ├── req-migrate.md          # 文档迁移 ⭐
-│   ├── req-verify.md # 验证检查 ⭐
-│   └── req-metrics.md                # 度量体系 ⭐
-├── scripts/              # 脚本工具
-│   └── req-metrics/
-│       └── collect.js   # 数据收集脚本 ⭐ 新增
-└── hooks.json            # Hooks 配置模板（自动合并）
+~/.claude/
+├── commands/                   # 全局命令
+│   ├── req.md                  # 需求管理命令
+│   └── metrics.md              # 度量命令
+├── scripts/                    # 全局脚本
+│   └── init-project.sh         # 项目初始化脚本
+└── skills/                     # 符号链接（指向仓库）
+    ├── req-manager.md          # → 仓库/skills/core/
+    ├── req-brainstorm.md
+    ├── req-setup.md
+    └── ...                     # 其他 req- 技能
 ```
 
-### 工作目录
+### 项目本地目录
 
 ```
-.requirements/
-├── features/       # 新功能
-├── bugs/          # Bug 修复
-├── questions/     # 技术问题
-├── adjustments/   # 需求调整
-├── refactorings/  # 重构任务
-├── req-metrics/       # 度量数据 ⭐ 新增
-│   ├── config.json      # 配置文件
-│   ├── data.yaml        # 度量数据
-│   ├── reports/         # 报告目录
-│   ├── exports/         # 导出文件
-│   └── trends/          # 趋势图表
-└── _system/       # 系统核心
-    └── versions/   # 版本历史
+your-project/
+├── .requirements/              # 需求数据（项目本地）
+│   ├── features/               # 新功能
+│   ├── bugs/                   # Bug 修复
+│   ├── questions/              # 技术问题
+│   ├── adjustments/            # 需求调整
+│   └── refactorings/           # 重构任务
+└── docs/                       # 项目文档（可选）
+    ├── specs/                  # 需求规格
+    └── guides/                 # 使用指南
+```
+
+### 仓库结构（开发）
+
+```
+claude-req-sys/
+├── skills/                     # 技能集合（符号链接源）
+│   ├── core/                   # 核心需求管理
+│   ├── quality/                # 质量保证
+│   ├── analysis/               # 分析评估
+│   ├── change/                 # 变更处理
+│   └── utils/                  # 辅助工具
+├── scripts/                    # 管理脚本
+│   ├── install-global.sh       # 全局安装脚本
+│   ├── update.sh               # 更新脚本
+│   └── link-skills.sh          # 符号链接脚本
+├── .claude/
+│   └── commands/               # 命令定义（源文件）
+└── docs/                       # 文档
 ```
 
 ### 新文档结构（v0.3.0）
@@ -369,7 +397,53 @@ rm -rf .requirements/req-metrics/
 
 ---
 
+## 更新系统
+
+### 快速更新
+
+```bash
+# 进入仓库目录
+cd claude-req-sys
+
+# 拉取最新代码
+git pull
+
+# 重新链接技能
+bash scripts/link-skills.sh
+```
+
+### 一键更新脚本
+
+```bash
+# 在仓库目录运行
+bash scripts/update.sh
+```
+
+---
+
 ## 版本历史
+
+### v0.5.0 (2026-05-13)
+
+**新增功能**：
+- ✅ 全局安装架构 - 一次安装，所有项目使用
+- ✅ 项目初始化脚本 - 快速设置新项目
+- ✅ 符号链接管理 - 自动同步最新版本
+- ✅ 项目数据分离 - 工具在全局，数据在项目
+
+**优化**：
+- 📦 项目更干净 - 只包含数据，不包含系统文件
+- 🚀 更新更快速 - 只需更新全局安装
+- 🔄 自动同步 - 符号链接自动同步
+
+### v0.4.0 (2026-05-13)
+
+**新增功能**：
+- ✅ 符号链接安装 - 参考 mattpocock/skills
+- ✅ 技能分类组织 - core/quality/analysis/change/utils
+- ✅ 快速更新脚本 - git pull + link-skills
+- ✅ setup 技能 - 一次性初始化配置
+- ✅ 跨平台支持 - Unix 和 Windows 脚本
 
 ### v0.3.0 (2026-05-13)
 
