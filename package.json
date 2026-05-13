@@ -8,8 +8,8 @@
     "install": "node scripts/npm-install.js",
     "postinstall": "bash scripts/link-skills.sh",
     "test": "node tests/run-all.js",
-    "lint": "eslint .claude/scripts/",
-    "format": "prettier --write .claude/scripts/"
+    "lint": "eslint src/scripts/",
+    "format": "prettier --write src/scripts/"
   },
   "bin": {
     "claude-req-init": "./bin/claude-req-init.js",
@@ -48,9 +48,7 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "skills/",
-    ".claude/commands/",
-    ".claude/scripts/",
+    "src/",
     "bin/",
     "scripts/",
     "docs/",

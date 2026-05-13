@@ -97,12 +97,15 @@ npm install -g .
 │   ├── req.md                  # 需求管理命令
 │   └── metrics.md              # 度量命令
 ├── scripts/                    # 全局脚本
-│   └── init-project.sh         # 项目初始化脚本
-└── skills/                     # 符号链接（指向仓库）
-    ├── req-manager.md          # → 仓库/skills/core/
-    ├── req-brainstorm.md
-    ├── req-init.md
-    └── ...                     # 其他 req- 技能
+│   ├── hooks/                  # 自动化钩子
+│   ├── metrics/                # 度量脚本
+│   └── requirement-manager/    # 需求管理器
+├── skills/                     # 符号链接（指向 src/claude/skills/）
+│   ├── req-manager.md          # → src/claude/skills/core/
+│   ├── req-brainstorm.md
+│   ├── req-init.md
+│   └── ...                     # 其他 req- 技能
+└── hooks.json                  # hooks 配置
 ```
 
 ### 项目本地目录
@@ -124,24 +127,33 @@ your-project/
 
 ```
 claude-req-sys/
-├── skills/                     # 技能集合（符号链接源）
-│   ├── core/                   # 核心需求管理
-│   ├── quality/                # 质量保证
-│   ├── analysis/               # 分析评估
-│   ├── change/                 # 变更处理
-│   └── utils/                  # 辅助工具
-├── scripts/                    # 管理脚本
-│   ├── npm-install.js          # npm 安装脚本
-│   ├── link-skills.sh          # 符号链接脚本
-│   └── update.sh               # 更新脚本
-├── bin/                        # 全局命令
+├── src/                        # 源文件目录
+│   ├── claude/                 # Claude Code 集成
+│   │   ├── commands/           # 命令定义
+│   │   └── skills/             # 技能集合
+│   │       ├── core/           # 核心需求管理
+│   │       ├── quality/        # 质量保证
+│   │       ├── analysis/       # 分析评估
+│   │       ├── change/         # 变更处理
+│   │       └── utils/          # 辅助工具
+│   ├── scripts/                # 脚本工具
+│   │   ├── hooks/              # 自动化钩子
+│   │   ├── metrics/            # 度量收集
+│   │   └── requirement-manager/  # 需求管理器
+│   └── config/                 # 配置文件
+│       ├── hooks.json          # hooks 配置
+│       └── req-system-hooks.example.json
+├── bin/                        # CLI 命令
 │   ├── claude-req-init.js      # 初始化命令
 │   └── claude-req-update.js    # 更新命令
-├── .claude/
-│   ├── commands/               # 命令定义（源文件）
-│   ├── scripts/                # hooks 脚本
-│   └── hooks.json              # hooks 配置
-└── docs/                       # 文档
+├── scripts/                    # 管理脚本
+│   ├── npm-install.js          # npm 安装脚本
+│   ├── link-skills.sh          # 技能链接脚本
+│   └── update.sh               # 更新脚本
+├── tests/                      # 测试文件
+├── docs/                       # 文档
+├── package.json
+└── README.md
 ```
 
 ### 新文档结构（v0.3.0）
