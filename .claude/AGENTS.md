@@ -16,19 +16,19 @@ req-manager skill (.claude/skills/req-manager.md) ⭐ 新增统一入口
   ↓
 /req 命令 (.claude/commands/req.md)
   ↓
-brainstorm-grill skill (.claude/skills/brainstorm-grill.md)
+req-brainstorm skill (.claude/skills/req-brainstorm.md)
   ├─ 问题探索 (Brainstorming)
   ├─ 方案审查 (Grill-me)
   ├─ 设计展示
   └─ 最终审查
   ↓
-priority-estimator skill (.claude/skills/priority-estimator.md) ⭐ 新增
+req-priority skill (.claude/skills/req-priority.md) ⭐ 新增
   ├─ 业务价值评估
   ├─ 紧急程度分析
   ├─ 依赖关系检查
   └─ ROI 计算
   ↓
-quality-gates skill (.claude/skills/quality-gates.md) ⭐ 新增
+req-quality skill (.claude/skills/req-quality.md) ⭐ 新增
   ├─ Gate 1: 设计完成检查
   ├─ Gate 2: 测试策略检查
   ├─ Gate 3: 实施计划检查
@@ -43,12 +43,12 @@ quality-gates skill (.claude/skills/quality-gates.md) ⭐ 新增
   ↓
 [执行中遇到需求变更]
   ↓
-handle-req-change skill (.claude/skills/handle-req-change.md)
+req-change skill (.claude/skills/req-change.md)
   ├─ 变更分类
   ├─ 影响评估
   └─ 调整执行
   ↓
-quality-gates Gate 4 检查 ⭐ 新增
+req-quality Gate 4 检查 ⭐ 新增
 ```
 
 ## 自定义 Skills
@@ -77,7 +77,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 路由目标 skill
 - 流程启动反馈
 
-### 2. brainstorm-grill
+### 2. req-brainstorm
 
 **用途**：深度需求分析，结合头脑风暴与无情审查
 
@@ -88,14 +88,14 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 **触发方式**：
 - 自动：`/req` 命令创建需求时
-- 手动：`/brainstorm-grill` 或在对话中描述需求
+- 手动：`/req-brainstorm` 或在对话中描述需求
 
 **输出**：
 - 完整的设计文档
 - 决策摘要
 - 开放问题列表
 
-### 3. handle-req-change
+### 3. req-change
 
 **用途**：处理任务执行过程中的需求变更
 
@@ -106,14 +106,14 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 **触发方式**：
 - 自动：在 `executing-plans` 执行过程中，当用户提出变更时
-- 手动：`/handle-req-change`
+- 手动：`/req-change`
 
 **变更分类**：
 | 类型 | 特征 | 处理方式 |
 |------|------|----------|
 | 小调整 | 文案、样式微调，<5分钟 | 直接执行并记录 |
 | 中等变更 | 影响1-2个任务 | Grill-me 快速审查 |
-| 重大变更 | 改变架构，影响多个任务 | 完整 brainstorm-grill |
+| 重大变更 | 改变架构，影响多个任务 | 完整 req-brainstorm |
 
 **输出**：
 - 变更分类
@@ -121,7 +121,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 调整后的执行计划
 - CHANGELOG.md 更新
 
-### 4. test-plan-generator
+### 4. req-test-plan
 
 **用途**：基于设计文档自动生成完整的测试计划和测试用例
 
@@ -132,7 +132,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 **触发方式**：
 - 自动：设计文档完成后自动调用
-- 手动：`/test-plan-generator`
+- 手动：`/req-test-plan`
 
 **生成的测试类型**：
 | 测试类型 | 覆盖内容 |
@@ -149,12 +149,12 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 测试数据准备说明
 - 测试执行计划
 
-### 5. priority-estimator ⭐ 新增
+### 5. req-priority ⭐ 新增
 
 **用途**：需求优先级科学评估，多维度量化分析
 
 **何时使用**：
-- brainstorm-grill 完成后（自动触发）
+- req-brainstorm 完成后（自动触发）
 - 需要重新评估优先级时
 - 需要生成优先级排序报告时
 
@@ -176,15 +176,15 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 优先级排序报告
 - ROI 评估结果
 
-### 6. quality-gates ⭐ 新增
+### 6. req-quality ⭐ 新增
 
 **用途**：质量门禁系统，在关键阶段自动检查质量标准
 
 **何时使用**：
-- brainstorm-grill 完成后（Gate 1）
-- test-plan-generator 完成后（Gate 2）
+- req-brainstorm 完成后（Gate 1）
+- req-test-plan 完成后（Gate 2）
 - writing-plans 完成后（Gate 3）
-- handle-req-change 完成后（Gate 4）
+- req-change 完成后（Gate 4）
 
 **触发方式**：
 - 自动：在各个阶段完成后自动触发
@@ -202,7 +202,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 改进建议
 - 例外申请记录
 
-### 7. doc-unifier ⭐ 新增
+### 7. req-unify ⭐ 新增
 
 **用途**：统一文档结构，将5个文件简化为2个文件
 
@@ -213,7 +213,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 **触发方式**：
 - 自动：新需求创建时使用新格式
-- 手动：`/doc-unifier <req-id>` 或 `/doc-unifier --all`
+- 手动：`/req-unify <req-id>` 或 `/req-unify --all`
 
 **优化**：
 - **旧格式**（5个文件）：design.md, test-plan.md, plan.md, analysis-report.md, CHANGELOG.md
@@ -227,7 +227,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 单一信息源，避免不一致
 - 集中式文档，减少跳转
 
-### 8. migrate-docs ⭐ 新增
+### 8. req-migrate ⭐ 新增
 
 **用途**：文档迁移工具，将旧格式需求文档迁移到新的统一格式
 
@@ -237,15 +237,15 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 需要回滚迁移时
 
 **触发方式**：
-- 手动：`/migrate-docs <req-id>` 或 `/migrate-docs --all`
+- 手动：`/req-migrate <req-id>` 或 `/req-migrate --all`
 
 **迁移功能**：
-- 单个需求迁移：`/migrate-docs REQ-20260513-001`
-- 批量迁移：`/migrate-docs --all`
-- 预览迁移：`/migrate-docs REQ-20260513-001 --dry-run`
-- 交互式迁移：`/migrate-docs --all --interactive`
-- 查看状态：`/migrate-docs --status`
-- 生成报告：`/migrate-docs --report`
+- 单个需求迁移：`/req-migrate REQ-20260513-001`
+- 批量迁移：`/req-migrate --all`
+- 预览迁移：`/req-migrate REQ-20260513-001 --dry-run`
+- 交互式迁移：`/req-migrate --all --interactive`
+- 查看状态：`/req-migrate --status`
+- 生成报告：`/req-migrate --report`
 
 **安全特性**：
 - 自动备份：迁移前自动创建 `.backup/` 目录
@@ -266,18 +266,18 @@ quality-gates Gate 4 检查 ⭐ 新增
 - .backup/: 备份目录
 - 迁移报告
 
-### 9. verification-checklist ⭐ 新增
+### 9. req-verify ⭐ 新增
 
 **用途**：验证检查清单，在关键阶段提供系统性的验证项
 
 **何时使用**：
-- brainstorm-grill 完成后（设计验证）
+- req-brainstorm 完成后（设计验证）
 - 代码实现完成后（实现验证）
 - 准备部署前（部署验证）
 
 **触发方式**：
 - 自动：在各个阶段完成后自动触发
-- 手动：`/verification-checklist <checkpoint> <req-id>`
+- 手动：`/req-verify <checkpoint> <req-id>`
 
 **检查点**：
 - **Checkpoint 1: 设计验证** - 技术可行性、架构完整性、安全风险、对比分析
@@ -294,7 +294,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 验证报告（通过率、未通过项、风险项、建议）
 - 验证状态（通过/未通过/部分通过）
 
-### 10. metrics ⭐ 新增
+### 10. req-metrics ⭐ 新增
 
 **用途**：度量体系，收集和分析项目关键指标
 
@@ -304,7 +304,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 - 导出度量数据时
 
 **触发方式**：
-- 手动：`/metrics [选项]`
+- 手动：`/req-metrics [选项]`
 - 自动：定期收集数据（通过 collect.js 脚本）
 
 **度量维度**：
@@ -314,14 +314,14 @@ quality-gates Gate 4 检查 ⭐ 新增
 - **价值指标**：完成率、优先级准确率、ROI达成率、用户满意度
 
 **功能**：
-- 查看指标：`/metrics --efficiency` / `--quality` / `--changes` / `--value`
-- 趋势分析：`/metrics --trend <metric>`
-- 生成报告：`/metrics --report week` / `month`
-- 导出数据：`/metrics --export json` / `csv` / `markdown`
-- 数据收集：`/metrics --collect`
+- 查看指标：`/req-metrics --efficiency` / `--quality` / `--changes` / `--value`
+- 趋势分析：`/req-metrics --trend <metric>`
+- 生成报告：`/req-metrics --report week` / `month`
+- 导出数据：`/req-metrics --export json` / `csv` / `markdown`
+- 数据收集：`/req-metrics --collect`
 
 **输出**：
-- 度量数据文件（.requirements/metrics/data.yaml）
+- 度量数据文件（.requirements/req-metrics/data.yaml）
 - 度量报告（Markdown）
 - 趋势图表（ASCII）
 - 告警通知（当指标异常时）
@@ -333,7 +333,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 ```bash
 # 1. 创建需求
 /req 添加用户头像上传功能
-  → 自动启动 brainstorm-grill
+  → 自动启动 req-brainstorm
   → 生成设计文档
   → 自动生成测试计划 ⭐ 新增
   → 创建需求文件
@@ -344,7 +344,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 # 3. 处理变更（如需要）
 [用户提出变更]
-  → 自动调用 handle-req-change
+  → 自动调用 req-change
   → 评估影响
   → 调整计划
 
@@ -360,11 +360,11 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 1. **立即暂停当前任务**
 2. **确认变更内容**
-3. **调用 handle-req-change**：
+3. **调用 req-change**：
    - 自动分类变更
    - 小调整：直接执行
    - 中等变更：快速审查后调整
-   - 重大变更：启动 brainstorm-grill 重新分析
+   - 重大变更：启动 req-brainstorm 重新分析
 4. **更新相关文档**
 5. **确认后继续执行**
 
@@ -374,7 +374,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 
 | Skill | 用途 | 触发时机 |
 |-------|------|----------|
-| `superpowers:brainstorming` | 头脑风暴设计 | brainstorm-grill 内部调用 |
+| `superpowers:brainstorming` | 头脑风暴设计 | req-brainstorm 内部调用 |
 | `superpowers:executing-plans` | 执行实现计划 | 需求创建后自动进入 |
 | `superpowers:writing-plans` | 生成实现计划 | 测试计划生成后调用 |
 | `superpowers:finishing-a-development-branch` | 完成开发分支 | 所有任务完成后调用 |
@@ -389,22 +389,22 @@ quality-gates Gate 4 检查 ⭐ 新增
    - `req-manager` 分析意图并路由到相应流程
 
 2. **需求创建流程** → 按顺序自动调用：
-   - `brainstorm-grill` → 深度需求分析
-   - `priority-estimator` → 优先级评估 ⭐ 新增
-   - `quality-gates` (Gate 1) → 设计质量检查 ⭐ 新增
-   - `test-plan-generator` → 生成测试策略
-   - `quality-gates` (Gate 2) → 测试质量检查 ⭐ 新增
+   - `req-brainstorm` → 深度需求分析
+   - `req-priority` → 优先级评估 ⭐ 新增
+   - `req-quality` (Gate 1) → 设计质量检查 ⭐ 新增
+   - `req-test-plan` → 生成测试策略
+   - `req-quality` (Gate 2) → 测试质量检查 ⭐ 新增
    - `writing-plans` → 生成实施计划
-   - `quality-gates` (Gate 3) → 计划质量检查 ⭐ 新增
+   - `req-quality` (Gate 3) → 计划质量检查 ⭐ 新增
 
-3. **文档生成** → 自动使用 `doc-unifier` 新格式 ⭐ 新增
+3. **文档生成** → 自动使用 `req-unify` 新格式 ⭐ 新增
    - 新需求：自动生成 spec.md + test-cases.md（可选）
    - 旧需求：可手动调用迁移
 
 4. **计划创建完成** → 自动调用 `executing-plans`
 
-5. **执行中用户提出变更** → 自动调用 `handle-req-change`
-   - 变更完成后自动调用 `quality-gates` (Gate 4) ⭐ 新增
+5. **执行中用户提出变更** → 自动调用 `req-change`
+   - 变更完成后自动调用 `req-quality` (Gate 4) ⭐ 新增
 
 6. **所有任务完成** → 自动调用 `finishing-a-development-branch`
 
@@ -416,7 +416,7 @@ quality-gates Gate 4 检查 ⭐ 新增
 {
   "pre:command:executing-plans": "检查是否有活跃的需求分支",
   "post:task:complete": "更新需求进度",
-  "on:req-change": "自动调用 handle-req-change"
+  "on:req-change": "自动调用 req-change"
 }
 ```
 
@@ -429,9 +429,9 @@ quality-gates Gate 4 检查 ⭐ 新增
 # 智能推断（推荐）
 /req 添加用户登录功能
   → req-manager 自动推断为 feature + deep
-  → brainstorm-grill 深度分析
-  → priority-estimator 自动评估优先级
-  → quality-gates 自动检查质量
+  → req-brainstorm 深度分析
+  → req-priority 自动评估优先级
+  → req-quality 自动检查质量
   → 生成 spec.md 统一文档
 
 # 快速模式
@@ -490,7 +490,7 @@ AI: [暂停] [快速审查] [调整计划] [继续执行]
 
 # 场景3：架构变更
 用户: "我想要实时协作而不是表单"
-AI: [暂停] [完整 brainstorm-grill] [创建新需求] [重新规划]
+AI: [暂停] [完整 req-brainstorm] [创建新需求] [重新规划]
 ```
 
 ## 文档结构
@@ -575,12 +575,12 @@ AI: [暂停] [完整 brainstorm-grill] [创建新需求] [重新规划]
 **DO**:
 - ✅ 使用 `/req` 创建所有新需求（自动触发 req-manager）⭐ 更新
 - ✅ 让 req-manager 自动选择最优流程 ⭐ 新增
-- ✅ 让 brainstorm-grill 自动进行深度分析
-- ✅ 让 priority-estimator 自动评估优先级 ⭐ 新增
-- ✅ 让 quality-gates 自动检查质量 ⭐ 新增
+- ✅ 让 req-brainstorm 自动进行深度分析
+- ✅ 让 req-priority 自动评估优先级 ⭐ 新增
+- ✅ 让 req-quality 自动检查质量 ⭐ 新增
 - ✅ 使用新文档格式（spec.md + test-cases.md）⭐ 新增
-- ✅ 让 test-plan-generator 自动生成测试策略
-- ✅ 执行中提出变更时，让 handle-req-change 自动处理
+- ✅ 让 req-test-plan 自动生成测试策略
+- ✅ 执行中提出变更时，让 req-change 自动处理
 - ✅ 记录所有变更到 spec.md 的变更历史部分 ⭐ 更新
 - ✅ 参考测试策略进行开发
 

@@ -38,9 +38,9 @@ npm install
 
 # 系统会自动：
 # 1. 智能意图识别（创建新功能）
-# 2. 深度需求分析（brainstorm-grill）
-# 3. 优先级评估（priority-estimator）
-# 4. 质量检查（quality-gates）
+# 2. 深度需求分析（req-brainstorm）
+# 3. 优先级评估（req-priority）
+# 4. 质量检查（req-quality）
 # 5. 生成统一文档（spec.md）
 ```
 
@@ -109,7 +109,7 @@ npm install
 - 复杂度分析 → 执行模式
 - 上下文感知 → 处理流程
 
-### 2. 优先级评估（priority-estimator）
+### 2. 优先级评估（req-priority）
 
 **功能**：5维度科学评估优先级
 
@@ -132,7 +132,7 @@ npm install
 /priority --compare REQ-001 REQ-002
 ```
 
-### 3. 质量门禁（quality-gates）
+### 3. 质量门禁（req-quality）
 
 **功能**：4个关键阶段自动检查
 
@@ -154,7 +154,7 @@ npm install
 /quality-gate history REQ-20260513-001
 ```
 
-### 4. 文档统一（doc-unifier）
+### 4. 文档统一（req-unify）
 
 **功能**：5个文件简化为2个文件
 
@@ -172,32 +172,32 @@ npm install
 **使用方式**：
 ```bash
 # 统一现有需求
-/doc-unifier REQ-20260513-001
+/req-unify REQ-20260513-001
 
 # 批量统一
-/doc-unifier --all
+/req-unify --all
 ```
 
-### 5. 文档迁移（migrate-docs）
+### 5. 文档迁移（req-migrate）
 
 **功能**：将旧格式迁移到新格式
 
 **使用方式**：
 ```bash
 # 单个需求迁移
-/migrate-docs REQ-20260513-001
+/req-migrate REQ-20260513-001
 
 # 批量迁移
-/migrate-docs --all
+/req-migrate --all
 
 # 预览迁移
-/migrate-docs REQ-20260513-001 --dry-run
+/req-migrate REQ-20260513-001 --dry-run
 
 # 交互式迁移
-/migrate-docs --all --interactive
+/req-migrate --all --interactive
 
 # 查看迁移状态
-/migrate-docs --status
+/req-migrate --status
 ```
 
 **安全特性**：
@@ -206,7 +206,7 @@ npm install
 - 回滚机制
 - 交互确认
 
-### 6. 验证检查清单（verification-checklist）
+### 6. 验证检查清单（req-verify）
 
 **功能**：20+验证项确保质量
 
@@ -218,16 +218,16 @@ npm install
 **使用方式**：
 ```bash
 # 设计验证
-/verification-checklist --design REQ-20260513-001
+/req-verify --design REQ-20260513-001
 
 # 实现验证
-/verification-checklist --implementation REQ-20260513-001
+/req-verify --implementation REQ-20260513-001
 
 # 部署验证
-/verification-checklist --deployment REQ-20260513-001
+/req-verify --deployment REQ-20260513-001
 
 # 全部验证
-/verification-checklist --all REQ-20260513-001
+/req-verify --all REQ-20260513-001
 ```
 
 ### 7. 度量体系（metrics）
@@ -243,29 +243,29 @@ npm install
 **使用方式**：
 ```bash
 # 查看所有指标
-/metrics
+/req-metrics
 
 # 查看特定维度
-/metrics --efficiency
-/metrics --quality
-/metrics --changes
-/metrics --value
+/req-metrics --efficiency
+/req-metrics --quality
+/req-metrics --changes
+/req-metrics --value
 
 # 查看趋势
-/metrics --trend cycle_time
-/metrics --trend rework_rate
+/req-metrics --trend cycle_time
+/req-metrics --trend rework_rate
 
 # 生成报告
-/metrics --report week
-/metrics --report month
+/req-metrics --report week
+/req-metrics --report month
 
 # 导出数据
-/metrics --export json
-/metrics --export csv
-/metrics --export markdown
+/req-metrics --export json
+/req-metrics --export csv
+/req-metrics --export markdown
 
 # 手动收集数据
-/metrics --collect
+/req-metrics --collect
 ```
 
 ---
@@ -280,29 +280,29 @@ npm install
    ↓
    [req-manager] 智能意图识别
    ↓
-   [brainstorm-grill] 深度需求分析
+   [req-brainstorm] 深度需求分析
    ├─ 问题探索（Brainstorming）
    ├─ 方案审查（Grill-me）
    ├─ 设计展示
    └─ 最终审查
    ↓
-   [priority-estimator] 优先级评估
+   [req-priority] 优先级评估
    ├─ 5维度评估
    ├─ ROI 计算
    └─ 优先级等级（P0-P4）
    ↓
-   [quality-gates Gate 1] 设计质量检查
+   [req-quality Gate 1] 设计质量检查
    ├─ 矛盾检测
    ├─ 决策完整性检查
    └─ 架构完整性检查
    ↓
-   [test-plan-generator] 生成测试策略
+   [req-test-plan] 生成测试策略
    ↓
-   [quality-gates Gate 2] 测试质量检查
+   [req-quality Gate 2] 测试质量检查
    ↓
    [writing-plans] 生成实施计划
    ↓
-   [quality-gates Gate 3] 计划质量检查
+   [req-quality Gate 3] 计划质量检查
    ↓
    创建需求文件
    ├─ meta.yaml（含优先级）
@@ -315,12 +315,12 @@ npm install
 3. 处理变更（如需要）
    [用户提出变更]
    ↓
-   [handle-req-change] 变更处理
+   [req-change] 变更处理
    ├─ 变更分类
    ├─ 影响评估
    └─ 调整执行
    ↓
-   [quality-gates Gate 4] 变更质量检查
+   [req-quality Gate 4] 变更质量检查
    ↓
 4. 完成开发
    [finishing-a-development-branch]
@@ -331,7 +331,7 @@ npm install
 **原则**：
 - 小调整：直接执行并记录
 - 中等变更：Grill-me 快速审查
-- 重大变更：完整 brainstorm-grill
+- 重大变更：完整 req-brainstorm
 
 **示例**：
 ```bash
@@ -345,7 +345,7 @@ AI: [暂停] [Grill-me快速审查] [调整计划] [继续执行]
 
 # 场景3：架构变更
 用户: "我想要实时协作而不是表单"
-AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
+AI: [暂停] [完整req-brainstorm] [创建新需求] [重新规划]
 ```
 
 ---
@@ -363,13 +363,13 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 # ✓ 类型推断：feature
 # ✓ 模式选择：deep（复杂需求）
 # 
-# [启动 brainstorm-grill]
+# [启动 req-brainstorm]
 # - 问题探索：用户评论的典型场景
 # - 方案审查：存储方案、审核机制
 # - 设计展示：评论组件设计
 # - 最终审查：确认设计方案
 #
-# [启动 priority-estimator]
+# [启动 req-priority]
 # - 业务价值：85/100（高）
 # - 紧急程度：70/100（中）
 # - 依赖关系：无
@@ -377,19 +377,19 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 # - 风险评估：低风险
 # ✓ 优先级：P1（75分）
 #
-# [启动 quality-gates Gate 1]
+# [启动 req-quality Gate 1]
 # ✓ 设计质量检查通过
 #
-# [启动 test-plan-generator]
+# [启动 req-test-plan]
 # ✓ 测试策略已生成
 #
-# [启动 quality-gates Gate 2]
+# [启动 req-quality Gate 2]
 # ✓ 测试质量检查通过
 #
 # [启动 writing-plans]
 # ✓ 实施计划已生成
 #
-# [启动 quality-gates Gate 3]
+# [启动 req-quality Gate 3]
 # ✓ 计划质量检查通过
 #
 # ✓ 需求已创建：.requirements/features/REQ-20260513-001/
@@ -460,7 +460,7 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 ### 示例4：查看度量指标
 
 ```bash
-/metrics --efficiency
+/req-metrics --efficiency
 
 # 系统响应：
 # 📊 效率指标
@@ -484,7 +484,7 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 ### 示例5：迁移旧文档
 
 ```bash
-/migrate-docs REQ-20260507-001
+/req-migrate REQ-20260507-001
 
 # 系统响应：
 # 📦 开始迁移：REQ-20260507-001
@@ -635,8 +635,8 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 #### Q: 度量数据不准确？
 
 **A**: 检查数据收集：
-- 运行 `/metrics --collect` 手动收集
-- 检查 .requirements/metrics/data.yaml
+- 运行 `/req-metrics --collect` 手动收集
+- 检查 .requirements/req-metrics/data.yaml
 - 确认需求元数据完整
 
 ### 错误码
@@ -656,8 +656,8 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 /req --help
 /priority --help
 /quality-gate --help
-/metrics --help
-/migrate-docs --help
+/req-metrics --help
+/req-migrate --help
 
 # 查看系统状态
 /req --dashboard
@@ -685,7 +685,7 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 ├── questions/         # 技术问题
 ├── adjustments/       # 需求调整
 ├── refactorings/      # 重构任务
-└── metrics/           # 度量数据 ⭐ 新增
+└── req-metrics/           # 度量数据 ⭐ 新增
     ├── config.json       # 配置文件
     ├── data.yaml         # 度量数据
     ├── reports/          # 报告目录
@@ -702,10 +702,10 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 
 ### 配置文件
 
-**`.requirements/metrics/config.json`**
+**`.requirements/req-metrics/config.json`**
 ```json
 {
-  "metrics": {
+  "req-metrics": {
     "collection": {
       "enabled": true,
       "interval": "daily",
@@ -742,11 +742,11 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 
 **新增功能**：
 - ✅ 统一入口（req-manager）- 智能路由
-- ✅ 优先级评估（priority-estimator）- 5维度科学评估
-- ✅ 质量门禁（quality-gates）- 4阶段自动检查
-- ✅ 文档统一（doc-unifier）- 5文件→2文件
-- ✅ 文档迁移（migrate-docs）- 自动备份和验证
-- ✅ 验证检查清单（verification-checklist）- 20+验证项
+- ✅ 优先级评估（req-priority）- 5维度科学评估
+- ✅ 质量门禁（req-quality）- 4阶段自动检查
+- ✅ 文档统一（req-unify）- 5文件→2文件
+- ✅ 文档迁移（req-migrate）- 自动备份和验证
+- ✅ 验证检查清单（req-verify）- 20+验证项
 - ✅ 度量体系（metrics）- 4维度16指标
 
 **优化**：
@@ -758,9 +758,9 @@ AI: [暂停] [完整brainstorm-grill] [创建新需求] [重新规划]
 
 ### v0.2.0
 
-- 添加 brainstorm-grill skill
-- 添加 handle-req-change skill
-- 添加 test-plan-generator skill
+- 添加 req-brainstorm skill
+- 添加 req-change skill
+- 添加 req-test-plan skill
 
 ### v0.1.0
 
