@@ -54,18 +54,17 @@ node install.js /path/to/target/project
 
 ## 安装
 
-### 方式一：npm 全局安装（推荐）⭐ v0.5.0
+### 方式一：克隆安装（推荐）⭐ v0.5.0
 
 ```bash
-# 从 GitHub npm 全局安装
-npm install -g github:zxc1213/claude-req-sys
-
-# 或克隆后安装
-git clone https://github.com/zxc1213/claude-req-sys.git
+# 1. 克隆仓库
+git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
-npm install -g .
 
-# 初始化你的项目
+# 2. 运行安装脚本
+bash install.sh
+
+# 3. 初始化你的项目
 cd /path/to/your/project
 claude-req-init
 ```
@@ -74,9 +73,9 @@ claude-req-init
 - 🌍 **一次安装，全局使用** - 所有项目自动可用
 - 🚀 **快速更新** - `claude-req-update` 一键更新
 - 📦 **项目更干净** - 项目只包含数据，不包含系统文件
-- 🔄 **npm 管理** - 使用 npm 标准流程，跨平台支持
+- 🔄 **可靠安装** - 避免 npm 工作目录问题
 
-### 方式二：手动全局安装
+### 方式二：npm 全局安装
 
 ```bash
 # 克隆仓库
@@ -84,7 +83,7 @@ git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
 
 # 运行安装脚本
-node scripts/npm-install.js
+bash install.sh
 
 # 初始化你的项目
 cd /path/to/your/project
