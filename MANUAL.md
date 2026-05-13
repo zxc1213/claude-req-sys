@@ -2,17 +2,35 @@
 
 ## ⚠️ 重要说明
 
-**Claude Code 的自定义命令只在当前工作目录的 `.claude/commands/` 下生效！**
+**v0.5.0 采用全局安装架构，一次安装所有项目可用！**
 
-这意味着你需要在要使用的项目目录中安装此系统。
+本系统现在推荐安装到全局 `~/.claude/` 目录，项目只包含数据。
 
 **本安装脚本不会覆盖你现有的配置文件。**
 
 ---
 
-## 🎯 快速安装（3步）
+## 🎯 快速安装（3步）⭐ 推荐
 
-### 方式一：安装到当前目录
+### 全局安装方式
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
+cd claude-req-sys
+
+# 2. 全局安装到 ~/.claude/
+bash scripts/install-global.sh
+
+# 3. 初始化你的项目
+cd /path/to/your/project
+~/.claude/scripts/init-project.sh
+
+# 4. 验证安装
+/req --dashboard
+```
+
+### 项目本地安装（传统方式）
 
 ```bash
 # 1. 进入 ClaudeReqSys 目录
@@ -25,43 +43,43 @@ node install.js
 /req --dashboard
 ```
 
-### 方式二：安装到指定目录
-
-```bash
-# 1. 进入目标目录
-cd C:\Users\19944\MyProject
-
-# 2. 运行安装脚本（从 ClaudeReqSys 目录运行）
-node E:\AI_Project\ClaudeReqSys\install.js
-
-# 3. 验证
-/req --dashboard
-```
-
 ---
 
 ## 📂 安装后目录结构
 
-安装完成后，你的项目会有：
+### 全局安装（推荐）
+
+安装完成后，全局目录会有：
 
 ```
-你的项目/
-├── .claude/
-│   ├── commands/
-│   │   └── requirement.md          ← 自定义命令（/req 生效的关键）
-│   ├── scripts/                    ← 核心脚本（新增）
-│   │   ├── hooks/                  ← 自动化钩子
-│   │   │   ├── post-req-update.js
-│   │   │   └── stop-req-summary.js
-│   │   └── requirement-manager/    ← 核心逻辑
-│   ├── req-system-hooks.example.json ← Hooks 配置示例（新增）
-│   ├── settings.json               ← 你的配置（不会被修改）
-│   └── settings.local.json         ← 你的本地配置（不会被修改）
-├── .requirements/                  ← 需求数据（新增）
-└── node_modules/                   ← 依赖（如果已有则添加）
+~/.claude/
+├── commands/                   ← 全局命令（所有项目共享）
+│   ├── req.md                  ← 需求管理命令
+│   └── metrics.md              ← 度量命令
+├── scripts/                    ← 全局脚本
+│   └── init-project.sh         ← 项目初始化脚本
+└── skills/                     ← 符号链接（指向仓库）
+    ├── req-manager.md          → 仓库/skills/core/
+    ├── req-brainstorm.md
+    └── ...                     ← 其他 req- 技能
 ```
 
-**关键文件**：`.claude/commands/requirement.md` — 这是 `/req` 命令的定义文件。
+### 项目本地（你的项目）
+
+```
+your-project/
+├── .requirements/              ← 需求数据（项目本地）
+│   ├── features/               ← 新功能
+│   ├── bugs/                   ← Bug 修复
+│   ├── questions/              ← 技术问题
+│   ├── adjustments/            ← 需求调整
+│   └── refactorings/           ← 重构任务
+└── docs/                       ← 项目文档（可选）
+    ├── specs/                  ← 需求规格
+    └── guides/                 ← 使用指南
+```
+
+**关键文件**：`~/.claude/commands/req.md` — 这是 `/req` 命令的定义文件（全局共享）。
 
 ---
 
