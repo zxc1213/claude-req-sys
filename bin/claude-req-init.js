@@ -3,6 +3,8 @@
 /**
  * ClaudeReqSys 项目初始化命令
  * 使用: claude-req-init
+ *
+ * 首次运行时自动安装全局配置到 ~/.claude/
  */
 
 import { execSync } from 'child_process';
@@ -12,6 +14,102 @@ import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
+const GLOBAL_CLAUDE = path.join(process.env.HOME || process.env.USERPROFILE, '.claude');
+
+// 检查是否需要安装全局配置
+const needsGlobalSetup = !fs.existsSync(path.join(GLOBAL_CLAUDE, 'commands', 'req.md'));
+
+if (needsGlobalSetup) {
+  console.log('🚀 首次运行，正在安装全局配置...\n');
+
+  try {
+    // 获取包安装位置
+    const packageJsonPath = require.resolve('claude-req-sys/package.json');
+    const pkgDir = path.dirname(packageJsonPath);
+
+    // 创建全局目录
+    console.log('📁 创建全局目录...');
+    fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'commands'), { recursive: true });
+    fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'skills'), { recursive: true });
+    fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'scripts'), { recursive: true });
+    fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'scripts', 'hooks'), { recursive: true });
+
+    // 复制命令文件
+    console.log('📋 安装命令文件...');
+    const commandsDir = path.join(pkgDir, 'src', 'claude', 'commands');
+    if (fs.existsSync(commandsDir)) {
+      const files = fs.readdirSync(commandsDir);
+      files.forEach(file => {
+        if (file.endsWith('.md')) {
+          fs.copyFileSync(
+            path.join(commandsDir, file),
+            path.join(GLOBAL_CLAUDE, 'commands', file)
+          );
+        }
+      });
+      console.log('  ✓ 命令文件');
+    }
+
+    // 复制 hooks 配置
+    console.log('⚙️  安装 hooks 配置...');
+    const hooksJson = path.join(pkgDir, 'src', 'config', 'hooks.json');
+    if (fs.existsSync(hooksJson)) {
+      fs.copyFileSync(hooksJson, path.join(GLOBAL_CLAUDE, 'hooks.json'));
+      console.log('  ✓ hooks 配置');
+    }
+
+    // 复制 hooks 脚本
+    console.log('🔧 安装 hooks 脚本...');
+    const hooksDir = path.join(pkgDir, 'src', 'scripts', 'hooks');
+    if (fs.existsSync(hooksDir)) {
+      const files = fs.readdirSync(hooksDir);
+      files.forEach(file => {
+        if (file.endsWith('.js')) {
+          fs.copyFileSync(
+            path.join(hooksDir, file),
+            path.join(GLOBAL_CLAUDE, 'scripts', 'hooks', file)
+          );
+        }
+      });
+      console.log('  ✓ hooks 脚本');
+    }
+
+    // 创建技能符号链接
+    console.log('🔗 链接技能文件...');
+    const skillsDir = path.join(pkgDir, 'src', 'claude', 'skills');
+    if (fs.existsSync(skillsDir)) {
+      const skills = fs.readdirSync(skillsDir, { withFileTypes: true });
+
+      for (const skill of skills) {
+        if (skill.isDirectory()) {
+          const skillPath = path.join(skillsDir, skill.name);
+          const skillFiles = fs.readdirSync(skillPath);
+
+          for (const file of skillFiles) {
+            if (file.startsWith('req-') && file.endsWith('.md')) {
+              const sourceFile = path.join(skillPath, file);
+              const targetFile = path.join(GLOBAL_CLAUDE, 'skills', file);
+
+              if (fs.existsSync(targetFile)) {
+                fs.unlinkSync(targetFile);
+              }
+
+              fs.symlinkSync(sourceFile, targetFile);
+            }
+          }
+        }
+      }
+      console.log('  ✓ 技能链接');
+    }
+
+    console.log('\n✅ 全局配置安装完成!\n');
+  } catch (error) {
+    console.error('❌ 全局配置安装失败:', error.message);
+    console.log('\n您可以手动运行安装脚本:');
+    console.log('  cd claude-req-sys');
+    console.log('  bash install.sh\n');
+  }
+}
 
 console.log('🎯 ClaudeReqSys 项目初始化\n');
 
