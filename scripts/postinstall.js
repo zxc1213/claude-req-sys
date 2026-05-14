@@ -2,8 +2,7 @@
 
 /**
  * ClaudeReqSys npm postinstall 脚本
- * 新架构：替换 npm 的缓存符号链接为物理目录
- * 清理缓存后依然可用
+ * 覆盖式更新：每次安装都清理旧文件并安装最新版本
  */
 
 import fs from 'fs';
@@ -19,55 +18,244 @@ const ROOT = path.dirname(__dirname);
 const GLOBAL_CLAUDE = path.join(process.env.HOME || process.env.USERPROFILE, '.claude');
 const claudeFilesDir = path.join(GLOBAL_CLAUDE, 'claude-req-sys');
 
-// 检查是否需要安装
-const needsGlobalSetup = !fs.existsSync(path.join(GLOBAL_CLAUDE, 'commands', 'req.md'));
+console.log('🚀 ClaudeReqSys 正在安装/更新...\n');
 
-if (!needsGlobalSetup) {
-  console.log('✓ ClaudeReqSys 全局配置已存在，跳过安装');
-
-  // 检查 hooks 是否已合并到 settings.json
-  const settingsPath = path.join(GLOBAL_CLAUDE, 'settings.json');
-  let hasHooks = false;
-  if (fs.existsSync(settingsPath)) {
-    try {
-      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-      hasHooks = !!settings.hooks;
-    } catch (_error) {
-      // 忽略读取错误
-    }
-  }
-
-  if (!hasHooks) {
-    console.log('⚙️  检测到 hooks 未配置，正在合并...');
-    const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
-    if (fs.existsSync(hooksJson)) {
-      mergeHooksToSettings(hooksJson);
-    }
-  }
-
-  // 检查是否需要更新
+try {
+  // 获取包源位置
+  let pkgDir;
   try {
-    const localVersion = JSON.parse(
-      fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')
-    ).version;
-    const symlinkVersion = fs.existsSync(path.join(claudeFilesDir, 'package.json'))
-      ? JSON.parse(fs.readFileSync(path.join(claudeFilesDir, 'package.json'), 'utf8')).version
-      : null;
-
-    if (symlinkVersion && symlinkVersion !== localVersion) {
-      console.log(`📦 检测到新版本 v${localVersion}（当前: v${symlinkVersion}），建议更新`);
-      console.log('   运行 npm install -g github:zxc1213/claude-req-sys 重新安装最新版本\n');
-    }
-  } catch (_error) {
-    // 忽略版本检查错误
+    const packageJsonPath = import.meta.resolve('claude-req-sys/package.json');
+    pkgDir = path.dirname(pathToFileURL(packageJsonPath).pathname);
+  } catch {
+    pkgDir = ROOT;
   }
 
-  // 确保符号链接存在（修复丢失的链接）
-  console.log('🔗 检查并修复技能符号链接...');
+  // 获取当前版本
+  let currentVersion = 'unknown';
+  try {
+    currentVersion = JSON.parse(fs.readFileSync(path.join(pkgDir, 'package.json'), 'utf8')).version;
+  } catch {
+    // 忽略版本读取错误
+  }
+
+  console.log(`📦 版本: v${currentVersion}`);
+  console.log('💡 覆盖式更新模式：清理旧文件，安装最新版本\n');
+
+  // 获取 npm 全局 node_modules 物理路径并替换符号链接
+  let physicalInstallDir;
+
+  try {
+    const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
+    const npmSymlink = path.join(npmGlobalRoot, 'claude-req-sys');
+
+    // 检查 npm 是否创建了符号链接
+    let needsReplacement = false;
+    if (fs.existsSync(npmSymlink)) {
+      const stats = fs.lstatSync(npmSymlink);
+      if (stats.isSymbolicLink()) {
+        const linkTarget = fs.readlinkSync(npmSymlink);
+        // 转换为绝对路径
+        const absoluteTarget = path.isAbsolute(linkTarget)
+          ? linkTarget
+          : path.resolve(path.dirname(npmSymlink), linkTarget);
+
+        console.log(`📍 npm 符号链接: ${npmSymlink} -> ${absoluteTarget}`);
+
+        // 检查是否指向缓存临时目录
+        if (absoluteTarget.includes('npm-cache') || absoluteTarget.includes('tmp')) {
+          console.log('🔄 检测到缓存符号链接，替换为物理目录...');
+          needsReplacement = true;
+
+          // 删除符号链接
+          fs.unlinkSync(npmSymlink);
+
+          // 创建物理目录
+          fs.mkdirSync(npmSymlink, { recursive: true });
+          physicalInstallDir = npmSymlink;
+        } else {
+          // 不是缓存链接，使用现有位置
+          physicalInstallDir = npmSymlink;
+        }
+      } else {
+        // 已经是物理目录
+        physicalInstallDir = npmSymlink;
+      }
+    } else {
+      // 目录不存在，创建
+      fs.mkdirSync(npmSymlink, { recursive: true });
+      physicalInstallDir = npmSymlink;
+    }
+
+    if (needsReplacement) {
+      console.log(`📦 复制包文件到物理位置: ${physicalInstallDir}`);
+
+      // 递归复制所有内容
+      const copyAll = (src, dest) => {
+        fs.mkdirSync(dest, { recursive: true });
+        const entries = fs.readdirSync(src, { withFileTypes: true });
+        for (const entry of entries) {
+          const srcPath = path.join(src, entry.name);
+          const destPath = path.join(dest, entry.name);
+          if (entry.isDirectory()) {
+            copyAll(srcPath, destPath);
+          } else {
+            fs.copyFileSync(srcPath, destPath);
+          }
+        }
+      };
+
+      // 复制源目录的所有内容
+      if (fs.existsSync(pkgDir)) {
+        copyAll(pkgDir, physicalInstallDir);
+        console.log('  ✓ 所有文件已复制');
+      }
+
+      // 手动安装依赖到物理位置
+      console.log('📦 安装依赖到物理位置...');
+      try {
+        execSync('npm install --production', {
+          cwd: physicalInstallDir,
+          stdio: 'inherit',
+        });
+        console.log('  ✓ 依赖安装完成');
+      } catch (installError) {
+        console.log('  ⚠️  依赖安装失败，但不影响核心功能');
+      }
+    } else {
+      console.log(`📍 npm 安装位置: ${physicalInstallDir}`);
+    }
+
+    // 创建独立位置用于 Claude 文件（覆盖式）
+    console.log('📦 复制文件到独立位置...');
+    const claudeFilesDir = claudeFilesDir;
+
+    // 清理旧文件（如果存在）
+    if (fs.existsSync(claudeFilesDir)) {
+      console.log('  🧹 清理旧文件...');
+      fs.rmSync(claudeFilesDir, { recursive: true, force: true });
+    }
+
+    fs.mkdirSync(claudeFilesDir, { recursive: true });
+
+    // 复制核心文件到独立位置
+    const dirsToCopy = ['src', 'bin', 'scripts'];
+    let copiedDirs = 0;
+
+    for (const dir of dirsToCopy) {
+      const sourceDir = path.join(pkgDir, dir);
+      if (fs.existsSync(sourceDir)) {
+        const targetDir = path.join(claudeFilesDir, dir);
+
+        // 递归复制目录
+        const copyDir = (src, dest) => {
+          fs.mkdirSync(dest, { recursive: true });
+          const entries = fs.readdirSync(src, { withFileTypes: true });
+          for (const entry of entries) {
+            const srcPath = path.join(src, entry.name);
+            const destPath = path.join(dest, entry.name);
+            if (entry.isDirectory()) {
+              copyDir(srcPath, destPath);
+            } else {
+              fs.copyFileSync(srcPath, destPath);
+            }
+          }
+        };
+
+        copyDir(sourceDir, targetDir);
+        copiedDirs++;
+      }
+    }
+
+    // 复制 package.json（用于版本检查）
+    let packageJson = path.join(pkgDir, 'package.json');
+    if (!fs.existsSync(packageJson)) {
+      packageJson = path.join(ROOT, 'package.json');
+    }
+    if (fs.existsSync(packageJson)) {
+      fs.copyFileSync(packageJson, path.join(claudeFilesDir, 'package.json'));
+    }
+
+    console.log(`  ✓ 已复制 ${copiedDirs} 个目录到独立位置`);
+  } catch (error) {
+    // Fallback: 使用独立目录
+    console.log('⚠️  无法替换 npm 符号链接，使用独立目录');
+    physicalInstallDir = claudeFilesDir;
+    fs.mkdirSync(physicalInstallDir, { recursive: true });
+
+    // 复制文件到独立目录
+    console.log('📦 复制包文件到独立位置...');
+    const dirsToCopy = ['src', 'bin', 'scripts'];
+    let copiedDirs = 0;
+
+    for (const dir of dirsToCopy) {
+      const sourceDir = path.join(pkgDir, dir);
+      if (fs.existsSync(sourceDir)) {
+        const targetDir = path.join(physicalInstallDir, dir);
+        const copyDir = (src, dest) => {
+          fs.mkdirSync(dest, { recursive: true });
+          const entries = fs.readdirSync(src, { withFileTypes: true });
+          for (const entry of entries) {
+            const srcPath = path.join(src, entry.name);
+            const destPath = path.join(dest, entry.name);
+            if (entry.isDirectory()) {
+              copyDir(srcPath, destPath);
+            } else {
+              fs.copyFileSync(srcPath, destPath);
+            }
+          }
+        };
+        copyDir(sourceDir, targetDir);
+        copiedDirs++;
+      }
+    }
+
+    let packageJson = path.join(pkgDir, 'package.json');
+    if (!fs.existsSync(packageJson)) {
+      packageJson = path.join(ROOT, 'package.json');
+    }
+    if (fs.existsSync(packageJson)) {
+      fs.copyFileSync(packageJson, path.join(physicalInstallDir, 'package.json'));
+    }
+
+    console.log(`  ✓ 已复制 ${copiedDirs} 个目录到独立位置`);
+  }
+
+  // 创建全局目录
+  console.log('\n📁 创建全局目录...');
+  fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'commands'), { recursive: true });
+  fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'skills'), { recursive: true });
+  console.log('  ✓ 目录创建完成');
+
+  // 从独立位置复制命令文件（覆盖式）
+  console.log('\n📋 安装命令文件...');
+  const commandsDir = path.join(claudeFilesDir, 'src', 'claude', 'commands');
+  if (fs.existsSync(commandsDir)) {
+    const files = fs.readdirSync(commandsDir);
+    let commandCount = 0;
+    files.forEach((file) => {
+      if (file.endsWith('.md')) {
+        fs.copyFileSync(path.join(commandsDir, file), path.join(GLOBAL_CLAUDE, 'commands', file));
+        commandCount++;
+      }
+    });
+    console.log(`  ✓ ${commandCount} 个命令文件`);
+  }
+
+  // 合并 hooks 配置到 settings.json
+  console.log('\n⚙️  配置 hooks...');
+  const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
+  if (fs.existsSync(hooksJson)) {
+    mergeHooksToSettings(hooksJson);
+  } else {
+    console.log('  ⚠️  hooks 配置文件不存在，跳过');
+  }
+
+  // 创建技能符号链接（覆盖式）
+  console.log('\n🔗 链接技能文件...');
   const skillsDir = path.join(claudeFilesDir, 'src', 'claude', 'skills');
   if (fs.existsSync(skillsDir)) {
     const skills = fs.readdirSync(skillsDir, { withFileTypes: true });
-    let repairedCount = 0;
+    let skillCount = 0;
 
     for (const skill of skills) {
       if (skill.isDirectory()) {
@@ -79,40 +267,35 @@ if (!needsGlobalSetup) {
             const sourceFile = path.join(skillPath, file);
             const targetFile = path.join(GLOBAL_CLAUDE, 'skills', file);
 
-            // 检查链接是否存在或损坏
-            let needsLink = !fs.existsSync(targetFile);
-            if (!needsLink) {
-              try {
-                const isSymlink = fs.lstatSync(targetFile).isSymbolicLink();
-                if (isSymlink) {
-                  const linkTarget = fs.readlinkSync(targetFile);
-                  needsLink = !fs.existsSync(linkTarget);
-                }
-              } catch {
-                needsLink = true;
-              }
+            // 删除旧链接或文件
+            if (fs.existsSync(targetFile)) {
+              fs.unlinkSync(targetFile);
             }
 
-            if (needsLink) {
-              if (fs.existsSync(targetFile)) {
-                fs.unlinkSync(targetFile);
-              }
-              fs.symlinkSync(sourceFile, targetFile);
-              repairedCount++;
-            }
+            fs.symlinkSync(sourceFile, targetFile);
+            skillCount++;
           }
         }
       }
     }
-
-    if (repairedCount > 0) {
-      console.log(`  ✓ 修复了 ${repairedCount} 个技能链接`);
-    } else {
-      console.log('  ✓ 所有技能链接正常');
-    }
+    console.log(`  ✓ ${skillCount} 个技能链接`);
   }
 
-  process.exit(0);
+  console.log('\n✅ ClaudeReqSys 安装完成!\n');
+  console.log('📌 现在可以在任何项目中直接使用:');
+  console.log('   /req 添加新功能');
+  console.log('   /req --dashboard');
+  console.log('');
+  console.log('💡 提示:');
+  console.log(`   - npm 包位置: ${physicalInstallDir}`);
+  console.log(`   - Claude 文件位置: ${claudeFilesDir}`);
+  console.log('   - 清理 npm 缓存不影响使用');
+  console.log('   - 每次运行 npm install 都会覆盖更新到最新版本');
+  console.log('');
+} catch (error) {
+  console.error('❌ 安装失败:', error.message);
+  console.log('\n💡 提示: 您可以稍后手动运行配置\n');
+  // 不退出，允许 npm install 完成
 }
 
 console.log('🚀 ClaudeReqSys 正在自动配置...\n');
