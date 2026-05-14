@@ -24,21 +24,23 @@
 - 📦 **项目更干净** - 项目只包含数据，不包含系统文件
 - 🔄 **npm 管理** - 使用 npm 标准流程，跨平台支持
 
-### 方式一：直接从 GitHub 安装
+### 方式一：直接从 GitHub 安装 ⭐ 推荐
 
 ```bash
-# npm 全局安装
+# npm 全局安装（自动配置）
 npm install -g github:zxc1213/claude-req-sys
 
-# 初始化你的项目
+# 直接使用！无需手动初始化
 cd /path/to/your/project
-claude-req-init
+/req 添加新功能
 ```
 
 **安装说明**：
-- 首次运行 `claude-req-init` 时，会自动安装全局配置到 `~/.claude/`
-- 无需手动配置，开箱即用
-- 所有项目共享同一套工具
+
+- ✅ **自动配置** - npm install 时自动安装所有 skills、hooks 和 commands
+- ✅ **开箱即用** - 无需手动运行 claude-req-init
+- ✅ **全局可用** - 所有项目自动共享同一套工具
+- ✅ **自动更新** - 重新安装即可更新所有配置
 
 ### 方式二：克隆后安装
 
@@ -47,12 +49,12 @@ claude-req-init
 git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
 
-# 2. npm 全局安装
+# 2. npm 全局安装（自动配置）
 npm install -g .
 
-# 3. 初始化你的项目
+# 直接使用！无需手动初始化
 cd /path/to/your/project
-claude-req-init
+/req 添加新功能
 ```
 
 ### 使用新项目
@@ -188,6 +190,7 @@ REQ-XXX/
 **功能**：智能路由到最优处理流程
 
 **使用**：
+
 ```bash
 /req 添加用户登录功能     # 自动推断为 feature + deep
 /req 修复登录bug         # 自动推断为 bug + quick
@@ -199,6 +202,7 @@ REQ-XXX/
 **功能**：5维度科学评估优先级
 
 **使用**：
+
 ```bash
 /priority --list           # 查看优先级排序
 /priority REQ-20260513-001 # 评估单个需求
@@ -209,6 +213,7 @@ REQ-XXX/
 **功能**：4个关键阶段自动检查
 
 **使用**：
+
 ```bash
 /quality-gate check-all REQ-20260513-001 # 检查所有门禁
 ```
@@ -218,6 +223,7 @@ REQ-XXX/
 **功能**：5个文件简化为2个文件
 
 **优势**：
+
 - 维护成本降低 70%
 - 消除信息冗余
 - 单一信息源
@@ -227,6 +233,7 @@ REQ-XXX/
 **功能**：将旧格式迁移到新格式
 
 **使用**：
+
 ```bash
 /req-migrate REQ-20260513-001 # 单个迁移
 /req-migrate --all               # 批量迁移
@@ -237,6 +244,7 @@ REQ-XXX/
 **功能**：20+验证项确保质量
 
 **使用**：
+
 ```bash
 /req-verify --all REQ-20260513-001
 ```
@@ -246,6 +254,7 @@ REQ-XXX/
 **功能**：4维度16指标，持续优化
 
 **使用**：
+
 ```bash
 /req-metrics                    # 查看所有指标
 /req-metrics --report week       # 生成周报
@@ -259,6 +268,7 @@ REQ-XXX/
 ### Q: 安装脚本会覆盖我的 settings.json 吗？
 
 **A**: 不会。v0.3.0 版本实现了智能配置合并：
+
 - ✅ 自动检测现有 `.claude/settings.json`
 - ✅ 使用深度合并算法，保留所有现有配置
 - ✅ Hooks 配置会智能合并，不会覆盖现有 hooks
@@ -267,6 +277,7 @@ REQ-XXX/
 ### Q: 命令不生效？
 
 **检查项**：
+
 1. 确认在正确的项目目录
 2. 检查 `.claude/commands/` 目录是否存在
 3. 确认文件格式正确（只有 description，没有 name 字段）
@@ -311,6 +322,7 @@ REQ-XXX/
 ```
 
 迁移工具会：
+
 - ✅ 自动备份旧文件
 - ✅ 验证生成的文档
 - ✅ 支持回滚
@@ -383,12 +395,14 @@ bash scripts/update.sh
 ### v0.5.0 (2026-05-13)
 
 **新增功能**：
+
 - ✅ 全局安装架构 - 一次安装，所有项目使用
 - ✅ 项目初始化脚本 - 快速设置新项目
 - ✅ 符号链接管理 - 自动同步最新版本
 - ✅ 项目数据分离 - 工具在全局，数据在项目
 
 **优化**：
+
 - 📦 项目更干净 - 只包含数据，不包含系统文件
 - 🚀 更新更快速 - 只需更新全局安装
 - 🔄 自动同步 - 符号链接自动同步
@@ -396,6 +410,7 @@ bash scripts/update.sh
 ### v0.4.0 (2026-05-13)
 
 **新增功能**：
+
 - ✅ 符号链接安装 - 参考 mattpocock/skills
 - ✅ 技能分类组织 - core/quality/analysis/change/utils
 - ✅ 快速更新脚本 - git pull + link-skills
@@ -405,6 +420,7 @@ bash scripts/update.sh
 ### v0.3.0 (2026-05-13)
 
 **新增功能**：
+
 - ✅ 统一入口（req-manager）- 智能路由
 - ✅ 优先级评估（req-priority）- 5维度科学评估
 - ✅ 质量门禁（req-quality）- 4阶段自动检查
@@ -414,6 +430,7 @@ bash scripts/update.sh
 - ✅ 度量体系（metrics）- 4维度16指标
 
 **优化**：
+
 - 📈 学习成本降低 60%
 - 📉 维护成本降低 70%
 - 📉 返工率减少 60%
