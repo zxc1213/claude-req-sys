@@ -62,6 +62,48 @@ if (!needsGlobalSetup) {
     // 忽略版本检查错误
   }
 
+  // 确保符号链接存在（修复丢失的链接）
+  console.log('🔗 检查并修复技能符号链接...');
+  const skillsDir = path.join(claudeFilesDir, 'src', 'claude', 'skills');
+  if (fs.existsSync(skillsDir)) {
+    const skills = fs.readdirSync(skillsDir, { withFileTypes: true });
+    let repairedCount = 0;
+
+    for (const skill of skills) {
+      if (skill.isDirectory()) {
+        const skillPath = path.join(skillsDir, skill.name);
+        const skillFiles = fs.readdirSync(skillPath);
+
+        for (const file of skillFiles) {
+          if (file.startsWith('req-') && file.endsWith('.md')) {
+            const sourceFile = path.join(skillPath, file);
+            const targetFile = path.join(GLOBAL_CLAUDE, 'skills', file);
+
+            // 检查链接是否存在或损坏
+            const needsLink =
+              !fs.existsSync(targetFile) ||
+              (fs.lstatSync(targetFile).isSymbolicLink() &&
+                !fs.existsSync(fs.readlinkSync(targetFile)));
+
+            if (needsLink) {
+              if (fs.existsSync(targetFile)) {
+                fs.unlinkSync(targetFile);
+              }
+              fs.symlinkSync(sourceFile, targetFile);
+              repairedCount++;
+            }
+          }
+        }
+      }
+    }
+
+    if (repairedCount > 0) {
+      console.log(`  ✓ 修复了 ${repairedCount} 个技能链接`);
+    } else {
+      console.log('  ✓ 所有技能链接正常');
+    }
+  }
+
   process.exit(0);
 }
 
