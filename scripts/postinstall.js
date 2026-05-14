@@ -21,12 +21,28 @@ let physicalInstallDir; // 最终的物理安装位置
 console.log('🚀 ClaudeReqSys 正在安装/更新...\n');
 
 try {
-  // 获取包源位置
+  // 获取包源位置（修复：优先使用 npm 全局路径）
   let pkgDir;
+
+  // 方法1: 从 npm 全局 node_modules 获取
   try {
-    const packageJsonPath = import.meta.resolve('claude-req-sys/package.json');
-    pkgDir = path.dirname(pathToFileURL(packageJsonPath).pathname);
+    const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
+    const npmPkgDir = path.join(npmGlobalRoot, 'claude-req-sys');
+    if (fs.existsSync(path.join(npmPkgDir, 'package.json'))) {
+      pkgDir = npmPkgDir;
+    }
   } catch {
+    // 忽略错误，尝试下一个方法
+  }
+
+  // 方法2: 从脚本位置推断（postinstall.js 在 scripts/ 目录下）
+  if (!pkgDir) {
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+    pkgDir = path.dirname(scriptDir);
+  }
+
+  // 方法3: 验证包目录是否有效，无效则使用 ROOT
+  if (!pkgDir || !fs.existsSync(path.join(pkgDir, 'package.json'))) {
     pkgDir = ROOT;
   }
 
