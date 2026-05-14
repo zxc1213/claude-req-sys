@@ -37,8 +37,15 @@ try {
 
   // 方法2: 从脚本位置推断（postinstall.js 在 scripts/ 目录下）
   if (!pkgDir) {
-    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
-    pkgDir = path.dirname(scriptDir);
+    let currentDir = path.dirname(fileURLToPath(import.meta.url));
+    // 向上查找包含 package.json 的目录
+    while (currentDir && currentDir !== path.dirname(currentDir)) {
+      if (fs.existsSync(path.join(currentDir, 'package.json'))) {
+        pkgDir = currentDir;
+        break;
+      }
+      currentDir = path.dirname(currentDir);
+    }
   }
 
   // 方法3: 验证包目录是否有效，无效则使用 ROOT
