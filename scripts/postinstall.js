@@ -63,32 +63,27 @@ try {
     const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
     const npmSymlink = path.join(npmGlobalRoot, 'claude-req-sys');
 
-    // 检查 npm 创建的符号链接
+    // 获取 npm 安装的实际位置（可能是符号链接）
+    let npmInstallLocation = npmSymlink;
     if (fs.existsSync(npmSymlink)) {
       const stats = fs.lstatSync(npmSymlink);
       if (stats.isSymbolicLink()) {
-        console.log('🔄 替换 npm 缓存符号链接为物理目录...');
-
-        // 删除 npm 的符号链接
-        fs.unlinkSync(npmSymlink);
-
-        // 创建物理目录
-        fs.mkdirSync(npmSymlink, { recursive: true });
-        physicalInstallDir = npmSymlink;
-
-        console.log(`  ✓ 物理目录: ${npmSymlink}`);
-      } else {
-        // 已经是物理目录
-        physicalInstallDir = npmSymlink;
+        npmInstallLocation = fs.readlinkSync(npmSymlink);
+        // 转换为绝对路径
+        if (!path.isAbsolute(npmInstallLocation)) {
+          npmInstallLocation = path.resolve(path.dirname(npmSymlink), npmInstallLocation);
+        }
       }
-    } else {
-      // 目录不存在，创建
-      fs.mkdirSync(npmSymlink, { recursive: true });
-      physicalInstallDir = npmSymlink;
     }
 
-    // 复制核心文件到物理位置
-    console.log('📦 复制包文件到物理位置...');
+    console.log(`📍 npm 安装位置: ${npmInstallLocation}`);
+
+    // 创建独立物理位置用于 Claude 文件
+    physicalInstallDir = SYMLINK_DIR;
+    fs.mkdirSync(physicalInstallDir, { recursive: true });
+
+    // 复制核心文件到独立位置
+    console.log('📦 复制包文件到独立位置...');
     const dirsToCopy = ['src', 'bin', 'scripts'];
     let copiedDirs = 0;
 
@@ -127,21 +122,7 @@ try {
       console.log('  ✓ package.json');
     }
 
-    console.log(`  ✓ 已复制 ${copiedDirs} 个目录`);
-
-    // 创建或更新符号链接：~/.claude/claude-req-sys → 物理位置
-    console.log('\n🔗 创建符号链接...');
-    if (fs.existsSync(SYMLINK_DIR)) {
-      const stats = fs.lstatSync(SYMLINK_DIR);
-      if (stats.isSymbolicLink()) {
-        fs.unlinkSync(SYMLINK_DIR);
-      } else {
-        fs.rmSync(SYMLINK_DIR, { recursive: true, force: true });
-      }
-    }
-
-    fs.symlinkSync(physicalInstallDir, SYMLINK_DIR, 'dir');
-    console.log(`  ✓ ~/.claude/claude-req-sys → ${physicalInstallDir}`);
+    console.log(`  ✓ 已复制 ${copiedDirs} 个目录到独立位置`);
   } catch (error) {
     // Fallback: 使用独立目录
     console.log('⚠️  无法替换 npm 符号链接，使用独立目录');
@@ -272,8 +253,8 @@ try {
   console.log('   /req --dashboard');
   console.log('');
   console.log('💡 提示:');
-  console.log(`   - 物理文件位置: ${physicalInstallDir}`);
-  console.log('   - 符号链接: ~/.claude/claude-req-sys → 物理位置');
+  console.log(`   - Claude 文件位置: ${physicalInstallDir}`);
+  console.log('   - npm 包位置: npm 全局安装目录（包含依赖）');
   console.log('   - 清理 npm 缓存不影响使用');
   console.log('   - 更新: 运行 npm install -g github:zxc1213/claude-req-sys');
   console.log('');
