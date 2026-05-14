@@ -16,7 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
 
 const GLOBAL_CLAUDE = path.join(process.env.HOME || process.env.USERPROFILE, '.claude');
-const claudeFilesDir = path.join(GLOBAL_CLAUDE, 'claude-req-sys');
+let physicalInstallDir; // 最终的物理安装位置
 
 console.log('🚀 ClaudeReqSys 正在安装/更新...\n');
 
@@ -42,8 +42,6 @@ try {
   console.log('💡 覆盖式更新模式：清理旧文件，安装最新版本\n');
 
   // 获取 npm 全局 node_modules 物理路径并替换符号链接
-  let physicalInstallDir;
-
   try {
     const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
     const npmSymlink = path.join(npmGlobalRoot, 'claude-req-sys');
@@ -128,13 +126,16 @@ try {
     // 创建独立位置用于 Claude 文件（覆盖式）
     console.log('📦 复制文件到独立位置...');
 
+    // 设置独立位置路径
+    physicalInstallDir = path.join(GLOBAL_CLAUDE, 'claude-req-sys');
+
     // 清理旧文件（如果存在）
-    if (fs.existsSync(claudeFilesDir)) {
+    if (fs.existsSync(physicalInstallDir)) {
       console.log('  🧹 清理旧文件...');
-      fs.rmSync(claudeFilesDir, { recursive: true, force: true });
+      fs.rmSync(physicalInstallDir, { recursive: true, force: true });
     }
 
-    fs.mkdirSync(claudeFilesDir, { recursive: true });
+    fs.mkdirSync(physicalInstallDir, { recursive: true });
 
     // 复制核心文件到独立位置
     const dirsToCopy = ['src', 'bin', 'scripts'];
@@ -143,7 +144,7 @@ try {
     for (const dir of dirsToCopy) {
       const sourceDir = path.join(pkgDir, dir);
       if (fs.existsSync(sourceDir)) {
-        const targetDir = path.join(claudeFilesDir, dir);
+        const targetDir = path.join(physicalInstallDir, dir);
 
         // 递归复制目录
         const copyDir = (src, dest) => {
@@ -171,14 +172,14 @@ try {
       packageJson = path.join(ROOT, 'package.json');
     }
     if (fs.existsSync(packageJson)) {
-      fs.copyFileSync(packageJson, path.join(claudeFilesDir, 'package.json'));
+      fs.copyFileSync(packageJson, path.join(physicalInstallDir, 'package.json'));
     }
 
     console.log(`  ✓ 已复制 ${copiedDirs} 个目录到独立位置`);
   } catch (error) {
     // Fallback: 使用独立目录
     console.log('⚠️  无法替换 npm 符号链接，使用独立目录');
-    physicalInstallDir = claudeFilesDir;
+    physicalInstallDir = path.join(GLOBAL_CLAUDE, 'claude-req-sys');
     fs.mkdirSync(physicalInstallDir, { recursive: true });
 
     // 复制文件到独立目录
@@ -227,7 +228,7 @@ try {
 
   // 从独立位置复制命令文件（覆盖式）
   console.log('\n📋 安装命令文件...');
-  const commandsDir = path.join(claudeFilesDir, 'src', 'claude', 'commands');
+  const commandsDir = path.join(physicalInstallDir, 'src', 'claude', 'commands');
   if (fs.existsSync(commandsDir)) {
     const files = fs.readdirSync(commandsDir);
     let commandCount = 0;
@@ -242,7 +243,7 @@ try {
 
   // 合并 hooks 配置到 settings.json
   console.log('\n⚙️  配置 hooks...');
-  const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
+  const hooksJson = path.join(physicalInstallDir, 'src', 'config', 'hooks.json');
   if (fs.existsSync(hooksJson)) {
     mergeHooksToSettings(hooksJson);
   } else {
@@ -251,7 +252,7 @@ try {
 
   // 创建技能符号链接（覆盖式）
   console.log('\n🔗 链接技能文件...');
-  const skillsDir = path.join(claudeFilesDir, 'src', 'claude', 'skills');
+  const skillsDir = path.join(physicalInstallDir, 'src', 'claude', 'skills');
 
   if (fs.existsSync(skillsDir)) {
     const skills = fs.readdirSync(skillsDir, { withFileTypes: true });
@@ -289,8 +290,7 @@ try {
   console.log('   /req --dashboard');
   console.log('');
   console.log('💡 提示:');
-  console.log(`   - npm 包位置: ${physicalInstallDir}`);
-  console.log(`   - Claude 文件位置: ${claudeFilesDir}`);
+  console.log(`   - 安装位置: ${physicalInstallDir}`);
   console.log('   - 清理 npm 缓存不影响使用');
   console.log('   - 每次运行 npm install 都会覆盖更新到最新版本');
   console.log('');
