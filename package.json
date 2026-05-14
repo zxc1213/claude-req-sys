@@ -44,7 +44,8 @@
     "url": "https://github.com/zxc1213/claude-req-sys/issues"
   },
   "homepage": "https://github.com/zxc1213/claude-req-sys#readme",
-  "dependencies": {
+  "dependencies": {},
+  "optionalDependencies": {
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.3",
     "commander": "^12.0.0",
