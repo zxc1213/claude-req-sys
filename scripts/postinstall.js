@@ -2,7 +2,7 @@
 
 /**
  * ClaudeReqSys npm postinstall 脚本
- * 新架构：物理文件在 npm 全局 node_modules，符号链接在 ~/.claude/
+ * 新架构：替换 npm 的缓存符号链接为物理目录
  * 清理缓存后依然可用
  */
 
@@ -56,67 +56,82 @@ try {
     pkgDir = ROOT;
   }
 
-  // 检测是否在 npm 全局安装环境中
-  let npmGlobalRoot;
+  // 获取 npm 全局 node_modules 物理路径并替换符号链接
   let physicalInstallDir;
 
   try {
-    // 获取 npm 全局 node_modules 物理路径
-    npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
-    physicalInstallDir = path.join(npmGlobalRoot, 'claude-req-sys');
+    const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
+    const npmSymlink = path.join(npmGlobalRoot, 'claude-req-sys');
 
-    // 如果物理路径不存在，创建并复制文件
-    if (!fs.existsSync(physicalInstallDir)) {
-      console.log('📁 创建物理安装目录...');
-      fs.mkdirSync(physicalInstallDir, { recursive: true });
+    // 检查 npm 创建的符号链接
+    if (fs.existsSync(npmSymlink)) {
+      const stats = fs.lstatSync(npmSymlink);
+      if (stats.isSymbolicLink()) {
+        console.log('🔄 替换 npm 缓存符号链接为物理目录...');
 
-      // 复制核心文件到物理位置
-      console.log('📦 复制包文件到物理位置...');
-      const dirsToCopy = ['src', 'bin', 'scripts'];
-      let copiedDirs = 0;
+        // 删除 npm 的符号链接
+        fs.unlinkSync(npmSymlink);
 
-      for (const dir of dirsToCopy) {
-        const sourceDir = path.join(pkgDir, dir);
-        if (fs.existsSync(sourceDir)) {
-          const targetDir = path.join(physicalInstallDir, dir);
+        // 创建物理目录
+        fs.mkdirSync(npmSymlink, { recursive: true });
+        physicalInstallDir = npmSymlink;
 
-          // 递归复制目录
-          const copyDir = (src, dest) => {
-            fs.mkdirSync(dest, { recursive: true });
-            const entries = fs.readdirSync(src, { withFileTypes: true });
-            for (const entry of entries) {
-              const srcPath = path.join(src, entry.name);
-              const destPath = path.join(dest, entry.name);
-              if (entry.isDirectory()) {
-                copyDir(srcPath, destPath);
-              } else {
-                fs.copyFileSync(srcPath, destPath);
-              }
-            }
-          };
-
-          copyDir(sourceDir, targetDir);
-          copiedDirs++;
-        }
+        console.log(`  ✓ 物理目录: ${npmSymlink}`);
+      } else {
+        // 已经是物理目录
+        physicalInstallDir = npmSymlink;
       }
-
-      // 复制 package.json（用于版本检查）
-      let packageJson = path.join(pkgDir, 'package.json');
-      if (!fs.existsSync(packageJson)) {
-        packageJson = path.join(ROOT, 'package.json');
-      }
-      if (fs.existsSync(packageJson)) {
-        fs.copyFileSync(packageJson, path.join(physicalInstallDir, 'package.json'));
-        console.log('  ✓ package.json');
-      }
-
-      console.log(`  ✓ 已复制 ${copiedDirs} 个目录到 ${physicalInstallDir}`);
+    } else {
+      // 目录不存在，创建
+      fs.mkdirSync(npmSymlink, { recursive: true });
+      physicalInstallDir = npmSymlink;
     }
+
+    // 复制核心文件到物理位置
+    console.log('📦 复制包文件到物理位置...');
+    const dirsToCopy = ['src', 'bin', 'scripts'];
+    let copiedDirs = 0;
+
+    for (const dir of dirsToCopy) {
+      const sourceDir = path.join(pkgDir, dir);
+      if (fs.existsSync(sourceDir)) {
+        const targetDir = path.join(physicalInstallDir, dir);
+
+        // 递归复制目录
+        const copyDir = (src, dest) => {
+          fs.mkdirSync(dest, { recursive: true });
+          const entries = fs.readdirSync(src, { withFileTypes: true });
+          for (const entry of entries) {
+            const srcPath = path.join(src, entry.name);
+            const destPath = path.join(dest, entry.name);
+            if (entry.isDirectory()) {
+              copyDir(srcPath, destPath);
+            } else {
+              fs.copyFileSync(srcPath, destPath);
+            }
+          }
+        };
+
+        copyDir(sourceDir, targetDir);
+        copiedDirs++;
+      }
+    }
+
+    // 复制 package.json（用于版本检查）
+    let packageJson = path.join(pkgDir, 'package.json');
+    if (!fs.existsSync(packageJson)) {
+      packageJson = path.join(ROOT, 'package.json');
+    }
+    if (fs.existsSync(packageJson)) {
+      fs.copyFileSync(packageJson, path.join(physicalInstallDir, 'package.json'));
+      console.log('  ✓ package.json');
+    }
+
+    console.log(`  ✓ 已复制 ${copiedDirs} 个目录`);
 
     // 创建或更新符号链接：~/.claude/claude-req-sys → 物理位置
     console.log('\n🔗 创建符号链接...');
     if (fs.existsSync(SYMLINK_DIR)) {
-      // 删除现有符号链接或目录
       const stats = fs.lstatSync(SYMLINK_DIR);
       if (stats.isSymbolicLink()) {
         fs.unlinkSync(SYMLINK_DIR);
@@ -125,12 +140,11 @@ try {
       }
     }
 
-    // 创建符号链接
     fs.symlinkSync(physicalInstallDir, SYMLINK_DIR, 'dir');
     console.log(`  ✓ ~/.claude/claude-req-sys → ${physicalInstallDir}`);
   } catch (error) {
-    // Fallback: 如果无法获取 npm 全局路径或创建符号链接，使用独立目录
-    console.log('⚠️  无法创建符号链接，使用独立目录');
+    // Fallback: 使用独立目录
+    console.log('⚠️  无法替换 npm 符号链接，使用独立目录');
     physicalInstallDir = SYMLINK_DIR;
     fs.mkdirSync(physicalInstallDir, { recursive: true });
 
