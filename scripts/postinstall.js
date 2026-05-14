@@ -124,6 +124,18 @@ try {
         copyAll(pkgDir, physicalInstallDir);
         console.log('  ✓ 所有文件已复制');
       }
+
+      // 手动安装依赖到物理位置
+      console.log('📦 安装依赖到物理位置...');
+      try {
+        execSync('npm install --production', {
+          cwd: physicalInstallDir,
+          stdio: 'inherit',
+        });
+        console.log('  ✓ 依赖安装完成');
+      } catch (installError) {
+        console.log('  ⚠️  依赖安装失败，但不影响核心功能');
+      }
     } else {
       console.log(`📍 npm 安装位置: ${physicalInstallDir}`);
     }
