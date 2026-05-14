@@ -21,6 +21,24 @@ let physicalInstallDir; // 最终的物理安装位置
 console.log('🚀 ClaudeReqSys 正在安装/更新...\n');
 
 try {
+  // 第一步：清理损坏的 npm 安装（修复 ENOTDIR 错误）
+  try {
+    const npmGlobalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
+    const npmPkgPath = path.join(npmGlobalRoot, 'claude-req-sys');
+
+    if (fs.existsSync(npmPkgPath)) {
+      const stats = fs.lstatSync(npmPkgPath);
+      if (!stats.isDirectory()) {
+        console.log('🧹 发现损坏的安装（文件而非目录），正在清理...');
+        fs.unlinkSync(npmPkgPath);
+        console.log('  ✓ 已清理损坏的文件');
+      }
+    }
+  } catch (cleanupError) {
+    // 清理失败不影响后续流程
+    console.log('  ⚠️  清理步骤跳过');
+  }
+
   // 获取包源位置（修复：优先使用 npm 全局路径）
   let pkgDir;
 
