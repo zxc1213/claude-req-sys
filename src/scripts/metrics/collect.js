@@ -7,7 +7,15 @@
 
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
+let yaml;
+try {
+  yaml = require('js-yaml');
+} catch {
+  console.error('❌ 错误: js-yaml 模块未安装');
+  console.error('\n请运行以下命令安装:');
+  console.error('  npm install js-yaml --save-dev\n');
+  process.exit(1);
+}
 
 const BASE_DIR = process.cwd();
 const REQUIREMENTS_DIR = path.join(BASE_DIR, '.requirements');

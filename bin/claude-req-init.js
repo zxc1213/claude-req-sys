@@ -11,7 +11,6 @@ import { execSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -48,12 +47,9 @@ if (needsGlobalSetup) {
     const commandsDir = path.join(pkgDir, 'src', 'claude', 'commands');
     if (fs.existsSync(commandsDir)) {
       const files = fs.readdirSync(commandsDir);
-      files.forEach(file => {
+      files.forEach((file) => {
         if (file.endsWith('.md')) {
-          fs.copyFileSync(
-            path.join(commandsDir, file),
-            path.join(GLOBAL_CLAUDE, 'commands', file)
-          );
+          fs.copyFileSync(path.join(commandsDir, file), path.join(GLOBAL_CLAUDE, 'commands', file));
         }
       });
       console.log('  ✓ 命令文件');
@@ -72,7 +68,7 @@ if (needsGlobalSetup) {
     const hooksDir = path.join(pkgDir, 'src', 'scripts', 'hooks');
     if (fs.existsSync(hooksDir)) {
       const files = fs.readdirSync(hooksDir);
-      files.forEach(file => {
+      files.forEach((file) => {
         if (file.endsWith('.js')) {
           fs.copyFileSync(
             path.join(hooksDir, file),
@@ -139,11 +135,11 @@ const dirs = [
   '.requirements/_system/versions',
   'docs/specs',
   'docs/guides',
-  'docs/analysis'
+  'docs/analysis',
 ];
 
 console.log('📁 创建项目目录...');
-dirs.forEach(dir => {
+dirs.forEach((dir) => {
   const fullPath = path.join(projectRoot, dir);
   fs.mkdirSync(fullPath, { recursive: true });
   console.log(`  ✓ ${dir}`);
@@ -157,35 +153,35 @@ if (!fs.existsSync(metricsConfigPath)) {
       collection: {
         enabled: true,
         interval: 'daily',
-        retentionDays: 90
+        retentionDays: 90,
       },
       targets: {
         cycle_time: 2.0,
         rework_rate: 0.15,
-        quality_gate_pass_rate: 0.90,
+        quality_gate_pass_rate: 0.9,
         user_satisfaction: 4.0,
-        completion_rate: 0.90
+        completion_rate: 0.9,
       },
       alerts: {
         enabled: true,
         thresholds: {
           cycle_time: { warning: 2.5, critical: 3.0 },
-          rework_rate: { warning: 0.15, critical: 0.20 }
-        }
+          rework_rate: { warning: 0.15, critical: 0.2 },
+        },
       },
       reporting: {
         frequency: 'weekly',
         autoGenerate: false,
-        includeCharts: false
-      }
-    }
+        includeCharts: false,
+      },
+    },
   };
   fs.writeFileSync(metricsConfigPath, JSON.stringify(metricsConfig, null, 2));
   console.log('  ✓ metrics/config.json');
 }
 
 // 初始化度量数据
-const metricsDataPath = path.join(projectRoot, '.requirements/metrics/data.yaml');
+const metricsDataPath = path.join(projectRoot, '.requirements/metrics/data.json');
 if (!fs.existsSync(metricsDataPath)) {
   const metricsData = {
     metrics: {
@@ -193,12 +189,12 @@ if (!fs.existsSync(metricsDataPath)) {
       rework_rate: [],
       quality_gate_pass_rate: [],
       completion_rate: [],
-      user_satisfaction: []
+      user_satisfaction: [],
     },
-    last_updated: new Date().toISOString()
+    last_updated: new Date().toISOString(),
   };
-  fs.writeFileSync(metricsDataPath, yaml.dump(metricsData));
-  console.log('  ✓ metrics/data.yaml');
+  fs.writeFileSync(metricsDataPath, JSON.stringify(metricsData, null, 2));
+  console.log('  ✓ metrics/data.json');
 }
 
 console.log('\n✅ 项目初始化完成!\n');
