@@ -80,10 +80,18 @@ if (!needsGlobalSetup) {
             const targetFile = path.join(GLOBAL_CLAUDE, 'skills', file);
 
             // 检查链接是否存在或损坏
-            const needsLink =
-              !fs.existsSync(targetFile) ||
-              (fs.lstatSync(targetFile).isSymbolicLink() &&
-                !fs.existsSync(fs.readlinkSync(targetFile)));
+            let needsLink = !fs.existsSync(targetFile);
+            if (!needsLink) {
+              try {
+                const isSymlink = fs.lstatSync(targetFile).isSymbolicLink();
+                if (isSymlink) {
+                  const linkTarget = fs.readlinkSync(targetFile);
+                  needsLink = !fs.existsSync(linkTarget);
+                }
+              } catch {
+                needsLink = true;
+              }
+            }
 
             if (needsLink) {
               if (fs.existsSync(targetFile)) {

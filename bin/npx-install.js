@@ -75,6 +75,7 @@ if (fs.existsSync(reqMdPath)) {
   // 确保符号链接存在（修复丢失的链接）
   console.log('🔗 检查并修复技能符号链接...');
   const skillsDir = path.join(PKG_INSTALL_DIR, 'src', 'claude', 'skills');
+
   if (fs.existsSync(skillsDir)) {
     const skills = fs.readdirSync(skillsDir, { withFileTypes: true });
     let repairedCount = 0;
@@ -90,10 +91,18 @@ if (fs.existsSync(reqMdPath)) {
             const targetFile = path.join(GLOBAL_CLAUDE, 'skills', file);
 
             // 检查链接是否存在或损坏
-            const needsLink =
-              !fs.existsSync(targetFile) ||
-              (fs.lstatSync(targetFile).isSymbolicLink() &&
-                !fs.existsSync(fs.readlinkSync(targetFile)));
+            let needsLink = !fs.existsSync(targetFile);
+            if (!needsLink) {
+              try {
+                const isSymlink = fs.lstatSync(targetFile).isSymbolicLink();
+                if (isSymlink) {
+                  const linkTarget = fs.readlinkSync(targetFile);
+                  needsLink = !fs.existsSync(linkTarget);
+                }
+              } catch {
+                needsLink = true;
+              }
+            }
 
             if (needsLink) {
               if (fs.existsSync(targetFile)) {
