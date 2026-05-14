@@ -12,9 +12,9 @@
  * - 显示执行总结
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const chalk = require('chalk');
+import fs from 'fs/promises';
+import path from 'path';
+import chalk from 'chalk';
 
 /**
  * 从 stdin 读取原始数据

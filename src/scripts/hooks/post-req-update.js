@@ -12,8 +12,8 @@
  * - 格式：[timestamp] Tool: {toolName}
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * 从 stdin 读取 JSON 数据
