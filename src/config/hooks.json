@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \".claude/scripts/hooks/post-req-update.js\"",
+            "command": "node \"{{CLAUDE_REQ_SYS}}/src/scripts/hooks/post-req-update.js\"",
             "timeout": 10
           }
         ],
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
+            "command": "node \"{{CLAUDE_REQ_SYS}}/src/scripts/hooks/stop-req-summary.js\"",
             "timeout": 10
           }
         ],

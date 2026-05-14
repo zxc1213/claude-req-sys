@@ -255,8 +255,6 @@ try {
   console.log('\n📁 创建全局目录...');
   fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'commands'), { recursive: true });
   fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'skills'), { recursive: true });
-  fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'scripts'), { recursive: true });
-  fs.mkdirSync(path.join(GLOBAL_CLAUDE, 'scripts', 'hooks'), { recursive: true });
   console.log('  ✓ 目录创建完成');
 
   // 从符号链接位置复制命令文件
@@ -281,24 +279,6 @@ try {
     mergeHooksToSettings(hooksJson);
   } else {
     console.log('  ⚠️  hooks 配置文件不存在，跳过');
-  }
-
-  // 从符号链接位置复制 hooks 脚本
-  console.log('\n🔧 安装 hooks 脚本...');
-  const hooksDir = path.join(claudeFilesDir, 'src', 'scripts', 'hooks');
-  if (fs.existsSync(hooksDir)) {
-    const files = fs.readdirSync(hooksDir);
-    let hookCount = 0;
-    files.forEach((file) => {
-      if (file.endsWith('.js')) {
-        fs.copyFileSync(
-          path.join(hooksDir, file),
-          path.join(GLOBAL_CLAUDE, 'scripts', 'hooks', file)
-        );
-        hookCount++;
-      }
-    });
-    console.log(`  ✓ ${hookCount} 个 hooks 脚本`);
   }
 
   // 创建技能符号链接（指向符号链接位置）
