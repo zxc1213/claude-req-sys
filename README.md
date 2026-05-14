@@ -1,8 +1,17 @@
-# Claude Code 需求管理系统
+# ClaudeReqSys - 智能需求管理系统
 
 智能需求管理与自动化执行系统，为 Claude Code 提供从需求到测试的全流程管理能力。
 
-## 特性
+## ⚡ 一键安装（推荐）
+
+```bash
+# 自动安装并配置（无需克隆项目）
+npx claude-req-sys
+```
+
+> 💡 **提示**：`npx` 会自动下载最新版本并配置 Claude Code，安装后可在任何项目中直接使用 `/req` 等命令。
+
+## 🚀 特性
 
 - 📋 **多类型支持**：新功能、Bug 修复、技术问题、需求调整、重构
 - 🤖 **智能自动化**：集成 brainstorming、systematic-debugging 等 skills
@@ -21,36 +30,36 @@
 - 💰 **成本优化**：智能控制 Token 使用
 - ⚠️ **智能配置合并**：自动合并 settings.json，不覆盖现有配置
 
-## 快速开始
+## 📖 使用方法
+
+安装完成后，在 Claude Code 中直接使用：
+
+```
+/req 添加用户登录功能          # 创建新功能
+/req --bug 登录页面显示异常     # Bug 报告
+/req --quick 修复文案错误       # 快速模式
+/req --dashboard               # 查看仪表板
+/metrics                       # 查看度量数据
+/commit                        # 提交管理
+```
+
+## 🔧 开发者安装
+
+如需参与开发或修改源码：
 
 ```bash
 # 克隆项目
 git clone https://github.com/zxc1213/claude-req-sys.git
 cd claude-req-sys
 
-# 安装到当前项目（自动合并配置）
-node install.js
+# 安装依赖
+npm install
 
-# 或安装到指定目录
-node install.js /path/to/target/project
+# 本地测试
+npm test
 
-# 创建新需求（智能推断）⭐ 新增
-/req 添加用户登录功能
-
-# 快速模式
-/req --quick 修复文案错误
-
-# Bug 报告
-/req --bug 登录页面在移动端显示异常
-
-# 技术问题
-/req --question 如何优化数据库查询性能
-
-# 查看仪表板
-/req --dashboard
-
-# 查看优先级排序 ⭐ 新增
-/priority --list
+# 全局链接（开发时使用）
+npm link
 ```
 
 ## 安装
