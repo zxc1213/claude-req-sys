@@ -53,38 +53,6 @@ cd /path/to/your/project
 - 💰 **成本优化**：智能控制 Token 使用
 - ⚠️ **智能配置合并**：自动合并 settings.json，不覆盖现有配置
 
-## 📖 使用方法
-
-安装完成后，在 Claude Code 中直接使用：
-
-```
-/req 添加用户登录功能          # 创建新功能
-/req --bug 登录页面显示异常     # Bug 报告
-/req --quick 修复文案错误       # 快速模式
-/req --dashboard               # 查看仪表板
-/metrics                       # 查看度量数据
-/commit                        # 提交管理
-```
-
-## 🔧 开发者安装
-
-如需参与开发或修改源码：
-
-```bash
-# 克隆项目
-git clone https://github.com/zxc1213/claude-req-sys.git
-cd claude-req-sys
-
-# 安装依赖
-npm install
-
-# 本地测试
-npm test
-
-# 全局链接（开发时使用）
-npm link
-```
-
 ## 🔄 更新方式
 
 **npm 安装更新**：
@@ -359,33 +327,20 @@ tests/
 
 ## 开发指南
 
+### 快速开始
+
+```bash
+git clone https://github.com/zxc1213/claude-req-sys.git
+cd claude-req-sys
+npm install
+```
+
 ### 环境要求
 
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 
-### 开发流程
-
-```bash
-# 1. 克隆仓库
-git clone https://github.com/zxc1213/claude-req-sys.git
-cd claude-req-sys
-
-# 2. 安装依赖
-npm install
-
-# 3. 运行测试
-npm test
-
-# 4. 代码检查
-npm run lint
-
-# 5. 格式化代码
-npm run format
-
-# 6. 提交代码（自动运行测试和lint）
-git commit -m "feat: 你的功能描述"
-```
+````
 
 ### 代码规范
 
@@ -403,7 +358,7 @@ npm run format
 
 # 检查格式
 npm run format:check
-```
+````
 
 ### Git Hooks
 

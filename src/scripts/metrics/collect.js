@@ -5,17 +5,9 @@
  * 自动从需求文件中收集度量数据
  */
 
-const fs = require('fs');
-const path = require('path');
-let yaml;
-try {
-  yaml = require('js-yaml');
-} catch {
-  console.error('❌ 错误: js-yaml 模块未安装');
-  console.error('\n请运行以下命令安装:');
-  console.error('  npm install js-yaml --save-dev\n');
-  process.exit(1);
-}
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
 
 const BASE_DIR = process.cwd();
 const REQUIREMENTS_DIR = path.join(BASE_DIR, '.requirements');

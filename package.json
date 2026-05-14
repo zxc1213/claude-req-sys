@@ -1,6 +1,6 @@
 {
   "name": "claude-req-sys",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "ClaudeReqSys - 智能需求管理与自动化执行系统，为 Claude Code 提供从需求到测试的全流程管理能力",
   "type": "module",
   "main": "src/scripts/requirement-manager/index.js",
@@ -48,10 +48,8 @@
     "cli-table3": "^0.6.3",
     "commander": "^12.0.0",
     "fuse.js": "^7.0.0",
+    "js-yaml": "^4.1.0",
     "ora": "^8.0.1"
-  },
-  "optionalDependencies": {
-    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
