@@ -90,9 +90,14 @@ try {
   }
 
   // 复制 package.json（用于版本检查）
-  const packageJson = path.join(pkgDir, 'package.json');
+  let packageJson = path.join(pkgDir, 'package.json');
+  if (!fs.existsSync(packageJson)) {
+    // fallback: 从 ROOT 复制
+    packageJson = path.join(ROOT, 'package.json');
+  }
   if (fs.existsSync(packageJson)) {
     fs.copyFileSync(packageJson, path.join(PKG_INSTALL_DIR, 'package.json'));
+    console.log('  ✓ package.json');
   }
 
   console.log(`  ✓ 已复制 ${copiedDirs} 个目录到独立位置`);
