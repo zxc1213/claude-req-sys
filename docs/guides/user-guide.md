@@ -132,13 +132,13 @@ npm install -g .
 
 ```bash
 # 查看优先级排序
-/priority --list
+/req:priority --list
 
 # 评估单个需求
-/priority REQ-20260513-001
+/req:priority REQ-20260513-001
 
 # 比较两个需求
-/priority --compare REQ-001 REQ-002
+/req:priority --compare REQ-001 REQ-002
 ```
 
 ### 3. 质量门禁（req-quality）
@@ -156,13 +156,13 @@ npm install -g .
 
 ```bash
 # 检查特定门禁
-/quality-gate check design REQ-20260513-001
+/req:quality REQ-20260513-001 --gate 1
 
 # 检查所有门禁
-/quality-gate check-all REQ-20260513-001
+/req:quality REQ-20260513-001
 
-# 查看门禁历史
-/quality-gate history REQ-20260513-001
+# 验证检查
+/req:verify REQ-20260513-001
 ```
 
 ### 4. 文档统一（req-unify）
@@ -423,7 +423,7 @@ AI: [暂停] [完整req-brainstorm] [创建新需求] [重新规划]
 ### 示例2：查看优先级排序
 
 ```bash
-/priority --list
+/req:priority --list
 
 # 系统响应：
 # 📊 优先级排序报告
@@ -450,7 +450,7 @@ AI: [暂停] [完整req-brainstorm] [创建新需求] [重新规划]
 ### 示例3：质量检查
 
 ```bash
-/quality-gate check-all REQ-20260513-001
+/req:quality check-all REQ-20260513-001
 
 # 系统响应：
 # 📋 质量检查报告 - REQ-20260513-001
@@ -683,8 +683,8 @@ AI: [暂停] [完整req-brainstorm] [创建新需求] [重新规划]
 ```bash
 # 查看命令帮助
 /req --help
-/priority --help
-/quality-gate --help
+/req:priority --help
+/req:quality --help
 /req-metrics --help
 /req-migrate --help
 

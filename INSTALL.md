@@ -252,16 +252,16 @@ claude-req-sys/
 /req 添加用户登录功能
 
 # 优先级管理
-/priority --list
+/req:priority --list
 
 # 质量检查
-/quality-gate check-all REQ-20260513-001
+/req:quality REQ-20260513-001
 
 # 度量分析
-/req-metrics --report week
+/req:metrics --report week
 
 # 文档迁移
-/req-migrate --all
+/req:migrate --all
 ```
 
 详细使用方法请参考 [用户指南](docs/guides/user-guide.md)

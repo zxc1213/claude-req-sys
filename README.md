@@ -98,23 +98,25 @@ kg-rebuild                   # 重建知识图谱索引
 **优先级管理**：
 
 ```bash
-/priority --list               # 查看所有需求的优先级排序
-/priority REQ-001              # 评估单个需求的优先级
-/priority --compare REQ-001 REQ-002  # 比较两个需求
+/req:priority --list               # 查看所有需求的优先级排序
+/req:priority REQ-001              # 评估单个需求的优先级
+/req:priority --compare REQ-001 REQ-002  # 比较两个需求
 ```
 
 **质量检查**：
 
 ```bash
-/quality-gate check design REQ-001  # 检查设计质量
-/quality-gate check-all REQ-001     # 检查所有门禁
+/req:quality REQ-001              # 质量门禁检查（自动推断检查点）
+/req:quality REQ-001 --gate 1     # 指定检查点（1-4）
+/req:verify REQ-001               # 验证检查清单
 ```
 
-**文档迁移**：
+**文档管理**：
 
 ```bash
-/req-unify REQ-001          # 迁移到新文档格式
-/req-unify --all            # 批量迁移所有需求
+/req:unify REQ-001          # 统一文档格式
+/req:migrate REQ-001        # 文档迁移（带备份）
+/req:test-plan REQ-001      # 生成测试计划
 ```
 
 ### 工作流程 ⭐ 更新
@@ -133,7 +135,7 @@ kg-rebuild                   # 重建知识图谱索引
 /req --active                  # 当前活跃需求
 
 # 3. 查看优先级
-/req-priority --list               # 按优先级排序
+/req:priority --list               # 按优先级排序
 
 # 4. 开始实现
 # 自动进入 executing-plans
