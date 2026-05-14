@@ -11,6 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { pathToFileURL } from 'url';
 import { execSync } from 'child_process';
+import { mergeHooksToSettings } from './merge-settings.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -23,6 +24,23 @@ const needsGlobalSetup = !fs.existsSync(path.join(GLOBAL_CLAUDE, 'commands', 're
 
 if (!needsGlobalSetup) {
   console.log('✓ ClaudeReqSys 全局配置已存在，跳过安装');
+
+  // 检查 hooks 是否已合并到 settings.json
+  const settingsPath = path.join(GLOBAL_CLAUDE, 'settings.json');
+  let hasHooks = false;
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      hasHooks = !!settings.hooks;
+    } catch (_error) {
+      // 忽略读取错误
+    }
+  }
+
+  if (!hasHooks) {
+    console.log('⚙️  检测到 hooks 未配置，正在合并...');
+    mergeHooksToSettings();
+  }
 
   // 检查是否需要更新
   try {
@@ -258,7 +276,10 @@ try {
   const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
   if (fs.existsSync(hooksJson)) {
     fs.copyFileSync(hooksJson, path.join(GLOBAL_CLAUDE, 'hooks.json'));
-    console.log('  ✓ hooks 配置');
+    console.log('  ✓ hooks 配置已复制');
+
+    // 合并到 settings.json 以生效
+    mergeHooksToSettings();
   }
 
   // 从符号链接位置复制 hooks 脚本

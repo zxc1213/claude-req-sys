@@ -10,6 +10,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { mergeHooksToSettings } from '../scripts/merge-settings.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -27,6 +28,24 @@ console.log(`
 const reqMdPath = path.join(GLOBAL_CLAUDE, 'commands', 'req.md');
 if (fs.existsSync(reqMdPath)) {
   console.log('✅ ClaudeReqSys 已安装并就绪！\n');
+
+  // 检查 hooks 是否已合并到 settings.json
+  const settingsPath = path.join(GLOBAL_CLAUDE, 'settings.json');
+  let hasHooks = false;
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      hasHooks = !!settings.hooks;
+    } catch (_error) {
+      // 忽略读取错误
+    }
+  }
+
+  if (!hasHooks) {
+    console.log('⚙️  检测到 hooks 未配置，正在合并...');
+    mergeHooksToSettings();
+  }
+
   console.log('📌 在 Claude Code 中直接使用:');
   console.log('   /req          添加新功能');
   console.log('   /req --dashboard  查看需求仪表板');
@@ -125,7 +144,10 @@ try {
   const hooksJson = path.join(PKG_INSTALL_DIR, 'src', 'config', 'hooks.json');
   if (fs.existsSync(hooksJson)) {
     fs.copyFileSync(hooksJson, path.join(GLOBAL_CLAUDE, 'hooks.json'));
-    console.log('  ✓ hooks 配置');
+    console.log('  ✓ hooks 配置已复制');
+
+    // 合并到 settings.json 以生效
+    mergeHooksToSettings();
   }
 
   // 从独立位置安装 hooks 脚本
