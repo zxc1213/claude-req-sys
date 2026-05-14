@@ -20,14 +20,21 @@ const CLAUDE_REQ_SYS_DIR = path.join(GLOBAL_CLAUDE, 'claude-req-sys');
 
 /**
  * 深度合并对象
+ * 注意：如果类型不匹配（对象 vs 数组），直接用 source 替换
  */
 function deepMerge(target, source) {
   const output = { ...target };
 
   for (const key of Object.keys(source)) {
-    if (source[key] instanceof Object && key in target && target[key] instanceof Object) {
+    // 类型检查：只有当两边都是纯对象（非数组）时才递归合并
+    const targetIsPlainObject =
+      key in target && target[key] instanceof Object && !Array.isArray(target[key]);
+    const sourceIsPlainObject = source[key] instanceof Object && !Array.isArray(source[key]);
+
+    if (sourceIsPlainObject && targetIsPlainObject) {
       output[key] = deepMerge(target[key], source[key]);
     } else {
+      // 类型不匹配或 source 是数组，直接替换
       output[key] = source[key];
     }
   }
