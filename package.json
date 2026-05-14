@@ -72,7 +72,6 @@
     "src/",
     "bin/",
     "scripts/",
-    "docs/",
     "package.json"
   ]
 }
