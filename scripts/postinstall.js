@@ -39,7 +39,10 @@ if (!needsGlobalSetup) {
 
   if (!hasHooks) {
     console.log('⚙️  检测到 hooks 未配置，正在合并...');
-    mergeHooksToSettings();
+    const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
+    if (fs.existsSync(hooksJson)) {
+      mergeHooksToSettings(hooksJson);
+    }
   }
 
   // 检查是否需要更新
@@ -271,15 +274,13 @@ try {
     console.log(`  ✓ ${commandCount} 个命令文件`);
   }
 
-  // 从符号链接位置复制 hooks 配置
-  console.log('\n⚙️  安装 hooks 配置...');
+  // 从符号链接位置合并 hooks 配置到 settings.json
+  console.log('\n⚙️  配置 hooks...');
   const hooksJson = path.join(claudeFilesDir, 'src', 'config', 'hooks.json');
   if (fs.existsSync(hooksJson)) {
-    fs.copyFileSync(hooksJson, path.join(GLOBAL_CLAUDE, 'hooks.json'));
-    console.log('  ✓ hooks 配置已复制');
-
-    // 合并到 settings.json 以生效
-    mergeHooksToSettings();
+    mergeHooksToSettings(hooksJson);
+  } else {
+    console.log('  ⚠️  hooks 配置文件不存在，跳过');
   }
 
   // 从符号链接位置复制 hooks 脚本

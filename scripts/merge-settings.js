@@ -33,16 +33,19 @@ function deepMerge(target, source) {
 
 /**
  * 合并 hooks 到 settings.json
+ * @param {string} [hooksSource] - 可选的 hooks 源文件路径，默认使用 HOOKS_SOURCE
  */
-export function mergeHooksToSettings() {
+export function mergeHooksToSettings(hooksSource) {
   try {
+    const sourceFile = hooksSource || HOOKS_SOURCE;
+
     // 读取 hooks 配置
-    if (!fs.existsSync(HOOKS_SOURCE)) {
+    if (!fs.existsSync(sourceFile)) {
       console.log('  ⚠️  hooks.json 不存在，跳过');
       return false;
     }
 
-    const hooksConfig = JSON.parse(fs.readFileSync(HOOKS_SOURCE, 'utf8'));
+    const hooksConfig = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
 
     // 读取或创建 settings.json
     let settings = {};

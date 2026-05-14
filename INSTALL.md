@@ -15,22 +15,22 @@
 
 ---
 
-## 全局安装（推荐）⭐ v0.5.0
+## 安装方式
 
-### 为什么选择全局安装？
+### 方式一：npm 全局安装（推荐）
+
+**为什么选择 npm 安装？**
 
 - 🌍 **一次安装，全局使用** - 所有项目自动可用
-- 🚀 **快速更新** - `claude-req-update` 一键更新
+- 🚀 **快速更新** - 重新安装即可更新
 - 📦 **项目更干净** - 项目只包含数据，不包含系统文件
 - 🔄 **npm 管理** - 使用 npm 标准流程，跨平台支持
 
-### 方式一：直接从 GitHub 安装 ⭐ 推荐
-
 ```bash
-# npm 全局安装（自动配置）
+# 直接从 GitHub 安装
 npm install -g github:zxc1213/claude-req-sys
 
-# 直接使用！无需手动初始化
+# 安装后直接使用
 cd /path/to/your/project
 /req 添加新功能
 ```
@@ -42,17 +42,23 @@ cd /path/to/your/project
 - ✅ **全局可用** - 所有项目自动共享同一套工具
 - ✅ **自动更新** - 重新安装即可更新所有配置
 
-### 方式二：克隆后安装
+### 方式二：克隆安装
+
+**为什么选择克隆安装？**
+
+- 🛠️ **方便开发** - 可以修改源码和本地测试
+- 📥 **完整源代码** - 访问完整的项目文件
+- 🔧 **适合贡献** - 方便开发者提交 PR
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
 cd claude-req-sys
 
-# 2. npm 全局安装（自动配置）
+# 2. npm 全局安装
 npm install -g .
 
-# 直接使用！无需手动初始化
+# 安装后直接使用
 cd /path/to/your/project
 /req 添加新功能
 ```
@@ -69,26 +75,14 @@ cd /path/to/new/project
 
 ## 更新系统
 
-### 快速更新
+### npm 安装更新
 
 ```bash
-# 重新安装来更新（从 GitHub）
+# 重新安装即可更新
 npm install -g github:zxc1213/claude-req-sys
-
-# 或使用 git+ 协议
-npm install -g git+https://github.com/zxc1213/claude-req-sys.git
 ```
 
-### 验证更新
-
-```bash
-# 查看当前版本
-claude-req-init --version
-```
-
-### 本地克隆仓库更新
-
-如果你是克隆仓库后安装的：
+### 克隆安装更新
 
 ```bash
 # 进入仓库目录
@@ -172,94 +166,60 @@ claude-req-sys/
 └── README.md
 ```
 
-### 新文档结构（v0.3.0）
-
-```
-REQ-XXX/
-├── meta.yaml           # 元数据（含优先级）
-├── spec.md             # 统一主文档 ⭐ 新格式
-└── test-cases.md       # 详细测试用例（可选）⭐ 新格式
-```
-
 ---
 
-## 新功能概览
+## 🔧 配置说明
 
-### 1. 统一入口（req-manager）
+### 自动化功能（可选）
 
-**功能**：智能路由到最优处理流程
+安装时会自动创建 `req-system-hooks.example.json`，其中包含自动化 Hooks 配置。
 
-**使用**：
+**如需启用自动化功能**，请手动将示例文件中的 hooks 配置合并到你的 `settings.json`：
 
-```bash
-/req 添加用户登录功能     # 自动推断为 feature + deep
-/req 修复登录bug         # 自动推断为 bug + quick
-/req 如何实现OAuth?      # 自动推断为 question + semi_auto
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/post-req-update.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "更新需求记录",
+        "id": "post:req:update"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \".claude/scripts/hooks/stop-req-summary.js\"",
+            "timeout": 10
+          }
+        ],
+        "description": "生成需求执行总结",
+        "id": "stop:req:summary"
+      }
+    ]
+  }
+}
 ```
 
-### 2. 优先级评估（req-priority）
+### 基础使用（无需 Hooks）
 
-**功能**：5维度科学评估优先级
+即使不配置 Hooks，`/req` 命令也可以正常使用：
 
-**使用**：
-
-```bash
-/priority --list           # 查看优先级排序
-/priority REQ-20260513-001 # 评估单个需求
-```
-
-### 3. 质量门禁（req-quality）
-
-**功能**：4个关键阶段自动检查
-
-**使用**：
-
-```bash
-/quality-gate check-all REQ-20260513-001 # 检查所有门禁
-```
-
-### 4. 文档统一（req-unify）
-
-**功能**：5个文件简化为2个文件
-
-**优势**：
-
-- 维护成本降低 70%
-- 消除信息冗余
-- 单一信息源
-
-### 5. 文档迁移（req-migrate）
-
-**功能**：将旧格式迁移到新格式
-
-**使用**：
-
-```bash
-/req-migrate REQ-20260513-001 # 单个迁移
-/req-migrate --all               # 批量迁移
-```
-
-### 6. 验证检查清单（req-verify）
-
-**功能**：20+验证项确保质量
-
-**使用**：
-
-```bash
-/req-verify --all REQ-20260513-001
-```
-
-### 7. 度量体系（metrics）
-
-**功能**：4维度16指标，持续优化
-
-**使用**：
-
-```bash
-/req-metrics                    # 查看所有指标
-/req-metrics --report week       # 生成周报
-/req-metrics --trend cycle_time  # 查看趋势
-```
+- ✅ 创建需求
+- ✅ 查看仪表板
+- ✅ 管理需求状态
+- ❌ 自动跟踪文件变更（需要 Hooks）
+- ❌ 自动生成会话总结（需要 Hooks）
 
 ---
 
@@ -343,112 +303,4 @@ rm -rf .requirements/req-metrics/
 
 ---
 
-## 快速开始
-
-安装完成后：
-
-```bash
-# 1. 创建第一个需求（智能推断）
-/req 添加用户登录功能
-
-# 2. 查看优先级排序
-/priority --list
-
-# 3. 查看度量指标
-/req-metrics
-
-# 4. 生成周报
-/req-metrics --report week
-
-# 5. 查看帮助
-/req --help
-```
-
----
-
-## 更新系统
-
-### 快速更新
-
-```bash
-# 进入仓库目录
-cd claude-req-sys
-
-# 拉取最新代码
-git pull
-
-# 重新链接技能
-bash scripts/link-skills.sh
-```
-
-### 一键更新脚本
-
-```bash
-# 在仓库目录运行
-bash scripts/update.sh
-```
-
----
-
-## 版本历史
-
-### v0.5.0 (2026-05-13)
-
-**新增功能**：
-
-- ✅ 全局安装架构 - 一次安装，所有项目使用
-- ✅ 项目初始化脚本 - 快速设置新项目
-- ✅ 符号链接管理 - 自动同步最新版本
-- ✅ 项目数据分离 - 工具在全局，数据在项目
-
-**优化**：
-
-- 📦 项目更干净 - 只包含数据，不包含系统文件
-- 🚀 更新更快速 - 只需更新全局安装
-- 🔄 自动同步 - 符号链接自动同步
-
-### v0.4.0 (2026-05-13)
-
-**新增功能**：
-
-- ✅ 符号链接安装 - 参考 mattpocock/skills
-- ✅ 技能分类组织 - core/quality/analysis/change/utils
-- ✅ 快速更新脚本 - git pull + link-skills
-- ✅ setup 技能 - 一次性初始化配置
-- ✅ 跨平台支持 - Unix 和 Windows 脚本
-
-### v0.3.0 (2026-05-13)
-
-**新增功能**：
-
-- ✅ 统一入口（req-manager）- 智能路由
-- ✅ 优先级评估（req-priority）- 5维度科学评估
-- ✅ 质量门禁（req-quality）- 4阶段自动检查
-- ✅ 文档统一（req-unify）- 5文件→2文件
-- ✅ 文档迁移（req-migrate）- 自动备份和验证
-- ✅ 验证检查清单（req-verify）- 20+验证项
-- ✅ 度量体系（metrics）- 4维度16指标
-
-**优化**：
-
-- 📈 学习成本降低 60%
-- 📉 维护成本降低 70%
-- 📉 返工率减少 60%
-- 📈 创建效率提升 50%
-- 📈 质量门禁通过率 >90%
-
-### v0.2.0
-
-- 添加 req-brainstorm skill
-- 添加 req-change skill
-- 添加 req-test-plan skill
-- 智能配置合并
-
-### v0.1.0
-
-- 初始版本
-- 基础需求管理功能
-
----
-
-**获取更多帮助**：查看 [用户指南](docs/guides/user-guide.md) | [优化报告](docs/analysis/optimization-report.md)
+**获取更多帮助**：查看 [用户指南](docs/guides/user-guide.md) | [README](../README.md)

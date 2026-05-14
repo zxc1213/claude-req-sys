@@ -2,14 +2,37 @@
 
 智能需求管理与自动化执行系统，为 Claude Code 提供从需求到测试的全流程管理能力。
 
-## ⚡ 一键安装（推荐）
+## ⚡ 快速安装
+
+### 方式一：npm 全局安装（推荐）
 
 ```bash
-# 自动安装并配置（无需克隆项目）
-npx claude-req-sys
+# 直接从 GitHub 安装
+npm install -g github:zxc1213/claude-req-sys
+
+# 安装后直接使用
+cd /path/to/your/project
+/req 添加新功能
 ```
 
-> 💡 **提示**：`npx` 会自动下载最新版本并配置 Claude Code，安装后可在任何项目中直接使用 `/req` 等命令。
+> 💡 **优势**：标准 npm 包管理，一键安装，全局可用
+
+### 方式二：克隆安装
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
+cd claude-req-sys
+
+# 2. npm 全局安装
+npm install -g .
+
+# 安装后直接使用
+cd /path/to/your/project
+/req 添加新功能
+```
+
+> 💡 **优势**：方便开发者修改源码和本地测试
 
 ## 🚀 特性
 
@@ -62,49 +85,23 @@ npm test
 npm link
 ```
 
-## 安装
+## 🔄 更新方式
 
-### 方式一：克隆安装（推荐）⭐ v0.5.0
-
-```bash
-# 1. 克隆仓库
-git clone https://github.com/zxc1213/claude-req-sys.git claude-req-sys
-cd claude-req-sys
-
-# 2. 运行安装脚本
-bash install.sh
-
-# 3. 初始化你的项目
-cd /path/to/your/project
-claude-req-init
-```
-
-**优点**：
-
-- 🌍 **一次安装，全局使用** - 所有项目自动可用
-- 🚀 **快速更新** - `claude-req-update` 一键更新
-- 📦 **项目更干净** - 项目只包含数据，不包含系统文件
-- 🔄 **可靠安装** - 避免 npm 工作目录问题
-
-### 方式二：npm 全局安装
+**npm 安装更新**：
 
 ```bash
-# 直接从 GitHub 安装
 npm install -g github:zxc1213/claude-req-sys
-
-# 初始化你的项目
-cd /path/to/your/project
-claude-req-init
 ```
 
-**优点**：
+**克隆安装更新**：
 
-- 📦 **标准 npm 包管理** - 使用熟悉的 npm 生态
-- 🚀 **一键安装** - 无需手动克隆和配置
-- 🔄 **简单更新** - 重新安装即可更新：`npm install -g github:zxc1213/claude-req-sys`
-- 🌍 **全局可用** - 所有项目共享同一套工具
+```bash
+cd claude-req-sys
+git pull
+npm install -g .
+```
 
-**详细安装指南**：[INSTALL.md](INSTALL.md) | [MANUAL.md](MANUAL.md)
+**详细安装指南**：[INSTALL.md](INSTALL.md)
 
 ## 使用
 
@@ -248,7 +245,6 @@ claude-req-sys/
 ## 文档
 
 - [安装指南](INSTALL.md) — 详细安装说明
-- [使用手册](MANUAL.md) — 完整使用文档
 - [用户指南](docs/guides/user-guide.md) — 功能使用说明
 - [设计文档](docs/specs/2026-05-07-design.md) — 系统设计
 
